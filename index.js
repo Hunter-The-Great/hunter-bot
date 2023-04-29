@@ -12,9 +12,9 @@ const client = new Client({
 client.on('ready', () => {
     console.log('yee')
 })
-//client.channels.cache.get(message.channelId).send('idk man')
+
 client.on('messageCreate', message => {
-    if(message.content.toLowerCase == "hello there"){
+    if(message.content.toLowerCase() == "hello there"){
          client.channels.cache.get(message.channelId).send('General Kenobi')
     }
 })
