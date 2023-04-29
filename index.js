@@ -1,4 +1,4 @@
-const{Client, GatewayIntentBits}  = require('discord.js')
+const{Client, GatewayIntentBits, SlashCommandBuilder}  = require('discord.js')
 require('dotenv/config')
 
 const client = new Client({
