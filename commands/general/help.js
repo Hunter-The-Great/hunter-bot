@@ -10,7 +10,7 @@ module.exports = {
         const helpMenu = new EmbedBuilder()
             .setColor(0x00ffff)
             .setDescription("Commands:")
-            .setThumbnail("https://imgur.com/a/5tj1beq")
+            .setThumbnail("https://i.imgur.com/bVm6Cue.png")
             .addFields(
                 { name: "General", value: "    help: Displays this menu." },
                 { name: "Utility", value: "    id: Tells you your user ID." },
