@@ -12,9 +12,9 @@ module.exports = {
             .setDescription("Commands:")
             .setThumbnail("https://i.imgur.com/bVm6Cue.png")
             .addFields(
-                { name: "General", value: "\thelp: Displays this menu." },
-                { name: "Utility", value: "\tid: Tells you your user ID." },
-                { name: "Fun", value: "\twaifu: Shows you a waifu." }
+                { name: "General", value: "help: Displays this menu." },
+                { name: "Utility", value: "id: Tells you your user ID." },
+                { name: "Fun", value: "waifu: Shows you a waifu." }
             );
         await interaction.reply({ embeds: [helpMenu] });
     },
