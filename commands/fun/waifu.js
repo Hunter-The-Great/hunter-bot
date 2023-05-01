@@ -5,67 +5,101 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("waifu")
         .setDescription("Shows you a waifu.")
-        .addSubcommand((subcommand) =>
-            subcommand
-                .setName("sfw")
-                .setDescription("SFW waifus")
-                .addStringOption((option) =>
-                    option
-                        .setName("tag")
-                        .setDescription("Tag to search for")
-                        .addChoices(
-                            { name: "waifu", value: "waifu" },
-                            { name: "maid", value: "maid" },
-                            { name: "Marin Kitagawa", value: "marin-kitagawa" },
-                            { name: "Mori Calliope", value: "mori-calliope" },
-                            { name: "Raiden Shogun", value: "raiden-shogun" },
-                            { name: "oppai", value: "oppai" },
-                            { name: "selfies", value: "selfies" },
-                            { name: "uniform", value: "uniform" }
-                        )
-                        .setRequired(true)
+        .addStringOption((option) =>
+            option
+                .setName("type")
+                .setDescription("NSFW/SFW")
+                .addChoices(
+                    { name: "SFW", value: "false" },
+                    { name: "NSFW", value: "true" }
                 )
+                .setRequired(true)
         )
-        .addSubcommand((subcommand) =>
-            subcommand
-                .setName("nsfw")
-                .setDescription("NSFW waifus")
-                .addStringOption((option) =>
-                    option
-                        .setName("tag")
-                        .setDescription("Tag to search for")
-                        .addChoices(
-                            { name: "waifu", value: "waifu" },
-                            { name: "maid", value: "maid" },
-                            { name: "Marin Kitagawa", value: "marin-kitagawa" },
-                            { name: "Mori Calliope", value: "mori-calliope" },
-                            { name: "Raiden Shogun", value: "raiden-shogun" },
-                            { name: "oppai", value: "oppai" },
-                            { name: "selfies", value: "selfies" },
-                            { name: "uniform", value: "uniform" },
-                            { name: "ass", value: "ass" },
-                            { name: "hentai", value: "hentai" },
-                            { name: "milf", value: "milf" },
-                            { name: "oral", value: "oral" },
-                            { name: "paizuri", value: "paizuri" },
-                            { name: "ecchi", value: "ecch" },
-                            { name: "ero", value: "ero" }
-                        )
-                        .setRequired(true)
+        .addStringOption((option) =>
+            option
+                .setName("tag")
+                .setDescription("The tag to search for")
+                .addChoices(
+                    { name: "waifu", value: "waifu" },
+                    { name: "maid", value: "maid" },
+                    { name: "Marin Kitagawa", value: "marin-kitagawa" },
+                    { name: "Mori Calliope", value: "mori-calliope" },
+                    { name: "Raiden Shogun", value: "raiden-shogun" },
+                    { name: "oppai", value: "oppai" },
+                    { name: "selfies", value: "selfies" },
+                    { name: "uniform", value: "uniform" },
+                    { name: "ass(NSFW)", value: "ass" },
+                    { name: "hentai(NSFW)", value: "hentai" },
+                    { name: "milf(NSFW)", value: "milf" },
+                    { name: "oral(NSFW)", value: "oral" },
+                    { name: "paizuri(NSFW)", value: "paizuri" },
+                    { name: "ecchi(NSFW)", value: "ecch" },
+                    { name: "ero(NSFW)", value: "ero" }
                 )
+                .setRequired(true)
+        )
+        .addStringOption((option) =>
+            option
+                .setName("second-tag")
+                .setDescription("The tag to search for")
+                .addChoices(
+                    { name: "waifu", value: "waifu" },
+                    { name: "maid", value: "maid" },
+                    { name: "Marin Kitagawa", value: "marin-kitagawa" },
+                    { name: "Mori Calliope", value: "mori-calliope" },
+                    { name: "Raiden Shogun", value: "raiden-shogun" },
+                    { name: "oppai", value: "oppai" },
+                    { name: "selfies", value: "selfies" },
+                    { name: "uniform", value: "uniform" },
+                    { name: "ass(NSFW)", value: "ass" },
+                    { name: "hentai(NSFW)", value: "hentai" },
+                    { name: "milf(NSFW)", value: "milf" },
+                    { name: "oral(NSFW)", value: "oral" },
+                    { name: "paizuri(NSFW)", value: "paizuri" },
+                    { name: "ecchi(NSFW)", value: "ecch" },
+                    { name: "ero(NSFW)", value: "ero" }
+                )
+                .setRequired(false)
         )
         .setDMPermission(false)
         .setNSFW(true),
     async execute(interaction) {
         await interaction.deferReply();
-        url =
-            `https://api.waifu.im/search/?&included_tags=${interaction.options.getString(
-                "tag"
-            )}&is_nsfw=` +
-            (interaction.options._subcommand == "sfw" ? "false" : "true");
+        const flags = [
+            "ass",
+            "hentai",
+            "milf",
+            "oral",
+            "paizuri",
+            "ecchi",
+            "ero",
+        ];
+        if (interaction.options.getString("type") == "false") {
+            for (flag of flags) {
+                console.log(flag);
+                if (
+                    interaction.options.getString("tag") == flag ||
+                    interaction.options.getString("second-tag") == flag
+                ) {
+                    await interaction.editReply(
+                        "No image found, try changing your tags."
+                    );
+                    return;
+                }
+            }
+        }
+        url = `https://api.waifu.im/search/?&included_tags=${interaction.options.getString(
+            "tag"
+        )}&is_nsfw=${interaction.options.getString("type")}`;
+
+        if (interaction.options.getString("second-tag")) {
+            url =
+                url +
+                `&included_tags=${interaction.options.getString("second-tag")}`;
+        }
 
         // user debug information
-        // console.log("User " + interaction.user.tag + " called: " + url);
+        //console.log("User " + interaction.user.tag + " called: " + url);
         const response = await fetch(url);
         const data = await response.json();
         if (!data.images) {
