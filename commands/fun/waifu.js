@@ -76,7 +76,6 @@ module.exports = {
         ];
         if (interaction.options.getString("type") == "false") {
             for (flag of flags) {
-                console.log(flag);
                 if (
                     interaction.options.getString("tag") == flag ||
                     interaction.options.getString("second-tag") == flag
