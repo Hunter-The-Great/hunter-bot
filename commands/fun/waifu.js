@@ -8,11 +8,11 @@ module.exports = {
         .addSubcommand((subcommand) =>
             subcommand
                 .setName("sfw")
-                .setDescription("sfw waifus")
+                .setDescription("SFW waifus")
                 .addStringOption((option) =>
                     option
                         .setName("tag")
-                        .setDescription("tag to search for")
+                        .setDescription("Tag to search for")
                         .addChoices(
                             { name: "waifu", value: "waifu" },
                             { name: "maid", value: "maid" },
@@ -29,11 +29,11 @@ module.exports = {
         .addSubcommand((subcommand) =>
             subcommand
                 .setName("nsfw")
-                .setDescription("nsfw waifus")
+                .setDescription("NSFW waifus")
                 .addStringOption((option) =>
                     option
                         .setName("tag")
-                        .setDescription("tag to search for")
+                        .setDescription("Tag to search for")
                         .addChoices(
                             { name: "waifu", value: "waifu" },
                             { name: "maid", value: "maid" },
