@@ -10,9 +10,11 @@ module.exports = {
         const helpMenu = new EmbedBuilder()
             .setColor(0x00ffff)
             .setDescription("Commands:")
+            .setThumbnail("https://imgur.com/a/5tj1beq")
             .addFields(
-                { name: "General", value: "    help: displays this menu" },
-                { name: "Utility", value: "    id: Tells you your user ID" }
+                { name: "General", value: "    help: Displays this menu." },
+                { name: "Utility", value: "    id: Tells you your user ID." },
+                { name: "Fun", value: "    waifu: Shows you a waifu." }
             );
         await interaction.reply({ embeds: [helpMenu] });
     },
