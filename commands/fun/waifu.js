@@ -101,8 +101,6 @@ module.exports = {
                 `&included_tags=${interaction.options.getString("second-tag")}`;
         }
 
-        // user debug information
-        //console.log("User " + interaction.user.tag + " called: " + url);
         const response = await fetch(url);
         const data = await response.json();
         if (!data.images) {
