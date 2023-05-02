@@ -78,11 +78,11 @@ module.exports = {
             "ecchi",
             "ero",
         ];
-        if (interaction.options.getString("type") == "false") {
+        if (interaction.options.getString("type") === "false") {
             for (const flag of flags) {
                 if (
-                    interaction.options.getString("tag") == flag ||
-                    interaction.options.getString("second-tag") == flag
+                    interaction.options.getString("tag") === flag ||
+                    interaction.options.getString("second-tag") === flag
                 ) {
                     await interaction.editReply(
                         "No image found, try changing your tags."
