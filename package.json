@@ -17,5 +17,8 @@
     "dotenv": "^16.0.3",
     "node-fetch": "^2.6.9",
     "nodemon": "^2.0.22"
+  },
+  "devDependencies": {
+    "eslint": "^8.39.0"
   }
 }
