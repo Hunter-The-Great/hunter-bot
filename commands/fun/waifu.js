@@ -64,7 +64,11 @@ module.exports = {
         .setDMPermission(false)
         .setNSFW(true),
     async execute(interaction) {
-        await interaction.deferReply();
+        try {
+            await interaction.deferReply();
+        } catch (err) {
+            console.log("An error has occured (waifu.js : 67)");
+        }
         const flags = [
             "ass",
             "hentai",
@@ -75,7 +79,7 @@ module.exports = {
             "ero",
         ];
         if (interaction.options.getString("type") == "false") {
-            for (flag of flags) {
+            for (const flag of flags) {
                 if (
                     interaction.options.getString("tag") == flag ||
                     interaction.options.getString("second-tag") == flag
@@ -87,7 +91,7 @@ module.exports = {
                 }
             }
         }
-        url = `https://api.waifu.im/search/?&included_tags=${interaction.options.getString(
+        let url = `https://api.waifu.im/search/?&included_tags=${interaction.options.getString(
             "tag"
         )}&is_nsfw=${interaction.options.getString("type")}`;
 
