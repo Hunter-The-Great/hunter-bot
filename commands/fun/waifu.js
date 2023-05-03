@@ -64,15 +64,11 @@ const data = new SlashCommandBuilder()
     .setNSFW(true);
 
 const execute = async (interaction) => {
-    try {
-        if (interaction.user.id === process.env.HID) {
-            await interaction.reply("*Down __**ATROCIOUS**__*.");
-        } else {
-            await interaction.reply("*Down bad*.");
-        }
-    } catch (err) {
-        console.error("An error has occured", err);
-        return;
+    console.log(process.env.HID + " : 472069345569144843");
+    if (interaction.user.id === process.env.HID) {
+        await interaction.reply("*Down __**ATROCIOUS**__*.");
+    } else {
+        await interaction.reply("*Down bad*.");
     }
     const flags = ["ass", "hentai", "milf", "oral", "paizuri", "ecchi", "ero"];
     if (interaction.options.getString("type") === "false") {
