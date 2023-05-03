@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { redis } = require("../../utilities/db.js");
+require("isomorphic-fetch");
 
 const data = new SlashCommandBuilder()
     .setName("gif")
