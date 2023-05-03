@@ -4,7 +4,11 @@ const name = Events.MessageCreate;
 
 const execute = async (message) => {
     if (message.content.toLowerCase() === "hello there") {
-        await message.channel.send("General Kenobi");
+        try {
+            await message.channel.send("General Kenobi");
+        } catch (err) {
+            console.error("An error has ocurred.", err);
+        }
     }
 };
 

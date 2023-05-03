@@ -7,7 +7,7 @@ const execute = async (interaction) => {
     try {
         await command.execute(interaction);
     } catch (err) {
-        console.error("An error has occured.", err);
+        console.error("An error has ocurred.", err);
     }
 };
 
