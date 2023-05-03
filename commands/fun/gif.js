@@ -86,7 +86,9 @@ const execute = async (interaction) => {
             link.endsWith(".com") ||
             link.endsWith(".org") ||
             link.endsWith(".edu") ||
-            link.endsWith(".net")
+            link.endsWith(".net") ||
+            link.includes(" ") ||
+            link.includes("http", 7)
         ) {
             await interaction.editReply(
                 "Error: invalid input, please provide a link to a GIF/image"
