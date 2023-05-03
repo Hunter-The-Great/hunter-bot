@@ -66,9 +66,9 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
     try {
         if (interaction.user.id === process.env.HID) {
-            await interaction.reply("*Down __**ATROCIOUS**__.*");
+            await interaction.reply("*Down __**ATROCIOUS**__*.");
         } else {
-            await interaction.reply("*Down bad.*");
+            await interaction.reply("*Down bad*.");
         }
     } catch (err) {
         console.error("An error has occured", err);
