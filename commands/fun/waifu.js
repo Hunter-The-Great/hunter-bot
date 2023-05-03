@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
-const fetch = require("node-fetch");
+const fetch = require("isomorphic-fetch");
 
 const data = new SlashCommandBuilder()
     .setName("waifu")
