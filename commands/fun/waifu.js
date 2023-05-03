@@ -39,7 +39,7 @@ const data = new SlashCommandBuilder()
     )
     .addStringOption((option) =>
         option
-            .setName("second-tag")
+            .setName("tag-2")
             .setDescription("The tag to search for")
             .addChoices(
                 { name: "waifu", value: "waifu" },
@@ -65,9 +65,14 @@ const data = new SlashCommandBuilder()
 
 const execute = async (interaction) => {
     try {
-        await interaction.deferReply();
+        if (interaction.user.id === process.env.HID) {
+            await interaction.reply("*Down __**ATROCIOUS**__.*");
+        } else {
+            await interaction.reply("*Down bad.*");
+        }
     } catch (err) {
-        console.log("An error has occured (waifu.js : 67)");
+        console.error("An error has occured", err);
+        return;
     }
     const flags = ["ass", "hentai", "milf", "oral", "paizuri", "ecchi", "ero"];
     if (interaction.options.getString("type") === "false") {
@@ -87,13 +92,18 @@ const execute = async (interaction) => {
         "tag"
     )}&is_nsfw=${interaction.options.getString("type")}`;
 
-    if (interaction.options.getString("second-tag")) {
-        url =
-            url +
-            `&included_tags=${interaction.options.getString("second-tag")}`;
+    if (interaction.options.getString("tag-2")) {
+        url = url + `&included_tags=${interaction.options.getString("tag-2")}`;
     }
-
-    const response = await fetch(url);
+    let response;
+    try {
+        response = await fetch(url);
+    } catch (err) {
+        await interaction.editReply(
+            "Waifu.IM API failed to respond, please try again later."
+        );
+        return;
+    }
     const data = await response.json();
     if (!data.images) {
         await interaction.editReply("No image found, try changing your tags.");
