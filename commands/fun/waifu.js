@@ -64,7 +64,6 @@ const data = new SlashCommandBuilder()
     .setNSFW(true);
 
 const execute = async (interaction) => {
-    console.log(process.env.HID + " : 472069345569144843");
     if (interaction.user.id === process.env.HID) {
         await interaction.reply("*Down __**ATROCIOUS**__*.");
     } else {

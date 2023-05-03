@@ -53,14 +53,14 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
     const link = interaction.options.getString("link");
     const alias = interaction.options.getString("alias");
-    const id = interaction.user.id;
+    const hash = "GIF:" + interaction.user.id;
 
     await interaction.deferReply({
         ephemeral: !(interaction.options.getSubcommand() === "load"),
     });
 
     if (interaction.options.getSubcommand() === "save") {
-        if (!(await redis.hsetnx(id, alias, link))) {
+        if (!(await redis.hsetnx(hash, alias, link))) {
             await interaction.editReply(
                 "Error: alias ' " +
                     alias +
@@ -71,10 +71,14 @@ const execute = async (interaction) => {
 
         await interaction.editReply("GIF saved.");
     } else if (interaction.options.getSubcommand() === "load") {
-        const data = await redis.hget(id, alias);
+        const data = await redis.hget(hash, alias);
+        if (!data) {
+            await interaction.editReply("No GIF by that alias found.");
+            return;
+        }
         await interaction.editReply(data);
     } else if (interaction.options.getSubcommand() === "list") {
-        const data = await redis.hkeys(id);
+        const data = await redis.hkeys(hash);
         if (data.length === 0) {
             await interaction.editReply(
                 "No aliases in use by " + interaction.user.tag + "."
@@ -88,7 +92,7 @@ const execute = async (interaction) => {
                 data.join(", ")
         );
     } else if (interaction.options.getSubcommand() === "delete") {
-        if (await redis.hdel(id, alias)) {
+        if (await redis.hdel(hash, alias)) {
             await interaction.editReply("GIF deleted");
         } else {
             await interaction.editReply("No GIF by that alias found.");
