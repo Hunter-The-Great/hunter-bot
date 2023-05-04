@@ -11,6 +11,10 @@ const execute = async (interaction) => {
         .setColor(0x00ffff)
         .setTitle("**Commands**:")
         .setThumbnail("https://i.imgur.com/bVm6Cue.png")
+        .setAuthor({
+            name: interaction.user.tag,
+            iconURL: interaction.user.displayAvatarURL(),
+        })
         .addFields(
             {
                 name: "__**General**__",

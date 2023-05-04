@@ -3,6 +3,7 @@ const {
     ButtonBuilder,
     ButtonStyle,
     ActionRowBuilder,
+    EmbedBuilder,
 } = require("discord.js");
 const { redis } = require("../../utilities/db.js");
 require("isomorphic-fetch");
@@ -114,18 +115,28 @@ const execute = async (interaction) => {
         await interaction.editReply(data);
     } else if (interaction.options.getSubcommand() === "list") {
         const data = await redis.hkeys(hash);
+        let listEmbed = new EmbedBuilder()
+            .setColor(0x00ffff)
+            .setThumbnail(interaction.user.displayAvatarURL())
+            .setAuthor({
+                name: interaction.user.tag,
+                iconURL: interaction.user.displayAvatarURL(),
+            });
+
         if (data.length === 0) {
-            await interaction.editReply(
+            listEmbed.setTitle(
                 "No aliases in use by " + interaction.user.tag + "."
             );
+            await interaction.editReply({ embeds: [listEmbed] });
             return;
         }
-        await interaction.editReply(
-            "Aliases in use for " +
-                interaction.user.tag +
-                ": \n" +
-                data.join(", ")
-        );
+
+        data.sort();
+        listEmbed
+            .setTitle("Aliases in use by " + interaction.user.username + ": ")
+            .setDescription(data.join(", "));
+
+        await interaction.editReply({ embeds: [listEmbed] });
     } else if (interaction.options.getSubcommand() === "delete") {
         if (await redis.hdel(hash, alias)) {
             await interaction.editReply("GIF deleted");
