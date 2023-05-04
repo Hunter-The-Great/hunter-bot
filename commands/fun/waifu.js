@@ -74,7 +74,7 @@ const execute = async (interaction) => {
         for (const flag of flags) {
             if (
                 interaction.options.getString("tag") === flag ||
-                interaction.options.getString("second-tag") === flag
+                interaction.options.getString("tag-2") === flag
             ) {
                 await interaction.editReply(
                     "No image found, try changing your tags."
