@@ -125,7 +125,7 @@ const execute = async (interaction) => {
 
         if (data.length === 0) {
             listEmbed.setTitle(
-                "No aliases in use by " + interaction.user.tag + "."
+                "No aliases in use by " + interaction.user.username + "."
             );
             await interaction.editReply({ embeds: [listEmbed] });
             return;
