@@ -2,7 +2,7 @@ const { SlashCommandBuilder } = require("discord.js");
 
 const data = new SlashCommandBuilder()
     .setName("id")
-    .setDescription("Tells you your user ID")
+    .setDescription("Tells you your user ID.")
     .setDMPermission(false)
     .setNSFW(false);
 
