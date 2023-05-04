@@ -9,13 +9,29 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
     const helpMenu = new EmbedBuilder()
         .setColor(0x00ffff)
-        .setDescription("Commands:")
+        .setTitle("**Commands**:")
         .setThumbnail("https://i.imgur.com/bVm6Cue.png")
         .addFields(
-            { name: "General", value: "help: Displays this menu." },
-            { name: "Utility", value: "id: Tells you your user ID." },
-            { name: "Fun", value: "waifu: Shows you a waifu." }
-        );
+            {
+                name: "__**General**__",
+                value: "**help**: Displays this menu.",
+                inline: true,
+            },
+            {
+                name: "__**Utility**__",
+                value: "**id**: Tells you your user ID.",
+                inline: true,
+            },
+            {
+                name: "__**Fun**__",
+                value: "**waifu**: (NSFW) Shows you a waifu.\n\n**gif**: Saves and loads GIFs from the bot's database.",
+                inline: true,
+            }
+        )
+        .setFooter({
+            text: "I am cowboy duck, and I approve of this message.",
+            iconURL: "https://i.imgur.com/bVm6Cue.png",
+        });
     await interaction.reply({ embeds: [helpMenu] });
 };
 
