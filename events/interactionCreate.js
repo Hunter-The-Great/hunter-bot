@@ -16,9 +16,15 @@ const execute = async (interaction) => {
         await command.execute(interaction);
     } catch (err) {
         try {
-            interaction.channel.send(
-                "An error has occured, please try again later."
-            );
+            if (interaction.replied || interaction.deferred) {
+                await interaction.editReply(
+                    "An error has occured, please try again later."
+                );
+            } else {
+                await interaction.reply(
+                    "An error has occured, please try again later."
+                );
+            }
         } catch (err1) {
             console.error("An error has REALLY occurred: \n", err1);
             return;
