@@ -87,6 +87,9 @@ const execute = async (interaction) => {
             !link.includes("gif") ||
             !link.includes("mov") ||
             !link.includes("mp4") ||
+            !link.includes("jpg") ||
+            !link.includes("png") ||
+            !link.includes("jpeg") ||
             link.toLowerCase.includes("pee") ||
             link.includes(" ") ||
             link.includes("http", 7) ||
