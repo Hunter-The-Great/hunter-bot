@@ -26,7 +26,10 @@ const execute = async (interaction) => {
                 );
             }
         } catch (err1) {
-            console.error("An error has REALLY occurred: \n", err1);
+            console.error(
+                "An error has occurred and a message could not be sent: \n",
+                err1
+            );
             return;
         }
         console.error("An error has occurred: \n", err);
