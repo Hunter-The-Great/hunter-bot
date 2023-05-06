@@ -14,20 +14,6 @@ const execute = async (interaction) => {
         console.error("A bad error has occurred:\n", err);
     }
     try {
-        const data = JSON.stringify([
-            { users: interaction.user.tag },
-            { cmds: command.name },
-        ]);
-        await axiom.ingest(
-            "commands",
-            data,
-            ContentType.JSON,
-            ContentEncoding.Identity
-        );
-    } catch (err) {
-        console.error("Axiom communications failure:\n", err);
-    }
-    try {
         await command.execute(interaction);
     } catch (err) {
         try {
@@ -48,6 +34,20 @@ const execute = async (interaction) => {
             return;
         }
         console.error("An error has occurred:\n", err);
+    }
+    try {
+        const data = JSON.stringify([
+            { users: interaction.user.tag },
+            { cmds: command.name },
+        ]);
+        await axiom.ingest(
+            "commands",
+            data,
+            ContentType.JSON,
+            ContentEncoding.Identity
+        );
+    } catch (err) {
+        console.error("Axiom communications failure:\n", err);
     }
 };
 
