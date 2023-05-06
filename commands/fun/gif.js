@@ -88,6 +88,9 @@ const execute = async (interaction) => {
             link.endsWith(".org") ||
             link.endsWith(".edu") ||
             link.endsWith(".net") ||
+            link.endsWith(".gay") ||
+            link.endsWith(".gov") ||
+            link.endsWith(".app") ||
             link.includes(" ") ||
             link.includes("http", 7)
         ) {
