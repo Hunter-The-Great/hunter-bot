@@ -13,6 +13,7 @@ const data = new SlashCommandBuilder()
     );
 
 const execute = async (interaction) => {
+    console.log("start");
     const commandName = interaction.options
         .getString("command", true)
         .toLowerCase();
@@ -41,6 +42,7 @@ const execute = async (interaction) => {
             `There was an error while reloading a command \`${command.data.name}\`:\n\`${error.message}\``
         );
     }
+    console.log("complete");
 };
 
 module.exports = {
