@@ -33,7 +33,7 @@ const execute = async (interaction) => {
             }
         )
         .setFooter({
-            text: "I am cowboy duck, and I approve of this message.",
+            text: "I am cowboy duck, and I approve of this message.2",
             iconURL: "https://i.imgur.com/bVm6Cue.png",
         });
     await interaction.reply({ embeds: [helpMenu] });
