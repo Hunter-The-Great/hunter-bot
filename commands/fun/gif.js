@@ -99,10 +99,10 @@ const execute = async (interaction) => {
             );
             return;
         }
-        const regex = /^[A-Za-z0-9\s]+$/;
+        const regex = /^[A-Za-z0-9\s-_,.]+$/;
         if (!alias.match(regex) || alias.toLowerCase() === "null") {
             await interaction.editReply(
-                "Error: invalid input, please provide an alias with only alphanumeric characters and whitespace."
+                'Error: invalid input, please provide an alias with only alphanumeric characters, whitespace, and the characters " , . - _ ".'
             );
             return;
         }
@@ -118,10 +118,10 @@ const execute = async (interaction) => {
 
         await interaction.editReply("GIF saved.");
     } else if (interaction.options.getSubcommand() === "load") {
-        const regex = /^[A-Za-z0-9\s]+$/;
+        const regex = /^[A-Za-z0-9\s-_,.]+$/;
         if (!alias.match(regex) || alias.toLowerCase() === "null") {
             await interaction.editReply(
-                "Error: invalid input, please provide an alias with only alphanumeric characters and whitespace."
+                'Error: invalid input, please provide an alias with only alphanumeric characters and whitespace, whitespace, and the characters " , . - _ ".'
             );
             return;
         }
