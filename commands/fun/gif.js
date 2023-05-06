@@ -83,16 +83,8 @@ const execute = async (interaction) => {
             );
             return;
         }
+
         if (
-            !(
-                link.includes("gif") ||
-                link.includes("mov") ||
-                link.includes("mp4") ||
-                link.includes("jpg") ||
-                link.includes("png") ||
-                link.includes("jpeg")
-            ) ||
-            link.toLowerCase().includes("pee") ||
             link.includes(" ") ||
             link.includes("http", 7) ||
             !link.startsWith("http")
@@ -101,27 +93,44 @@ const execute = async (interaction) => {
             return;
         }
         const regex = /^[A-Za-z0-9\s-_,.]+$/;
-        if (
-            !alias.match(regex) ||
-            alias.toLowerCase() === "null" ||
-            alias.toLowerCase().includes("pee")
-        ) {
+        if (!alias.match(regex) || alias.toLowerCase() === "null") {
             await interaction.editReply(
                 'Error: invalid input, please provide an alias with only alphanumeric characters, whitespace, and the characters " , . - _ ".'
             );
             return;
         }
 
-        if (!(await redis.hsetnx(hash, alias, link))) {
-            await interaction.editReply(
-                "Error: alias " +
-                    alias +
-                    " already in use, please select another alias or delete the currently saved GIF."
-            );
+        const scrapeMeta = await fetch(
+            `https://jsonlink.io/api/extract?url=${link}`
+        );
+        const meta = await scrapeMeta.json();
+        const response = await fetch(link);
+        const type = response.headers.get("content-type");
+        if (type.includes("gif") || type.includes("image")) {
+            if (!(await redis.hsetnx(hash, alias, link))) {
+                await interaction.editReply(
+                    "Error: alias " +
+                        alias +
+                        " already in use, please select another alias or delete the currently saved GIF."
+                );
+                return;
+            }
+            await interaction.editReply("GIF saved.");
+            return;
+        } else if (meta.images.length > 0) {
+            if (!(await redis.hsetnx(hash, alias, meta.images[0]))) {
+                await interaction.editReply(
+                    "Error: alias " +
+                        alias +
+                        " already in use, please select another alias or delete the currently saved GIF."
+                );
+                return;
+            }
+            await interaction.editReply("GIF saved.");
             return;
         }
 
-        await interaction.editReply("GIF saved.");
+        await interaction.editReply("Error: invalid link.");
     } else if (interaction.options.getSubcommand() === "load") {
         const regex = /^[A-Za-z0-9\s-_,.]+$/;
         if (!alias.match(regex) || alias.toLowerCase() === "null") {
@@ -135,6 +144,7 @@ const execute = async (interaction) => {
             await interaction.editReply("No GIF by that alias found.");
             return;
         }
+
         await interaction.editReply(data);
     } else if (interaction.options.getSubcommand() === "list") {
         const data = await redis.hkeys(hash);
@@ -157,7 +167,7 @@ const execute = async (interaction) => {
         data.sort();
         listEmbed
             .setTitle("Aliases in use by " + interaction.user.username + ": ")
-            .setDescription(data.join(", "));
+            .setDescription(data.join("\n"));
 
         await interaction.editReply({ embeds: [listEmbed] });
     } else if (interaction.options.getSubcommand() === "delete") {
