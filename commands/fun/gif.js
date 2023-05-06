@@ -91,6 +91,8 @@ const execute = async (interaction) => {
             link.endsWith(".gay") ||
             link.endsWith(".gov") ||
             link.endsWith(".app") ||
+            link.endsWith(".gg") ||
+            link.endsWith(".xyz") ||
             link.endsWith(".com/") ||
             link.endsWith(".org/") ||
             link.endsWith(".edu/") ||
@@ -98,6 +100,9 @@ const execute = async (interaction) => {
             link.endsWith(".gay/") ||
             link.endsWith(".gov/") ||
             link.endsWith(".app/") ||
+            link.endsWith(".io/") ||
+            link.endsWith(".gg/") ||
+            link.endsWith(".xyz/") ||
             link.includes(" ") ||
             link.includes("http", 7) ||
             !link.startsWith("http")
