@@ -84,25 +84,9 @@ const execute = async (interaction) => {
             return;
         }
         if (
-            link.endsWith(".com") ||
-            link.endsWith(".org") ||
-            link.endsWith(".edu") ||
-            link.endsWith(".net") ||
-            link.endsWith(".gay") ||
-            link.endsWith(".gov") ||
-            link.endsWith(".app") ||
-            link.endsWith(".gg") ||
-            link.endsWith(".xyz") ||
-            link.endsWith(".com/") ||
-            link.endsWith(".org/") ||
-            link.endsWith(".edu/") ||
-            link.endsWith(".net/") ||
-            link.endsWith(".gay/") ||
-            link.endsWith(".gov/") ||
-            link.endsWith(".app/") ||
-            link.endsWith(".io/") ||
-            link.endsWith(".gg/") ||
-            link.endsWith(".xyz/") ||
+            !link.includes("gif") ||
+            !link.includes("mov") ||
+            !link.includes("mp4") ||
             link.includes(" ") ||
             link.includes("http", 7) ||
             !link.startsWith("http")
