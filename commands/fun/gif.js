@@ -96,6 +96,14 @@ const execute = async (interaction) => {
             );
             return;
         }
+        const regex = /^[A-Za-z0-9\s]+$/;
+        if (!alias.match(regex) || alias.toLowerCase() === "null") {
+            await interaction.editReply(
+                "Error: invalid input, please provide an alias with only alphanumeric characters and whitespace."
+            );
+            return;
+        }
+
         if (!(await redis.hsetnx(hash, alias, link))) {
             await interaction.editReply(
                 "Error: alias " +
@@ -107,6 +115,13 @@ const execute = async (interaction) => {
 
         await interaction.editReply("GIF saved.");
     } else if (interaction.options.getSubcommand() === "load") {
+        const regex = /^[A-Za-z0-9\s]+$/;
+        if (!alias.match(regex) || alias.toLowerCase() === "null") {
+            await interaction.editReply(
+                "Error: invalid input, please provide an alias with only alphanumeric characters and whitespace."
+            );
+            return;
+        }
         const data = await redis.hget(hash, alias);
         if (!data) {
             await interaction.editReply("No GIF by that alias found.");
