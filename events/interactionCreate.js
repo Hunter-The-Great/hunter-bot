@@ -1,4 +1,5 @@
 const { Events } = require("discord.js");
+const { axiom, ContentEncoding, ContentType } = require("../utilities/log.js");
 
 const name = Events.InteractionCreate;
 
@@ -10,7 +11,21 @@ const execute = async (interaction) => {
     try {
         command = interaction.client.commands.get(interaction.commandName);
     } catch (err) {
-        console.error("A bad error has occurred: \n", err);
+        console.error("A bad error has occurred:\n", err);
+    }
+    try {
+        const data = JSON.stringify([
+            { users: interaction.user.tag },
+            { cmds: command.name },
+        ]);
+        await axiom.ingest(
+            "commands",
+            data,
+            ContentType.JSON,
+            ContentEncoding.Identity
+        );
+    } catch (err) {
+        console.error("Axiom communications failure:\n", err);
     }
     try {
         await command.execute(interaction);
@@ -27,12 +42,12 @@ const execute = async (interaction) => {
             }
         } catch (err1) {
             console.error(
-                "An error has occurred and a message could not be sent: \n",
+                "An error has occurred and a message could not be sent:\n",
                 err1
             );
             return;
         }
-        console.error("An error has occurred: \n", err);
+        console.error("An error has occurred:\n", err);
     }
 };
 

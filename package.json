@@ -15,6 +15,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@axiomhq/axiom-node": "^0.12.0",
         "@upstash/redis": "^1.20.5",
         "discord.js": "^14.9.0",
         "dotenv": "^16.0.3",
