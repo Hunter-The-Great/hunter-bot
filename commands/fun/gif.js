@@ -87,17 +87,20 @@ const execute = async (interaction) => {
             !link.includes("gif") ||
             !link.includes("mov") ||
             !link.includes("mp4") ||
+            link.toLowerCase.includes("pee") ||
             link.includes(" ") ||
             link.includes("http", 7) ||
             !link.startsWith("http")
         ) {
-            await interaction.editReply(
-                "Error: invalid input, please provide a link to a GIF/image"
-            );
+            await interaction.editReply("Error: invalid link.");
             return;
         }
         const regex = /^[A-Za-z0-9\s-_,.]+$/;
-        if (!alias.match(regex) || alias.toLowerCase() === "null") {
+        if (
+            !alias.match(regex) ||
+            alias.toLowerCase() === "null" ||
+            alias.toLowerCase().includes("pee")
+        ) {
             await interaction.editReply(
                 'Error: invalid input, please provide an alias with only alphanumeric characters, whitespace, and the characters " , . - _ ".'
             );
