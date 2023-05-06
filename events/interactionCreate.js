@@ -1,5 +1,5 @@
 const { Events } = require("discord.js");
-const { axiom, ContentEncoding, ContentType } = require("../utilities/log.js");
+const { log } = require("../utilities/log.js");
 require("isomorphic-fetch");
 
 const name = Events.InteractionCreate;
@@ -37,16 +37,14 @@ const execute = async (interaction) => {
         console.error("An error has occurred:\n", err);
     }
     try {
-        const data = JSON.stringify([
-            { users: interaction.user.tag },
-            { cmds: command.name },
-        ]);
-        await axiom.ingest(
-            "commands",
-            data,
-            ContentType.JSON,
-            ContentEncoding.Identity
-        );
+        const payload = {
+            user: interaction.user.tag,
+            command: interaction.commandName,
+            ...interaction.options._hoistedOptions.reduce((acc, params) => {
+                return { [params.name]: params.value, ...acc };
+            }, {}),
+        };
+        await log("commands", payload);
     } catch (err) {
         console.error("Axiom communications failure:\n", err);
     }

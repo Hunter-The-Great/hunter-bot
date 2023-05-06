@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const fetch = require("isomorphic-fetch");
+const { log } = require("../../utilities/log.js");
 
 const data = new SlashCommandBuilder()
     .setName("waifu")
