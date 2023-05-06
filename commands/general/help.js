@@ -34,7 +34,7 @@ const execute = async (interaction) => {
         )
         .setFooter({
             text: "I am cowboy duck, and I approve of this message.",
-            iconURL: process.env.avatar,
+            iconURL: process.env.AVATAR,
         });
     await interaction.reply({ embeds: [helpMenu] });
 };
