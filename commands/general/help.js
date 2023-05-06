@@ -10,7 +10,7 @@ const execute = async (interaction) => {
     const helpMenu = new EmbedBuilder()
         .setColor(0x00ffff)
         .setTitle("**Commands**:")
-        .setThumbnail(process.env.avatar)
+        .setThumbnail(process.env.AVATAR)
         .setAuthor({
             name: interaction.user.tag,
             iconURL: interaction.user.displayAvatarURL(),
@@ -34,7 +34,7 @@ const execute = async (interaction) => {
         )
         .setFooter({
             text: "I am cowboy duck, and I approve of this message.",
-            iconURL: process.env.avatar,
+            iconURL: process.env.AVATAR,
         });
     await interaction.reply({ embeds: [helpMenu] });
 };
