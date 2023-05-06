@@ -1,6 +1,5 @@
 const { Events } = require("discord.js");
 const { log } = require("../utilities/log.js");
-require("isomorphic-fetch");
 
 const name = Events.InteractionCreate;
 
