@@ -10,8 +10,8 @@ require("isomorphic-fetch");
 
 const data = new SlashCommandBuilder()
     .setName("gif")
-    .setDescription("Loads a GIF.")
-    .setDMPermission(false)
+    .setDescription("GIF saver.")
+    .setDMPermission(true)
     .setNSFW(false)
     .addSubcommand((subcommand) =>
         subcommand
@@ -200,5 +200,6 @@ const execute = async (interaction) => {
 
 module.exports = {
     data,
+    category: "fun",
     execute,
 };

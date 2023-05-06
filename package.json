@@ -8,6 +8,7 @@
         "start": "node index.js",
         "dev": "nodemon index.js",
         "cmd": "node deploy-commands.js",
+        "cmd-dev": "node deploy-dev-commands.js",
         "format": "prettier --write \"**/*.js\""
     },
     "keywords": [],

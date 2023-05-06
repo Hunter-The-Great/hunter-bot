@@ -9,12 +9,9 @@ const path = require("node:path");
 const commands = [];
 // Grab all the command files from the commands directory you created earlier
 const foldersPath = path.join(__dirname, "commands");
-const commandFolders = fs.readdirSync(foldersPath);
+const commandFolders = ["admin", "testing"];
 
 for (const folder of commandFolders) {
-    if (folder === "admin" || folder === "testing") {
-        continue;
-    }
     // Grab all the command files from the commands directory you created earlier
     const commandsPath = path.join(foldersPath, folder);
     const commandFiles = fs
@@ -46,4 +43,7 @@ for (const command of commands) {
     console.log(command);
 }
 
-rest.put(Routes.applicationCommands(process.env.clientId), { body: commands });
+rest.put(
+    Routes.applicationGuildCommands(process.env.clientId, process.env.guildID),
+    { body: commands }
+);

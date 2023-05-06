@@ -109,5 +109,6 @@ const execute = async (interaction) => {
 
 module.exports = {
     data,
+    category: "fun",
     execute,
 };

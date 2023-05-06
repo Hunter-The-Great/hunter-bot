@@ -15,5 +15,6 @@ const execute = async (interaction) => {
 
 module.exports = {
     data,
+    category: "utility",
     execute,
 };

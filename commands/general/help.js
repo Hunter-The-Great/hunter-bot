@@ -23,7 +23,7 @@ const execute = async (interaction) => {
             },
             {
                 name: "__**Utility**__",
-                value: "**id**: Tells you your user ID.",
+                value: "**id**: Tells you your user ID.\n\n**whois**: Displays information about a given user.",
                 inline: true,
             },
             {
@@ -33,7 +33,7 @@ const execute = async (interaction) => {
             }
         )
         .setFooter({
-            text: "I am cowboy duck, and I approve of this message.",
+            text: "I am cowboy duck, and I approve of this message.2",
             iconURL: "https://i.imgur.com/bVm6Cue.png",
         });
     await interaction.reply({ embeds: [helpMenu] });
@@ -41,5 +41,6 @@ const execute = async (interaction) => {
 
 module.exports = {
     data,
+    category: "general",
     execute,
 };
