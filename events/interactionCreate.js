@@ -6,14 +6,10 @@ const name = Events.InteractionCreate;
 const execute = async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
-    let command;
-
     try {
-        command = interaction.client.commands.get(interaction.commandName);
-    } catch (err) {
-        console.error("A bad error has occurred:\n", err);
-    }
-    try {
+        const command = interaction.client.commands.get(
+            interaction.commandName
+        );
         await command.execute(interaction);
     } catch (err) {
         try {
@@ -29,7 +25,7 @@ const execute = async (interaction) => {
         } catch (err1) {
             console.error(
                 "An error has occurred and a message could not be sent:\n",
-                err1
+                err
             );
             return;
         }
