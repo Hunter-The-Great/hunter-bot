@@ -75,6 +75,13 @@ const execute = async (interaction) => {
     });
 
     if (interaction.options.getSubcommand() === "save") {
+        const data = await redis.hkeys(hash);
+        if (data.length >= 20) {
+            interaction.editReply(
+                "Too many GIFs saved, please delete a GIF before saving another."
+            );
+            return;
+        }
         try {
             new URL(link);
         } catch (err) {
@@ -115,7 +122,7 @@ const execute = async (interaction) => {
                 );
                 return;
             }
-            await interaction.editReply("GIF saved.");
+            await interaction.editReply(`${data.length + 1}/20 GIFs saved.`);
             return;
         } else if (meta.images.length > 0) {
             if (!(await redis.hsetnx(hash, alias, meta.images[0]))) {
@@ -126,7 +133,7 @@ const execute = async (interaction) => {
                 );
                 return;
             }
-            await interaction.editReply("GIF saved.");
+            await interaction.editReply(`${data.length + 1}/20 GIFs saved.`);
             return;
         }
 
@@ -167,7 +174,8 @@ const execute = async (interaction) => {
         data.sort();
         listEmbed
             .setTitle("Aliases in use by " + interaction.user.username + ": ")
-            .setDescription(data.join("\n"));
+            .setDescription(data.join("\n"))
+            .setFooter({ text: `${data.length}/20` });
 
         await interaction.editReply({ embeds: [listEmbed] });
     } else if (interaction.options.getSubcommand() === "delete") {

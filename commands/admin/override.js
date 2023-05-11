@@ -87,7 +87,8 @@ const execute = async (interaction) => {
             data.sort();
             listEmbed
                 .setTitle("Aliases in use by " + puppet.username + ": ")
-                .setDescription(data.join("\n"));
+                .setDescription(data.join("\n"))
+                .setFooter({ text: `${data.length}/20` });
 
             await interaction.editReply({ embeds: [listEmbed] });
             return;
