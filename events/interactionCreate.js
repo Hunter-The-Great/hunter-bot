@@ -38,7 +38,9 @@ const execute = async (interaction) => {
             ...interaction.options._hoistedOptions.reduce((acc, params) => {
                 return { [params.name]: params.value, ...acc };
             }, {}),
-            subcommand: interaction.options.getSubcommand(),
+            subcommand: interaction.options.getSubcommand()
+                ? interaction.options.getSubcommand()
+                : null,
         };
         await log("commands", payload);
     } catch (err) {
