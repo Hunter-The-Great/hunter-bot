@@ -33,16 +33,6 @@ for (const folder of commandFolders) {
 
 const rest = new REST().setToken(process.env.TOKEN);
 
-console.log(
-    "Sending " +
-        commands.length +
-        " command" +
-        (commands.length > 1 ? "s: " : ": ")
-);
-for (const command of commands) {
-    console.log(command);
-}
-
 rest.put(
     Routes.applicationGuildCommands(process.env.clientId, process.env.guildID),
     { body: commands }

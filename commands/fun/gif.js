@@ -5,7 +5,7 @@ const {
     ActionRowBuilder,
     EmbedBuilder,
 } = require("discord.js");
-const { redis } = require("../../utilities/db.js");
+const { prisma } = require("../../utilities/db.js");
 require("isomorphic-fetch");
 
 const data = new SlashCommandBuilder()
@@ -68,15 +68,19 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
     const link = interaction.options.getString("link");
     const alias = interaction.options.getString("alias");
-    const hash = "GIF:" + interaction.user.id;
+    const id = interaction.user.id;
 
     await interaction.deferReply({
         ephemeral: !(interaction.options.getSubcommand() === "load"),
     });
 
     if (interaction.options.getSubcommand() === "save") {
-        const data = await redis.hkeys(hash);
-        if (data.length >= 20) {
+        if (await prisma.gif.findFirst({ where: { uid: id, alias } })) {
+            interaction.editReply("Alias already in use.");
+            return;
+        }
+        const data = await prisma.gif.count({ where: { uid: id } });
+        if (data >= 20) {
             interaction.editReply(
                 "Too many GIFs saved, please delete a GIF before saving another."
             );
@@ -114,26 +118,24 @@ const execute = async (interaction) => {
         const response = await fetch(link);
         const type = response.headers.get("content-type");
         if (type.includes("gif") || type.includes("image")) {
-            if (!(await redis.hsetnx(hash, alias, link))) {
-                await interaction.editReply(
-                    "Error: alias " +
-                        alias +
-                        " already in use, please select another alias or delete the currently saved GIF."
-                );
-                return;
-            }
-            await interaction.editReply(`${data.length + 1}/20 GIFs saved.`);
+            await prisma.gif.create({
+                data: {
+                    alias,
+                    link,
+                    uid: id,
+                },
+            });
+            await interaction.editReply(`${data + 1}/20 GIFs saved.`);
             return;
         } else if (meta.images.length > 0) {
-            if (!(await redis.hsetnx(hash, alias, meta.images[0]))) {
-                await interaction.editReply(
-                    "Error: alias " +
-                        alias +
-                        " already in use, please select another alias or delete the currently saved GIF."
-                );
-                return;
-            }
-            await interaction.editReply(`${data.length + 1}/20 GIFs saved.`);
+            await prisma.gif.create({
+                data: {
+                    alias,
+                    link: meta.images[0],
+                    uid: id,
+                },
+            });
+            await interaction.editReply(`${data + 1}/20 GIFs saved.`);
             return;
         }
 
@@ -142,19 +144,21 @@ const execute = async (interaction) => {
         const regex = /^[A-Za-z0-9\s-_,.]+$/;
         if (!alias.match(regex) || alias.toLowerCase() === "null") {
             await interaction.editReply(
-                'Error: invalid input, please provide an alias with only alphanumeric characters and whitespace, whitespace, and the characters " , . - _ ".'
+                "Error: invalid input, please provide an alias with only alphanumeric characters."
             );
             return;
         }
-        const data = await redis.hget(hash, alias);
+        const data = await prisma.gif.findFirst({ where: { uid: id, alias } });
         if (!data) {
             await interaction.editReply("No GIF by that alias found.");
             return;
         }
-
-        await interaction.editReply(data);
+        await interaction.editReply(data.link);
     } else if (interaction.options.getSubcommand() === "list") {
-        const data = await redis.hkeys(hash);
+        const data = await prisma.gif.findMany({
+            where: { uid: id },
+            orderBy: { savedAt: "asc" },
+        });
         let listEmbed = new EmbedBuilder()
             .setColor(0x00ffff)
             .setThumbnail(interaction.user.displayAvatarURL())
@@ -172,14 +176,13 @@ const execute = async (interaction) => {
             return;
         }
 
-        data.sort();
         listEmbed
             .setTitle("Aliases in use by " + interaction.user.username + ": ")
-            .setDescription(data.join("\n"));
+            .setDescription(data.map((gif) => gif.alias).join("\n"));
 
         await interaction.editReply({ embeds: [listEmbed] });
     } else if (interaction.options.getSubcommand() === "delete") {
-        if (await redis.hdel(hash, alias)) {
+        if (await prisma.gif.deleteMany({ where: { uid: id, alias } })) {
             await interaction.editReply("GIF deleted");
         } else {
             await interaction.editReply("No GIF by that alias found.");
@@ -210,10 +213,7 @@ const execute = async (interaction) => {
             });
 
             if (confirmation.customId === "confirm") {
-                const list = await redis.hkeys(hash);
-                for (const item of list) {
-                    await redis.hdel(hash, item);
-                }
+                await prisma.gif.deleteMany({ where: { uid: id } });
                 await confirmation.update({
                     content: "GIFs deleted.",
                     components: [],

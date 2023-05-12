@@ -16,4 +16,6 @@ model Gif {
   alias   String
   link    String
   savedAt DateTime @default(now())
+
+  @@unique([uid, alias])
 }
