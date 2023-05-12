@@ -10,7 +10,7 @@ const start = async (client) => {
     });
 
     try {
-        await fastify.listen({ port: process.env.PORT });
+        await fastify.listen({ host: "0.0.0.0", port: process.env.PORT });
         console.log("Listening on: " + process.env.PORT);
     } catch (err) {
         fastify.log.error(err);
