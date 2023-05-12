@@ -1,5 +1,6 @@
 const { Client, GatewayIntentBits, Collection } = require("discord.js");
 require("dotenv/config");
+const { start } = require("./rest-server.js");
 
 const client = new Client({
     intents: [
@@ -54,3 +55,5 @@ for (const file of eventFiles) {
 }
 
 client.login(process.env.TOKEN);
+
+start(client);
