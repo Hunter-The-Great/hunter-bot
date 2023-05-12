@@ -20,7 +20,7 @@ const data = new SlashCommandBuilder()
             .addStringOption((option) =>
                 option
                     .setName("link")
-                    .setDescription("The link to the GIF to be saved")
+                    .setDescription("The link to the GIF to be saved.")
                     .setRequired(true)
                     .setMaxLength(500)
             )
@@ -39,7 +39,7 @@ const data = new SlashCommandBuilder()
             .addStringOption((option) =>
                 option
                     .setName("alias")
-                    .setDescription("The alias of the GIF to be Loaded")
+                    .setDescription("The alias of the GIF to be Loaded.")
                     .setRequired(true)
                     .setMaxLength(100)
             )
@@ -54,7 +54,7 @@ const data = new SlashCommandBuilder()
             .addStringOption((option) =>
                 option
                     .setName("alias")
-                    .setDescription("The alias of the GIF to be deleted")
+                    .setDescription("The alias of the GIF to be deleted.")
                     .setRequired(true)
                     .setMaxLength(100)
             )
@@ -161,7 +161,8 @@ const execute = async (interaction) => {
             .setAuthor({
                 name: interaction.user.tag,
                 iconURL: interaction.user.displayAvatarURL(),
-            });
+            })
+            .setFooter({ text: `${data.length}/20` });
 
         if (data.length === 0) {
             listEmbed.setTitle(
@@ -174,8 +175,7 @@ const execute = async (interaction) => {
         data.sort();
         listEmbed
             .setTitle("Aliases in use by " + interaction.user.username + ": ")
-            .setDescription(data.join("\n"))
-            .setFooter({ text: `${data.length}/20` });
+            .setDescription(data.join("\n"));
 
         await interaction.editReply({ embeds: [listEmbed] });
     } else if (interaction.options.getSubcommand() === "delete") {

@@ -13,39 +13,57 @@ const data = new SlashCommandBuilder()
     .addSubcommand((subcommand) =>
         subcommand
             .setName("gif-list")
-            .setDescription("e")
+            .setDescription("Lists all saved GIFs of a given user.")
             .addStringOption((option) =>
-                option.setName("uid").setDescription("e").setRequired(true)
+                option
+                    .setName("uid")
+                    .setDescription("The UID to override.")
+                    .setRequired(true)
             )
     )
     .addSubcommand((subcommand) =>
         subcommand
             .setName("gif-load")
-            .setDescription("e")
+            .setDescription("Loads a GIF.")
             .addStringOption((option) =>
-                option.setName("uid").setDescription("e").setRequired(true)
+                option
+                    .setName("uid")
+                    .setDescription("The UID to override.")
+                    .setRequired(true)
             )
             .addStringOption((option) =>
-                option.setName("alias").setDescription("e").setRequired(true)
+                option
+                    .setName("alias")
+                    .setDescription("The alias of the GIF to be loaded.")
+                    .setRequired(true)
             )
     )
     .addSubcommand((subcommand) =>
         subcommand
             .setName("gif-delete")
-            .setDescription("e")
+            .setDescription("Deletes a GIF.")
             .addStringOption((option) =>
-                option.setName("uid").setDescription("e").setRequired(true)
+                option
+                    .setName("uid")
+                    .setDescription("The UID to override.")
+                    .setRequired(true)
             )
             .addStringOption((option) =>
-                option.setName("alias").setDescription("e").setRequired(true)
+                option
+                    .setName("alias")
+                    .setDescription("The alias of the GIF to delete.")
+                    .setRequired(true)
             )
     )
     .addSubcommand((subcommand) =>
         subcommand
             .setName("gif-clear")
-            .setDescription("e")
+            .setDescription("Clears all of a user's GIFs.")
             .addStringOption((option) =>
-                option.setName("uid").setDescription("e").setRequired(true)
+                option
+                    .setName("uid")
+                    .setDescription("The UID to override.")
+                    .setRequired(true)
             )
     )
     .setDMPermission(false)
@@ -74,7 +92,8 @@ const execute = async (interaction) => {
                 .setAuthor({
                     name: puppet.tag,
                     iconURL: puppet.displayAvatarURL(),
-                });
+                })
+                .setFooter({ text: `${data.length}/20` });
 
             if (data.length === 0) {
                 listEmbed.setTitle(
@@ -87,8 +106,7 @@ const execute = async (interaction) => {
             data.sort();
             listEmbed
                 .setTitle("Aliases in use by " + puppet.username + ": ")
-                .setDescription(data.join("\n"))
-                .setFooter({ text: `${data.length}/20` });
+                .setDescription(data.join("\n"));
 
             await interaction.editReply({ embeds: [listEmbed] });
             return;
