@@ -14,7 +14,7 @@ const execute = async (interaction) => {
         {
             method: "POST",
             headers: {
-                Authorization: "Bearer" + process.env.QSTASH_TOKEN,
+                Authorization: "Bearer " + process.env.QSTASH_TOKEN,
                 "Content-type": "application/json",
             },
             body: JSON.stringify({
