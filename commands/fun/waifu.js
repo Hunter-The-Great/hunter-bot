@@ -98,8 +98,9 @@ const execute = async (interaction) => {
         response = await fetch(url);
     } catch (err) {
         await interaction.editReply(
-            "Waifu.IM API failed to respond, please try again later."
+            "Waifu.im API failed to respond, please try again later."
         );
+        console.error("Waifu.im communication failure\n", err);
         return;
     }
     const data = await response.json();
