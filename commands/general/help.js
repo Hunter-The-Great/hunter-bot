@@ -23,12 +23,15 @@ const execute = async (interaction) => {
             },
             {
                 name: "__**Utility**__",
-                value: "**id**: Tells you your user ID.\n\n**whois**: Displays information about a given user.",
+                value: `**id**: Tells you your user ID.\n\n
+                        **whois**: Displays information about a given user.`,
                 inline: true,
             },
             {
                 name: "__**Fun**__",
-                value: "**waifu**: (NSFW) Shows you a waifu.\n\n**gif**: Saves and loads GIFs from the bot's database.",
+                value: `**waifu**: (NSFW) Shows you a waifu.\n\n
+                        **gif**: Saves and loads GIFs from the bot's database.\n\n
+                        **bored**: Gives you an idea for something to do.`,
                 inline: true,
             }
         )
