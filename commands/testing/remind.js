@@ -16,6 +16,7 @@ const execute = async (interaction) => {
             headers: {
                 Authorization: "Bearer " + process.env.QSTASH_TOKEN,
                 "Content-type": "application/json",
+                "Upstash-Delay": "1m",
             },
             body: JSON.stringify({
                 hello: "world",

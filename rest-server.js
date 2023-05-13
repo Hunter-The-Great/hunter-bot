@@ -1,8 +1,5 @@
 const fastify = require("fastify")({ logger: false });
 
-// Declare a route
-
-// Run the server!
 const start = async (client) => {
     fastify.post("/reminders", async (request, reply) => {
         console.log(request.body);
