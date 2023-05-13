@@ -4,6 +4,18 @@ const fetch = require("isomorphic-fetch");
 const data = new SlashCommandBuilder()
     .setName("remind")
     .setDescription("Sets a reminder.")
+    .addIntegerOption((option) =>
+        option
+            .setName("delay")
+            .setDescription("Number of minutes to delay the reminder.")
+            .setRequired(true)
+    )
+    .addStringOption((option) =>
+        option
+            .setName("reminder")
+            .setDescription("The thing to be reminded about.")
+            .setRequired(true)
+    )
     .setDMPermission(true)
     .setNSFW(false);
 
@@ -16,14 +28,15 @@ const execute = async (interaction) => {
             headers: {
                 Authorization: "Bearer " + process.env.QSTASH_TOKEN,
                 "Content-type": "application/json",
-                "Upstash-Delay": "1m",
+                "Upstash-Delay": `${interaction.options.getInteger("delay")}m`,
             },
             body: JSON.stringify({
-                hello: "world",
+                uid: interaction.user.id,
+                content: interaction.options.getString("reminder"),
             }),
         }
     );
-    await interaction.editReply("e");
+    await interaction.editReply("Reminder set.");
 };
 
 module.exports = {
