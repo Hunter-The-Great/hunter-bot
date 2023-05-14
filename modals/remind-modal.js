@@ -3,7 +3,7 @@ const fetch = require("isomorphic-fetch");
 const execute = async (interaction) => {
     const delay = interaction.fields.getTextInputValue("delay");
     const reminder = interaction.fields.getTextInputValue("remindercontent");
-    const response = fetch(
+    const response = await fetch(
         "https://qstash.upstash.io/v1/publish/https://hunter-bot-production.up.railway.app/reminders",
         {
             method: "POST",
