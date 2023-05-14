@@ -42,7 +42,7 @@ const execute = async (interaction) => {
         } catch (err) {
             console.error("Axiom communications failure:\n", err);
         }
-    } else if (interaction.ismodalSubmit()) {
+    } else if (interaction.isModalSubmit()) {
         reminder.execute(interaction);
     } else {
         return;
