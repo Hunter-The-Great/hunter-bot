@@ -75,10 +75,6 @@ const execute = async (interaction) => {
     });
 
     if (interaction.options.getSubcommand() === "save") {
-        if (interaction.user.id === "254591447284711424") {
-            interaction.editReply("You are banned from using this command.");
-            return;
-        }
         if (await prisma.gif.findFirst({ where: { uid: id, alias } })) {
             interaction.editReply("Alias already in use.");
             return;
