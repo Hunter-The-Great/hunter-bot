@@ -2,8 +2,10 @@ const fastify = require("fastify")({ logger: false });
 
 const start = async (client) => {
     fastify.post("/reminders", async (request) => {
-        console.log(request.body);
-        return "ok";
+        const { uid, content } = request.body;
+        const user = await client.users.fetch(uid);
+        await user.send(content);
+        return "Acknowledged.";
     });
 
     try {
