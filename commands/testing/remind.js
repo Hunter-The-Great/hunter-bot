@@ -5,7 +5,6 @@ const {
     TextInputBuilder,
     TextInputStyle,
 } = require("discord.js");
-const fetch = require("isomorphic-fetch");
 
 const data = new SlashCommandBuilder()
     .setName("remind")
