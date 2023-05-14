@@ -93,16 +93,17 @@ const execute = async (interaction) => {
     if (interaction.options.getString("tag-2")) {
         url = url + `&included_tags=${interaction.options.getString("tag-2")}`;
     }
-    let response;
-    try {
-        response = await fetch(url);
-    } catch (err) {
+
+    const response = await fetch(url);
+
+    if (response.status !== 200) {
         await interaction.editReply(
             "Waifu.im API failed to respond, please try again later."
         );
-        console.error("Waifu.im communication failure\n", err);
+        console.log("Waifu.im communication failure.");
         return;
     }
+
     const data = await response.json();
     if (!data.images) {
         await interaction.editReply("No image found, try changing your tags.");
