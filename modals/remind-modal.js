@@ -10,7 +10,7 @@ const execute = async (interaction) => {
             headers: {
                 Authorization: "Bearer " + process.env.QSTASH_TOKEN,
                 "Content-type": "application/json",
-                "Upstash-Not-Before": delay.valueOf(),
+                "Upstash-Not-Before": delay.getTime() / 1000,
             },
             body: JSON.stringify({
                 uid: interaction.user.id,
