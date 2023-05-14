@@ -1,42 +1,39 @@
-const { SlashCommandBuilder } = require("discord.js");
+const {
+    SlashCommandBuilder,
+    ModalBuilder,
+    ActionRowBuilder,
+    TextInputBuilder,
+    TextInputStyle,
+} = require("discord.js");
 const fetch = require("isomorphic-fetch");
 
 const data = new SlashCommandBuilder()
     .setName("remind")
     .setDescription("Sets a reminder.")
-    .addIntegerOption((option) =>
-        option
-            .setName("delay")
-            .setDescription("Number of minutes to delay the reminder.")
-            .setRequired(true)
-    )
-    .addStringOption((option) =>
-        option
-            .setName("reminder")
-            .setDescription("The thing to be reminded about.")
-            .setRequired(true)
-    )
     .setDMPermission(true)
     .setNSFW(false);
 
 const execute = async (interaction) => {
-    await interaction.deferReply();
-    fetch(
-        "https://qstash.upstash.io/v1/publish/https://hunter-bot-production.up.railway.app/reminders",
-        {
-            method: "POST",
-            headers: {
-                Authorization: "Bearer " + process.env.QSTASH_TOKEN,
-                "Content-type": "application/json",
-                "Upstash-Delay": `${interaction.options.getInteger("delay")}m`,
-            },
-            body: JSON.stringify({
-                uid: interaction.user.id,
-                content: interaction.options.getString("reminder"),
-            }),
-        }
-    );
-    await interaction.editReply("Reminder set.");
+    //await interaction.deferReply();
+    const delayInput = new TextInputBuilder()
+        .setCustomId("delay")
+        .setLabel("Date/time:")
+        .setStyle(TextInputStyle.Short);
+
+    const reminderInput = new TextInputBuilder()
+        .setCustomId("remindercontent")
+        .setLabel("Reminder:")
+        .setStyle(TextInputStyle.Paragraph);
+
+    const row1 = new ActionRowBuilder().addComponents(delayInput);
+    const row2 = new ActionRowBuilder().addComponents(reminderInput);
+
+    const modal = new ModalBuilder()
+        .setCustomId("reminder")
+        .setTitle("Reminder")
+        .addComponents(row1, row2);
+
+    await interaction.showModal(modal);
 };
 
 module.exports = {

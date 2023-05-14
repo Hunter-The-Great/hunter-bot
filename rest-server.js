@@ -1,9 +1,9 @@
 const fastify = require("fastify")({ logger: false });
 
 const start = async (client) => {
-    fastify.post("/reminders", async (request, reply) => {
+    fastify.post("/reminders", async (request) => {
         console.log(request.body);
-        return { hello: "world" };
+        return "ok";
     });
 
     try {
