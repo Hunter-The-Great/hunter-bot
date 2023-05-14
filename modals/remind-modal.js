@@ -18,11 +18,16 @@ const execute = async (interaction) => {
             }),
         }
     );
-    if (response.status !== 200) {
+    if (response.status !== 201) {
         await interaction.reply({
             content: "Failed to set reminder, please try again later.",
         });
-        console.log("Upstash communication failure.");
+        console.log(
+            "Upstash communication failure, code: " +
+                response.status +
+                "\n\n" +
+                response.statusText
+        );
         return;
     }
     await interaction.reply({ content: "Reminder set." });

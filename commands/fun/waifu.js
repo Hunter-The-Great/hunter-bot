@@ -100,7 +100,12 @@ const execute = async (interaction) => {
         await interaction.editReply(
             "Waifu.im API failed to respond, please try again later."
         );
-        console.log("Waifu.im communication failure.");
+        console.log(
+            "Waifu.im communication failure, code: " +
+                response.status +
+                "\n\n" +
+                response.statusText
+        );
         return;
     }
 
