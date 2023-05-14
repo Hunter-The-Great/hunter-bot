@@ -18,7 +18,6 @@ const execute = async (interaction) => {
             }),
         }
     );
-    console.log(response);
     if (response.status !== 201) {
         await interaction.reply({
             content: "Failed to set reminder, please try again later.",
