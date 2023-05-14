@@ -1,6 +1,5 @@
 const { Events } = require("discord.js");
 const { log } = require("../utilities/log.js");
-const reminder = require("../modals/remind-modal.js");
 
 const name = Events.InteractionCreate;
 
@@ -27,7 +26,6 @@ const execute = async (interaction) => {
                 console.log("\nA message could not be sent");
                 return;
             }
-            console.error("An error has occurred:\n", err);
         }
         try {
             const payload = {
@@ -43,7 +41,12 @@ const execute = async (interaction) => {
             console.error("Axiom communications failure:\n", err);
         }
     } else if (interaction.isModalSubmit()) {
-        reminder.execute(interaction);
+        try {
+            const modal = interaction.client.modals.get(interaction.customId);
+            await modal.execute(interaction);
+        } catch (err) {
+            console.error("An error has occurred:\n", err);
+        }
     } else {
         return;
     }

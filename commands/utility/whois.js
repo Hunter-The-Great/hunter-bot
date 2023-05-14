@@ -16,6 +16,8 @@ const execute = async (interaction) => {
     const target = interaction.options.getUser("target")
         ? interaction.options.getUser("target")
         : interaction.user;
+    const date = new Date(target.createdAt);
+
     const info = new EmbedBuilder()
         .setColor(0x00ffff)
         .setTitle(target.tag)
@@ -29,7 +31,7 @@ const execute = async (interaction) => {
 
             {
                 name: "__**Account Created**__",
-                value: `${target.createdAt}`,
+                value: date.toUTCString(),
                 inline: true,
             },
             {

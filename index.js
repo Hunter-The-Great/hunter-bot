@@ -15,7 +15,7 @@ const path = require("node:path");
 
 // reading in all commands from the commands folder
 client.commands = new Collection();
-const foldersPath = path.join(__dirname, "commands");
+let foldersPath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(foldersPath);
 
 //Registers commands
@@ -35,6 +35,26 @@ for (const folder of commandFolders) {
                 `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
             );
         }
+    }
+}
+
+//registers modals
+client.modals = new Collection();
+const modalsPath = path.join(__dirname, "modals");
+const modalFiles = fs
+    .readdirSync(modalsPath)
+    .filter((file) => file.endsWith(".js"));
+
+for (const file of modalFiles) {
+    const filePath = path.join(modalsPath, file);
+    const modal = require(filePath);
+    // Set a new item in the Collection with the key as the command name and the value as the exported module
+    if ("name" in modal && "execute" in modal) {
+        client.modals.set(modal.name, modal);
+    } else {
+        console.log(
+            `[WARNING] The modal at ${filePath} is missing a required "name" or "execute" property.`
+        );
     }
 }
 

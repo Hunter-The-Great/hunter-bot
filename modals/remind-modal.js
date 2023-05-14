@@ -1,7 +1,7 @@
 const fetch = require("isomorphic-fetch");
 
 const execute = async (interaction) => {
-    const delay = interaction.fields.getTextInputValue("delay");
+    const delay = new Date.parse(interaction.fields.getTextInputValue("delay"));
     const reminder = interaction.fields.getTextInputValue("remindercontent");
     const response = await fetch(
         "https://qstash.upstash.io/v1/publish/https://hunter-bot-production.up.railway.app/reminders",
@@ -10,7 +10,7 @@ const execute = async (interaction) => {
             headers: {
                 Authorization: "Bearer " + process.env.QSTASH_TOKEN,
                 "Content-type": "application/json",
-                "Upstash-Delay": `${delay}m`,
+                "Upstash-Not-Before": delay.valueOf(),
             },
             body: JSON.stringify({
                 uid: interaction.user.id,
@@ -34,6 +34,6 @@ const execute = async (interaction) => {
 };
 
 module.exports = {
-    name: "remind",
+    name: "reminder",
     execute,
 };

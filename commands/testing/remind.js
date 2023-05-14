@@ -16,7 +16,7 @@ const execute = async (interaction) => {
     //await interaction.deferReply();
     const delayInput = new TextInputBuilder()
         .setCustomId("delay")
-        .setLabel("Date/time:")
+        .setLabel("Date:")
         .setStyle(TextInputStyle.Short);
 
     const reminderInput = new TextInputBuilder()
