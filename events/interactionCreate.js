@@ -13,14 +13,16 @@ const execute = async (interaction) => {
         } catch (err) {
             console.error("An error has occurred:\n", err);
             try {
-                if (interaction.replied || interaction.deferred) {
-                    await interaction.editReply(
-                        "An error has occured, please try again later."
-                    );
-                } else {
-                    await interaction.reply(
-                        "An error has occured, please try again later."
-                    );
+                if (interaction.isRepliable()) {
+                    if (interaction.replied || interaction.deferred) {
+                        await interaction.editReply(
+                            "An error has occured, please try again later."
+                        );
+                    } else {
+                        await interaction.reply(
+                            "An error has occured, please try again later."
+                        );
+                    }
                 }
             } catch (err1) {
                 console.log("\nA message could not be sent");
