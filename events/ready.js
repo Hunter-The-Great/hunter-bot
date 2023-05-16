@@ -5,7 +5,7 @@ const name = Events.ClientReady;
 const once = true;
 
 const execute = async (client) => {
-    await console.log(`Logged in as ${client.user.tag}`);
+    console.log(`Logged in as ${client.user.tag}`);
 };
 
 module.exports = {
