@@ -75,6 +75,7 @@ const execute = async (interaction) => {
     });
 
     if (interaction.options.getSubcommand() === "save") {
+        //* -------------------------------------------------------------------------------------------- Save
         if (await prisma.gif.findFirst({ where: { uid: id, alias } })) {
             interaction.editReply("Alias already in use.");
             return;
@@ -141,6 +142,7 @@ const execute = async (interaction) => {
 
         await interaction.editReply("Error: invalid link.");
     } else if (interaction.options.getSubcommand() === "load") {
+        //* -------------------------------------------------------------------------------------------- Load
         const regex = /^[A-Za-z0-9\s-_,.]+$/;
         if (!alias.match(regex) || alias.toLowerCase() === "null") {
             await interaction.editReply(
@@ -182,12 +184,14 @@ const execute = async (interaction) => {
 
         await interaction.editReply({ embeds: [listEmbed] });
     } else if (interaction.options.getSubcommand() === "delete") {
+        //* -------------------------------------------------------------------------------------------- Delete
         if (await prisma.gif.deleteMany({ where: { uid: id, alias } })) {
             await interaction.editReply("GIF deleted");
         } else {
             await interaction.editReply("No GIF by that alias found.");
         }
     } else if (interaction.options.getSubcommand() === "clear") {
+        //* -------------------------------------------------------------------------------------------- Clear
         const confirm = new ButtonBuilder()
             .setCustomId("confirm")
             .setLabel("Confirm clear")
@@ -220,7 +224,7 @@ const execute = async (interaction) => {
                 });
             } else if (confirmation.customId === "cancel") {
                 await confirmation.update({
-                    content: "Action cancelled",
+                    content: "Action cancelled.",
                     components: [],
                 });
             }
