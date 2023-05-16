@@ -24,7 +24,8 @@ const execute = async (interaction) => {
             {
                 name: "__**Utility**__",
                 value: `**id**: Tells you your user ID.\n\n
-                        **whois**: Displays information about a given user.`,
+                        **whois**: Displays information about a given user.\n\n
+                        **remind**: Sets a reminder for a given time.`,
                 inline: true,
             },
             {
