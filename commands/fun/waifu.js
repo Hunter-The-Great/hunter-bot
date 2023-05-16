@@ -160,7 +160,7 @@ const execute = async (interaction) => {
             .setDescription(`Rarity: ${starList}`);
 
         const save = new ButtonBuilder()
-            .setCustomId("save")
+            .setCustomId(`waifu-save:${interaction.user.id}`)
             .setLabel("Save")
             .setStyle(ButtonStyle.Primary);
 
@@ -179,22 +179,49 @@ const execute = async (interaction) => {
                 time: 60_000,
             });
 
-            if (confirmation.customId === "save") {
+            if (confirmation.customId === `waifu-save:${interaction.user.id}`) {
+                const data = await prisma.waifu.count({
+                    where: { uid: interaction.user.id },
+                });
+                if (data >= 20) {
+                    confirmation.reply({
+                        content:
+                            "Too many images saved, please delete one before saving another.",
+                        ephemeral: true,
+                    });
+                    interaction.update({ components: [] });
+                    return;
+                }
                 if (
                     await prisma.waifu.findFirst({
-                        where: { uid: interaction.user.id, link: image },
+                        where: { uid: interaction.user.id, image },
                     })
                 ) {
-                    interaction.followUp("Image already in Compendium.");
+                    confirmation.reply({
+                        content: "Image already in Compendium.",
+                        ephemeral: true,
+                    });
+                    interaction.update({ components: [] });
                     return;
                 }
 
                 await prisma.waifu.create({
-                    data: { uid: interaction.user.id, link: image },
+                    data: {
+                        uid: interaction.user.id,
+                        image,
+                        rarity,
+                    },
                 });
+                const saved = new ButtonBuilder()
+                    .setCustomId("saved")
+                    .setLabel("Saved")
+                    .setStyle(ButtonStyle.Primary)
+                    .setDisabled(true);
+                row.setComponents(saved);
+                confirmation.update({ components: [row] });
             }
         } catch (err) {
-            console.error("An error has occurred: \n", err);
+            interaction.editReply({ components: [] });
         }
     }
 };

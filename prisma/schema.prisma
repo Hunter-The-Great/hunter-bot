@@ -23,8 +23,9 @@ model Gif {
 model Waifu {
   id      String   @id @default(cuid())
   uid     String
-  link    String
+  image   String
+  rarity  Int
   savedAt DateTime @default(now())
 
-  @@unique([uid, link])
+  @@unique([uid, image])
 }

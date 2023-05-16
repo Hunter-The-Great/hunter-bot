@@ -4,7 +4,38 @@ const { log } = require("../utilities/log.js");
 const name = Events.InteractionCreate;
 
 const execute = async (interaction) => {
+    if (interaction.isButton()) {
+        //* -------------------------------------------------------------------- buttons
+        try {
+            if (
+                !(
+                    interaction.customId.startsWith("waifu-compendium-prev") ||
+                    interaction.customId.startsWith("waifu-compendium-next") ||
+                    interaction.customId.startsWith("waifu-compendium-delete")
+                )
+            ) {
+                if (!interaction.customId.endsWith(interaction.user.id)) {
+                    if (interaction.customId.startsWith("waifu-save")) {
+                        return interaction.reply({
+                            content:
+                                "This is not the waifu you're looking for.",
+                            ephemeral: true,
+                        });
+                    } else {
+                        return interaction.reply({
+                            content:
+                                "This is not the button you're looking for.",
+                            ephemeral: true,
+                        });
+                    }
+                }
+            }
+        } catch (err) {
+            console.error("An error has occurred:\n", err);
+        }
+    }
     if (interaction.isChatInputCommand()) {
+        //* -------------------------------------------------------------------- slash commands
         try {
             const command = interaction.client.commands.get(
                 interaction.commandName
@@ -29,6 +60,7 @@ const execute = async (interaction) => {
                 return;
             }
         }
+        //* -------------------------------------------------------------------- command logging
         try {
             const payload = {
                 user: interaction.user.tag,
@@ -43,6 +75,7 @@ const execute = async (interaction) => {
             console.error("Axiom communications failure:\n", err);
         }
     } else if (interaction.isModalSubmit()) {
+        //* -------------------------------------------------------------------- modals
         try {
             const modal = interaction.client.modals.get(interaction.customId);
             await modal.execute(interaction);

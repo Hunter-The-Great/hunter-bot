@@ -9,6 +9,7 @@
         "dev": "nodemon index.js",
         "cmd": "node deploy-commands.js",
         "cmd-dev": "node deploy-dev-commands.js",
+        "db-gen": "npx prisma db push",
         "format": "prettier --write \"**/*.js\""
     },
     "keywords": [],

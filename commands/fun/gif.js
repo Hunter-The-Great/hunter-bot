@@ -193,12 +193,12 @@ const execute = async (interaction) => {
     } else if (interaction.options.getSubcommand() === "clear") {
         //* -------------------------------------------------------------------------------------------- Clear
         const confirm = new ButtonBuilder()
-            .setCustomId("confirm")
+            .setCustomId(`confirm:${interaction.user.id}`)
             .setLabel("Confirm clear")
             .setStyle(ButtonStyle.Danger);
 
         const cancel = new ButtonBuilder()
-            .setCustomId("cancel")
+            .setCustomId(`cancel:${interaction.user.id}`)
             .setLabel("Cancel")
             .setStyle(ButtonStyle.Secondary);
 
@@ -216,13 +216,13 @@ const execute = async (interaction) => {
                 time: 60_000,
             });
 
-            if (confirmation.customId === "confirm") {
+            if (confirmation.customId.includes("confirm")) {
                 await prisma.gif.deleteMany({ where: { uid: id } });
                 await confirmation.update({
                     content: "GIFs deleted.",
                     components: [],
                 });
-            } else if (confirmation.customId === "cancel") {
+            } else if (confirmation.customId.includes("cancel")) {
                 await confirmation.update({
                     content: "Action cancelled.",
                     components: [],
