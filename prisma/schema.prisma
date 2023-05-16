@@ -19,3 +19,12 @@ model Gif {
 
   @@unique([uid, alias])
 }
+
+model Waifu {
+  id      String   @id @default(cuid())
+  uid     String
+  link    String
+  savedAt DateTime @default(now())
+
+  @@unique([uid, link])
+}

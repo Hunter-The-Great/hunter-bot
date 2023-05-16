@@ -1,5 +1,12 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ButtonBuilder,
+    ActionRowBuilder,
+    ButtonStyle,
+} = require("discord.js");
 const fetch = require("isomorphic-fetch");
+const { prisma } = require("../../utilities/db.js");
 
 const data = new SlashCommandBuilder()
     .setName("waifu")
@@ -152,7 +159,43 @@ const execute = async (interaction) => {
             .setImage(image)
             .setDescription(`Rarity: ${starList}`);
 
-        await interaction.editReply({ embeds: [embed] });
+        const save = new ButtonBuilder()
+            .setCustomId("save")
+            .setLabel("Save")
+            .setStyle(ButtonStyle.Primary);
+
+        const row = new ActionRowBuilder().addComponents(save);
+
+        const collectorFilter = (i) => i.user.id === interaction.user.id;
+
+        const rsp = await interaction.editReply({
+            embeds: [embed],
+            components: [row],
+        });
+
+        try {
+            const confirmation = await rsp.awaitMessageComponent({
+                filter: collectorFilter,
+                time: 60_000,
+            });
+
+            if (confirmation.customId === "save") {
+                if (
+                    await prisma.waifu.findFirst({
+                        where: { uid: interaction.user.id, link: image },
+                    })
+                ) {
+                    interaction.followUp("Image already in Compendium.");
+                    return;
+                }
+
+                await prisma.waifu.create({
+                    data: { uid: interaction.user.id, link: image },
+                });
+            }
+        } catch (err) {
+            console.error("An error has occurred: \n", err);
+        }
     }
 };
 
