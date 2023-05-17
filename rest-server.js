@@ -1,4 +1,5 @@
 const fastify = require("fastify")({ logger: false });
+const { Receiver } = require("@upstash/qstash");
 
 const start = async (client) => {
     fastify.post("/reminders", async (request) => {
@@ -7,6 +8,21 @@ const start = async (client) => {
                 "\n\n\n------------------------------------------------------------------------"
         );
         console.log(request.headers);
+
+        const receiver = new Receiver({
+            currentSigningKey: process.env.UPSTASH_SIGNING_KEY,
+        });
+
+        const isValid = await receiver.verify({
+            signature: request.headers["upstash-signature"],
+            body: request.body,
+            url: `https://${request.requestContext.domainName}`,
+        });
+
+        if (!isValid) {
+            return "Invalid signature.";
+        }
+
         if (
             request.headers["upstash-signature"] !==
             process.env.UPSTASH_SIGNATURE
