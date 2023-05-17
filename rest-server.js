@@ -2,6 +2,11 @@ const fastify = require("fastify")({ logger: false });
 
 const start = async (client) => {
     fastify.post("/reminders", async (request) => {
+        console.log(
+            request +
+                "\n\n\n------------------------------------------------------------------------"
+        );
+        console.log(request.headers);
         if (
             request.headers["upstash-signature"] !==
             process.env.UPSTASH_SIGNATURE
