@@ -2,7 +2,12 @@ const fetch = require("isomorphic-fetch");
 
 const execute = async (interaction) => {
     const delay = new Date(interaction.fields.getTextInputValue("delay"));
-    console.log(delay);
+    if (delay === "Invalid Date") {
+        interaction.reply({
+            content: "Invalid date format, please follow the example.",
+        });
+        return;
+    }
     const reminder = interaction.fields.getTextInputValue("remindercontent");
     const response = await fetch(
         "https://qstash.upstash.io/v1/publish/https://hunter-bot-production.up.railway.app/reminders",

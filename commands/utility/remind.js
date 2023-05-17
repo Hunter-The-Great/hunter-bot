@@ -13,7 +13,6 @@ const data = new SlashCommandBuilder()
     .setNSFW(false);
 
 const execute = async (interaction) => {
-    //// await interaction.deferReply();
     const delayInput = new TextInputBuilder()
         .setCustomId("delay")
         .setLabel("Date:")
