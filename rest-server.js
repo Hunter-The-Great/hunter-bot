@@ -5,6 +5,7 @@ const start = async (client) => {
     fastify.post("/reminders", async (request) => {
         const receiver = new Receiver({
             currentSigningKey: process.env.UPSTASH_SIGNING_KEY,
+            nextSigningKey: process.env.UPSTASH_SIGNING_KEY_NEXT,
         });
 
         const isValid = await receiver.verify({
