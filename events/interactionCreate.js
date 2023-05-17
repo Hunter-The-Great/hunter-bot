@@ -4,6 +4,10 @@ const { log } = require("../utilities/log.js");
 const name = Events.InteractionCreate;
 
 const execute = async (interaction) => {
+    if (!interaction) {
+        console.log("interaction is undefined");
+        return;
+    }
     if (interaction.isButton()) {
         //* -------------------------------------------------------------------- buttons
         try {
