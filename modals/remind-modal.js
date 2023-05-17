@@ -2,7 +2,7 @@ const fetch = require("isomorphic-fetch");
 
 const execute = async (interaction) => {
     const delay = new Date(interaction.fields.getTextInputValue("delay"));
-    if (delay === "Invalid Date") {
+    if (delay.toString() === "Invalid Date") {
         interaction.reply({
             content: "Invalid date format, please follow the example.",
         });
