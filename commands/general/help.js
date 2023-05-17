@@ -32,7 +32,7 @@ const execute = async (interaction) => {
                 name: "__**Fun**__",
                 value: `**waifu**: (NSFW) Shows you a waifu.\n\n
                         **gif**: Saves and loads GIFs from the bot's database.\n\n
-                        **bored**: Gives you an idea for something to do.
+                        **bored**: Gives you an idea for something to do.\n\n
                         **xkcd**: Shows you an XKCD comic.`,
                 inline: true,
             }
