@@ -166,63 +166,73 @@ const execute = async (interaction) => {
 
         const row = new ActionRowBuilder().addComponents(save);
 
-        const collectorFilter = (i) => i.user.id === interaction.user.id;
-
         const rsp = await interaction.editReply({
             embeds: [embed],
             components: [row],
         });
 
-        try {
-            const confirmation = await rsp.awaitMessageComponent({
-                filter: collectorFilter,
-                time: 60_000,
+        const filter = (i) =>
+            i.customId.startsWith("waifu-save") &&
+            i.user.id === interaction.user.id;
+        const collector = rsp.createMessageComponentCollector({
+            filter,
+            time: 120_000,
+        });
+        collector.on("collect", async (i) => {
+            //* ------------------------------------------------------------------------------ console.on("collect")
+            const data = await prisma.waifu.count({
+                where: { uid: interaction.user.id },
+            });
+            if (data >= 20) {
+                rsp.reply({
+                    content:
+                        "Too many waifus saved, please delete one before saving another.",
+                    ephemeral: true,
+                });
+                return;
+            }
+            if (
+                await prisma.waifu.findFirst({
+                    where: { uid: interaction.user.id, image },
+                })
+            ) {
+                i.reply({
+                    content: "Image already in Compendium.",
+                    ephemeral: true,
+                });
+                return;
+            }
+
+            await prisma.waifu.create({
+                data: {
+                    uid: interaction.user.id,
+                    image,
+                    rarity,
+                },
             });
 
-            if (confirmation.customId === `waifu-save:${interaction.user.id}`) {
-                const data = await prisma.waifu.count({
-                    where: { uid: interaction.user.id },
-                });
-                if (data >= 20) {
-                    confirmation.reply({
-                        content:
-                            "Too many images saved, please delete one before saving another.",
-                        ephemeral: true,
-                    });
-                    interaction.update({ components: [] });
-                    return;
-                }
-                if (
-                    await prisma.waifu.findFirst({
-                        where: { uid: interaction.user.id, image },
-                    })
-                ) {
-                    confirmation.reply({
-                        content: "Image already in Compendium.",
-                        ephemeral: true,
-                    });
-                    interaction.update({ components: [] });
-                    return;
-                }
-
-                await prisma.waifu.create({
-                    data: {
-                        uid: interaction.user.id,
-                        image,
-                        rarity,
-                    },
-                });
-                const saved = new ButtonBuilder()
-                    .setCustomId("saved")
-                    .setLabel("Saved")
-                    .setStyle(ButtonStyle.Primary)
-                    .setDisabled(true);
-                row.setComponents(saved);
-                confirmation.update({ components: [row] });
-            }
-        } catch (err) {
-            interaction.editReply({ components: [] });
-        }
+            const saved = new ButtonBuilder()
+                .setCustomId("saved")
+                .setLabel("Saved")
+                .setStyle(ButtonStyle.Primary)
+                .setDisabled(true);
+            row.setComponents(saved);
+            i.update({ components: [row] });
+        });
+        collector.on("end", async () => {
+            //* ------------------------------------------------------------------------------ console.on("end")
+            const save = new ButtonBuilder()
+                .setCustomId("save")
+                .setLabel(
+                    await interaction
+                        .fetchReply()
+                        .then((r) => r.components[0].components[0].label)
+                )
+                .setStyle(ButtonStyle.Primary)
+                .setDisabled(true);
+            row.setComponents(save);
+            interaction.editReply({ components: [row] });
+        });
     }
 };
 

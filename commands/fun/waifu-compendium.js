@@ -180,9 +180,39 @@ const execute = async (interaction) => {
                 i.update({ embeds: [embed], components: [row] });
             }
         });
-        collector.on("end", async (collected) =>
-            console.log(`Collected ${collected.size} items`)
-        );
+        collector.on("end", async () => {
+            const prev = new ButtonBuilder()
+                .setCustomId(`waifu-compendium-prev:${interaction.user.id}`)
+                .setLabel("Prev")
+                .setStyle(ButtonStyle.Primary)
+                .setDisabled(true);
+
+            const num = new ButtonBuilder()
+                .setCustomId(`waifu-compendium-num:${interaction.user.id}`)
+                .setLabel(`1/${waifus.length}`)
+                .setStyle(ButtonStyle.Secondary)
+                .setDisabled(true);
+
+            const next = new ButtonBuilder()
+                .setCustomId(`waifu-compendium-next:${interaction.user.id}`)
+                .setLabel("Next")
+                .setStyle(ButtonStyle.Primary)
+                .setDisabled(true);
+
+            const deleteButton = new ButtonBuilder()
+                .setCustomId(`waifu-compendium-delete:${interaction.user.id}`)
+                .setLabel("Delete")
+                .setStyle(ButtonStyle.Danger)
+                .setDisabled(true);
+
+            const row = new ActionRowBuilder().addComponents(
+                prev,
+                num,
+                next,
+                deleteButton
+            );
+            interaction.editReply({ components: [row] });
+        });
     } catch (err) {
         console.error(err);
     }
