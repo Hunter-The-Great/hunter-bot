@@ -12,7 +12,7 @@ const data = new SlashCommandBuilder()
     .setDescription("shows your compendium of waifus.")
     .addUserOption((option) =>
         option
-            .setName("user")
+            .setName("target")
             .setDescription("The user whose compendium you want to see.")
             .setRequired(false)
     )
@@ -21,7 +21,7 @@ const data = new SlashCommandBuilder()
 
 const execute = async (interaction) => {
     await interaction.deferReply();
-    const user = interaction.options.getUser("user") || interaction.user;
+    const user = interaction.options.getUser("target") || interaction.user;
     const waifus = await prisma.waifu.findMany({
         where: { uid: user.id },
         orderBy: { rarity: "desc" },
