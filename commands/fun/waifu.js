@@ -103,7 +103,7 @@ const execute = async (interaction) => {
 
     const response = await fetch(url);
 
-    if (response.status !== 200) {
+    if (!response.ok) {
         await interaction.editReply(
             "Waifu.im API failed to respond, please try again later."
         );

@@ -9,10 +9,9 @@ const data = new SlashCommandBuilder()
 
 const execute = async (interaction) => {
     await interaction.deferReply();
-    let response;
-    try {
-        response = await fetch("https://www.boredapi.com/api/activity");
-    } catch (err) {
+
+    const response = await fetch("https://www.boredapi.com/api/activity");
+    if (!response.ok) {
         console.error("Bored API communication failure.");
         await interaction.editReply(
             "Bored API failed to respond, please try again later."

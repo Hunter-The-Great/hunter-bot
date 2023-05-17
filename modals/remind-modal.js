@@ -16,7 +16,7 @@ const execute = async (interaction) => {
             headers: {
                 Authorization: "Bearer " + process.env.QSTASH_TOKEN,
                 "Content-type": "application/json",
-                "Upstash-Not-Before": Math.floor(delay.getTime() / 1000),
+                "Upstash-Not-Before": "Math.floor(delay.getTime() / 1000)",
             },
             body: JSON.stringify({
                 key: process.env.KEY,
@@ -25,7 +25,7 @@ const execute = async (interaction) => {
             }),
         }
     );
-    if (response.status !== 201) {
+    if (!response.ok) {
         await interaction.reply({
             content: "Failed to set reminder, please try again later.",
         });
