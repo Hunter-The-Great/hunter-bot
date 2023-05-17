@@ -2,6 +2,7 @@ const fetch = require("isomorphic-fetch");
 
 const execute = async (interaction) => {
     const delay = new Date(interaction.fields.getTextInputValue("delay"));
+    console.log(delay);
     const reminder = interaction.fields.getTextInputValue("remindercontent");
     const response = await fetch(
         "https://qstash.upstash.io/v1/publish/https://hunter-bot-production.up.railway.app/reminders",
@@ -13,6 +14,7 @@ const execute = async (interaction) => {
                 "Upstash-Not-Before": Math.floor(delay.getTime() / 1000),
             },
             body: JSON.stringify({
+                key: process.env.KEY,
                 uid: interaction.user.id,
                 content: reminder,
             }),
