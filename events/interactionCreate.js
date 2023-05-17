@@ -40,7 +40,8 @@ const execute = async (interaction) => {
             const command = interaction.client.commands.get(
                 interaction.commandName
             );
-            if (!command.execute) {
+            console.log(command);
+            if (!command) {
                 throw new Error(`Command "${command.name}" not found`);
             }
             await command.execute(interaction);
