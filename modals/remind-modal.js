@@ -35,7 +35,7 @@ const execute = async (interaction) => {
                 "\n\n" +
                 response.statusText +
                 "\n\n" +
-                response
+                response.body
         );
         return;
     }
