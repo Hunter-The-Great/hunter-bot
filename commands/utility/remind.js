@@ -16,7 +16,7 @@ const execute = async (interaction) => {
     const delayInput = new TextInputBuilder()
         .setCustomId("delay")
         .setLabel("Date:")
-        .setPlaceholder("MM/DD/YY HH:MM (UTC) [Don't forget Daylight Savings]")
+        .setPlaceholder("MM/DD/YY HH:MM PM UTC [Don't forget Daylight Savings]")
         .setStyle(TextInputStyle.Short);
 
     const reminderInput = new TextInputBuilder()
