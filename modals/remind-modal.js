@@ -33,7 +33,9 @@ const execute = async (interaction) => {
             "Upstash communication failure, code: " +
                 response.status +
                 "\n\n" +
-                response.statusText
+                response.statusText +
+                "\n\n" +
+                response
         );
         return;
     }
