@@ -16,7 +16,7 @@ const execute = async (interaction) => {
             headers: {
                 Authorization: "Bearer " + process.env.QSTASH_TOKEN,
                 "Content-type": "application/json",
-                "Upstash-Not-Before": "Math.floor(delay.getTime() / 1000)",
+                "Upstash-Not-Before": Math.floor(delay.getTime() / 1000),
             },
             body: JSON.stringify({
                 key: process.env.KEY,
@@ -33,9 +33,7 @@ const execute = async (interaction) => {
             "Upstash communication failure, code: " +
                 response.status +
                 "\n\n" +
-                response.statusText +
-                "\n\n" +
-                response.body
+                response.statusText
         );
         return;
     }
