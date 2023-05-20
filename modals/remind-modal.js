@@ -4,10 +4,11 @@ var moment = require("moment-timezone");
 const execute = async (interaction) => {
     const delay = new Date(interaction.fields.getTextInputValue("delay"));
 
-    const test = moment.parseZone(
-        interaction.fields.getTextInputValue("delay"),
-        ["MM/DD/YY hh:mm a ZZZ", "MM/DD hh:mm a ZZZ", "hh:mm a ZZZ"]
-    );
+    const test = moment.tz(interaction.fields.getTextInputValue("delay"), [
+        "MM/DD/YY hh:mm a ZZZ",
+        "MM/DD hh:mm a ZZZ",
+        "hh:mm a ZZZ",
+    ]);
     console.log(test.unix());
     const reminder = interaction.fields.getTextInputValue("remindercontent");
 
