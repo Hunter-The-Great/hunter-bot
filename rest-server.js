@@ -23,10 +23,7 @@ const start = async (client) => {
             return "Invalid key.";
         }
         const { channelID, message } = request.body;
-        console.log("channelID: " + channelID + "\nmessage: " + message);
-
         const channel = await client.channels.fetch(channelID);
-        console.log("channel: " + channel);
         await channel.send(message);
         return "Acknowledged.";
     });
