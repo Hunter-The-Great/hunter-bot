@@ -4,9 +4,9 @@ var moment = require("moment");
 const execute = async (interaction) => {
     const delay = new Date(interaction.fields.getTextInputValue("delay"));
 
-    const test = moment(
+    const test = moment.parseZone(
         interaction.fields.getTextInputValue("delay"),
-        "MM/DD/YY hh:mm a"
+        "MM/DD/YY hh:mm a ZZ"
     );
     console.log(test.unix());
     const reminder = interaction.fields.getTextInputValue("remindercontent");
