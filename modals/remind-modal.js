@@ -3,12 +3,7 @@ var moment = require("moment");
 
 const execute = async (interaction) => {
     const delay = new Date(interaction.fields.getTextInputValue("delay"));
-    if (delay.toString() === "Invalid Date") {
-        interaction.reply({
-            content: "Invalid date format, please follow the example.",
-        });
-        return;
-    }
+
     const test = moment(
         interaction.fields.getTextInputValue("delay"),
         "MM/DD/YY hh:mm a"
