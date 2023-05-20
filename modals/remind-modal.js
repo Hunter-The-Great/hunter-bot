@@ -6,7 +6,7 @@ const execute = async (interaction) => {
 
     const test = moment.parseZone(
         interaction.fields.getTextInputValue("delay"),
-        "MM/DD/YY hh:mm a ZZ"
+        ["MM/DD/YY hh:mm a ZZZ", "MM/DD hh:mm a ZZZ", "hh:mm a ZZZ"]
     );
     console.log(test.unix());
     const reminder = interaction.fields.getTextInputValue("remindercontent");
