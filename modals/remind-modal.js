@@ -13,6 +13,7 @@ const execute = async (interaction) => {
         interaction.fields.getTextInputValue("delay"),
         "MM/DD/YY hh:mm a"
     );
+    console.log(test.unix());
     const reminder = interaction.fields.getTextInputValue("remindercontent");
 
     const response = await fetch(
