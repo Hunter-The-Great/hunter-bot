@@ -18,14 +18,14 @@ const start = async (client) => {
     });
 
     fastify.post("/message", async (request) => {
-        /*
         if (request.body.key !== process.env.MESSAGE_KEY) {
             return "Invalid key.";
         }
-        */
         const { channelID, message } = request.body;
         console.log("channelID: " + channelID + "\nmessage: " + message);
-        //TODO discord stuff
+
+        const channel = await client.channels.fetch(channelID);
+        await channel.send(message);
         return "Acknowledged.";
     });
 
