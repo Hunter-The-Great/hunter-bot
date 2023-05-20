@@ -45,7 +45,6 @@ const execute = async (interaction) => {
         );
         return;
     }
-    console.log(date.getTime() / 1000);
     await interaction.reply({ content: "Reminder set." });
 };
 
