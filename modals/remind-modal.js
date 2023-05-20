@@ -1,5 +1,5 @@
 const fetch = require("isomorphic-fetch");
-var moment = require("moment");
+var moment = require("moment-timezone");
 
 const execute = async (interaction) => {
     const delay = new Date(interaction.fields.getTextInputValue("delay"));
