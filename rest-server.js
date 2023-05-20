@@ -1,9 +1,9 @@
 const fastify = require("fastify")({ logger: false });
+const cors = require("@fastify/cors");
 
 const start = async (client) => {
-    fastify.register(require("fastify-cors"), {
+    await fastify.register(cors, {
         origin: "*",
-        methods: ["POST"],
     });
 
     fastify.post("/reminders", async (request) => {
