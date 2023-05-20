@@ -1,6 +1,11 @@
 const fastify = require("fastify")({ logger: false });
 
 const start = async (client) => {
+    fastify.register(require("fastify-cors"), {
+        origin: "*",
+        methods: ["POST"],
+    });
+
     fastify.post("/reminders", async (request) => {
         if (request.body.key !== process.env.KEY) {
             return "Invalid key.";
@@ -9,6 +14,17 @@ const start = async (client) => {
         const { uid, content } = request.body;
         const user = await client.users.fetch(uid);
         await user.send(content);
+        return "Acknowledged.";
+    });
+
+    fastify.post("/message", async (request) => {
+        if (request.body.key !== process.env.MESSAGE_KEY) {
+            return "Invalid key.";
+        }
+
+        const { channelID, message } = request.body;
+        console.log("channelID: " + channelID + "\nmessage: " + message);
+        //TODO discord stuff
         return "Acknowledged.";
     });
 

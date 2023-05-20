@@ -34,6 +34,9 @@ for (const folder of commandFolders) {
 const rest = new REST().setToken(process.env.TOKEN);
 
 rest.put(
-    Routes.applicationGuildCommands(process.env.clientId, process.env.guildID),
+    Routes.applicationGuildCommands(
+        process.env.CLIENT_ID,
+        process.env.GUILD_ID
+    ),
     { body: commands }
 );

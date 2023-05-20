@@ -36,4 +36,4 @@ for (const folder of commandFolders) {
 
 const rest = new REST().setToken(process.env.TOKEN);
 
-rest.put(Routes.applicationCommands(process.env.clientId), { body: commands });
+rest.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands });
