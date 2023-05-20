@@ -25,6 +25,7 @@
         "fastify": "^4.17.0",
         "isomorphic-fetch": "^3.0.0",
         "jsonwebtoken": "^9.0.0",
+        "moment": "^2.29.4",
         "node-fetch": "^2.6.9",
         "nodemon": "^2.0.22",
         "prisma": "^4.14.0"
