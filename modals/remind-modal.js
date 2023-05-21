@@ -2,15 +2,6 @@ const fetch = require("isomorphic-fetch");
 const chrono = require("chrono-node");
 
 const execute = async (interaction) => {
-    /*
-    const delay = new Date(interaction.fields.getTextInputValue("delay"));
-    if (delay.toString() === "Invalid Date") {
-        interaction.reply({
-            content: "Invalid date format, please follow the example.",
-        });
-        return;
-    }
-    */
     const time = chrono.parseDate(
         interaction.fields.getTextInputValue("delay")
     );
@@ -45,7 +36,7 @@ const execute = async (interaction) => {
         );
         return;
     }
-    await interaction.reply({ content: "Reminder set." });
+    await interaction.reply({ content: "Reminder set.", ephemeral: true });
 };
 
 module.exports = {
