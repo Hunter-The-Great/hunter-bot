@@ -5,7 +5,16 @@ const execute = async (interaction) => {
     const time = chrono.parseDate(
         interaction.fields.getTextInputValue("delay")
     );
+
     const date = new Date(time);
+
+    if (date.toString() === "Invalid Date") {
+        interaction.reply({
+            content: "Error processing date.",
+        });
+        return;
+    }
+
     const reminder = interaction.fields.getTextInputValue("remindercontent");
     const response = await fetch(
         "https://qstash.upstash.io/v1/publish/https://hunter-bot-production.up.railway.app/reminders",
