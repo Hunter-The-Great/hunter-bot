@@ -13,24 +13,36 @@ const data = new SlashCommandBuilder()
     .setNSFW(false);
 
 const execute = async (interaction) => {
-    const delayInput = new TextInputBuilder()
-        .setCustomId("delay")
+    const dateInput = new TextInputBuilder()
+        .setCustomId("date")
         .setLabel("Date:")
         .setPlaceholder("MM/DD/YY HH:MM PM UTC [Don't forget Daylight Savings]")
+        .setRequired(false)
+        .setStyle(TextInputStyle.Short);
+
+    const delayInput = new TextInputBuilder()
+        .setCustomId("delay")
+        .setLabel("Delay:")
+        .setPlaceholder("minutes")
+        .setValue(0)
+        .setRequired(false)
         .setStyle(TextInputStyle.Short);
 
     const reminderInput = new TextInputBuilder()
         .setCustomId("remindercontent")
         .setLabel("Reminder:")
+        .setValue("This is a reminder.")
+        .setRequired(true)
         .setStyle(TextInputStyle.Paragraph);
 
-    const row1 = new ActionRowBuilder().addComponents(delayInput);
-    const row2 = new ActionRowBuilder().addComponents(reminderInput);
+    const row1 = new ActionRowBuilder().addComponents(dateInput);
+    const row2 = new ActionRowBuilder().addComponents(delayInput);
+    const row3 = new ActionRowBuilder().addComponents(reminderInput);
 
     const modal = new ModalBuilder()
         .setCustomId("reminder")
         .setTitle("Reminder")
-        .addComponents(row1, row2);
+        .addComponents(row1, row2, row3);
 
     await interaction.showModal(modal);
 };
