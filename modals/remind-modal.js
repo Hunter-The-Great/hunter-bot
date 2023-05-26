@@ -11,6 +11,7 @@ const execute = async (interaction) => {
     if (date.toString() === "Invalid Date") {
         interaction.reply({
             content: "Error processing date.",
+            ephemeral: true,
         });
         return;
     } else {
@@ -18,6 +19,7 @@ const execute = async (interaction) => {
         if (!delay.match(regex)) {
             interaction.reply({
                 content: "Error processing delay.",
+                ephemeral: true,
             });
             return;
         }
@@ -52,6 +54,7 @@ const execute = async (interaction) => {
     if (!response.ok) {
         await interaction.reply({
             content: "Failed to set reminder, please try again later.",
+            ephemeral: true,
         });
         console.log(
             "Upstash communication failure, code: " +
