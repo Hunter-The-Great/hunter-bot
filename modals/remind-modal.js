@@ -23,6 +23,13 @@ const execute = async (interaction) => {
         }
     }
 
+    console.log({
+        "Upstash-Not-Before": time
+            ? Math.floor(date.getTime() / 1000)
+            : undefined,
+        "Upstash-Delay": delay,
+    });
+
     const response = await fetch(
         "https://qstash.upstash.io/v1/publish/https://hunter-bot-production.up.railway.app/reminders",
         {
@@ -33,7 +40,7 @@ const execute = async (interaction) => {
                 "Upstash-Not-Before": time
                     ? Math.floor(date.getTime() / 1000)
                     : undefined,
-                "Upstash-Delay": delay,
+                "Upstash-Delay": `${delay}m`,
             },
             body: JSON.stringify({
                 key: process.env.KEY,
