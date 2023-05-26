@@ -24,7 +24,6 @@ const execute = async (interaction) => {
         .setCustomId("delay")
         .setLabel("Delay:")
         .setPlaceholder("minutes")
-        .setValue("0")
         .setRequired(false)
         .setStyle(TextInputStyle.Short);
 
