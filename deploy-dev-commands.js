@@ -32,7 +32,6 @@ for (const folder of commandFolders) {
 }
 
 const rest = new REST().setToken(process.env.TOKEN);
-
 rest.put(
     Routes.applicationGuildCommands(
         process.env.CLIENT_ID,
