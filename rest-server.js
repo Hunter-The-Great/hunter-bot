@@ -7,6 +7,7 @@ const start = async (client) => {
     });
 
     fastify.post("/reminders", async (request) => {
+        //* -------------------------------------------------------------------------------------------- /reminders
         if (request.body.key !== process.env.KEY) {
             return "Invalid key.";
         }
@@ -18,8 +19,9 @@ const start = async (client) => {
     });
 
     fastify.post("/message", async (request) => {
+        //* -------------------------------------------------------------------------------------------- /message
         if (request.body.key !== process.env.MESSAGE_KEY) {
-            console.log("Invalid key.");
+            console.log("Invalid key for /message.");
             return "Invalid key.";
         }
         const { channelID, message } = request.body;
@@ -30,9 +32,27 @@ const start = async (client) => {
     });
 
     fastify.post("/mc", async (request) => {
+        //* -------------------------------------------------------------------------------------------- /mc
+        if (request.body.key !== process.env.MC_KEY) {
+            console.log("Invalid key for /mc.");
+            return "Invalid key.";
+        }
+
+        const channel = await client.channels.fetch(process.env.MC_CHANNEL_ID);
+        if (request.body.type === "join") {
+            //* -------------------------------------------------------------------------------------------- join
+            await channel.send(
+                `**${request.body.username}** joined the server.`
+            );
+        } else if (request.body.type === "leave") {
+            //* -------------------------------------------------------------------------------------------- leave
+            await channel.send(`**${request.body.username}** left the server.`);
+        }
+
         return "Acknowledged.";
     });
 
+    //* running the server
     try {
         fastify.listen({ host: "0.0.0.0", port: process.env.PORT });
         console.log("Listening on: " + process.env.PORT);
