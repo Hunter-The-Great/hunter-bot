@@ -29,6 +29,10 @@ const start = async (client) => {
         return "Acknowledged.";
     });
 
+    fastify.post("/mc", async (request) => {
+        return "Acknowledged.";
+    });
+
     try {
         fastify.listen({ host: "0.0.0.0", port: process.env.PORT });
         console.log("Listening on: " + process.env.PORT);
