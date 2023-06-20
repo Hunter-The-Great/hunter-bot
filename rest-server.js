@@ -33,15 +33,11 @@ const start = async (client) => {
 
     fastify.post("/mc", async (request) => {
         //* -------------------------------------------------------------------------------------------- /mc
-        console.log(request.body);
-        console.log(request.body.key);
-        console.log(process.env.MC_KEY);
         if (request.body.key !== process.env.MC_KEY) {
             console.log("Invalid key for /mc.");
             return "Invalid key.";
         }
 
-        console.log(request.body.type);
         const channel = await client.channels.fetch(process.env.MC_CHANNEL_ID);
         if (request.body.type === "join") {
             //* -------------------------------------------------------------------------------------------- join
