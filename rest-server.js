@@ -33,6 +33,8 @@ const start = async (client) => {
 
     fastify.post("/mc", async (request) => {
         //* -------------------------------------------------------------------------------------------- /mc
+        console.log(request.body);
+        console.log(process.env.MC_KEY);
         if (request.body.key !== process.env.MC_KEY) {
             console.log("Invalid key for /mc.");
             return "Invalid key.";
