@@ -41,6 +41,7 @@ const start = async (client) => {
             return "Invalid key.";
         }
 
+        console.log(request.body.type);
         const channel = await client.channels.fetch(process.env.MC_CHANNEL_ID);
         if (request.body.type === "join") {
             //* -------------------------------------------------------------------------------------------- join
