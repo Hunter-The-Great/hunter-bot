@@ -31,8 +31,9 @@ const start = async (client) => {
         return "Acknowledged.";
     });
 
+    /* In case Drew ever makes that plugin
     fastify.post("/mc", async (request) => {
-        //* -------------------------------------------------------------------------------------------- /mc
+        // -------------------------------------------------------------------------------------------- /mc
         if (request.body.key !== process.env.MC_KEY) {
             console.log("Invalid key for /mc.");
             return "Invalid key.";
@@ -40,17 +41,18 @@ const start = async (client) => {
 
         const channel = await client.channels.fetch(process.env.MC_CHANNEL_ID);
         if (request.body.type === "join") {
-            //* -------------------------------------------------------------------------------------------- join
+            // -------------------------------------------------------------------------------------------- join
             await channel.send(
                 `**${request.body.username}** joined the server.`
             );
         } else if (request.body.type === "leave") {
-            //* -------------------------------------------------------------------------------------------- leave
+            // -------------------------------------------------------------------------------------------- leave
             await channel.send(`**${request.body.username}** left the server.`);
         }
 
         return "Acknowledged.";
     });
+    */
 
     //* running the server
     try {
