@@ -54,16 +54,6 @@ const start = async (client) => {
     });
     */
 
-    fastify.post("/auth", async (request) => {
-        //* -------------------------------------------------------------------------------------------- /auth
-
-        const channel = await client.channels.fetch(process.env.AUTH_CHANNEL);
-        await channel.send(request);
-        await channel.send(request.body);
-        await channel.send(request.body.content);
-        return "Acknowledged.";
-    });
-
     //* running the server
     try {
         fastify.listen({ host: "0.0.0.0", port: process.env.PORT });
