@@ -79,6 +79,17 @@ const execute = async (interaction) => {
     }
     */
     await interaction.deferReply();
+    await prisma.user.upsert({
+        where: { uid: interaction.user.id },
+        update: {
+            waifuCount: { increment: 1 },
+        },
+        create: {
+            uid: interaction.user.id,
+            username: interaction.user.tag,
+            waifuCount: 1,
+        },
+    });
     const flags = ["ass", "hentai", "milf", "oral", "paizuri", "ecchi", "ero"];
     if (interaction.options.getString("type") === "false") {
         for (const flag of flags) {
