@@ -165,7 +165,7 @@ const execute = async (interaction) => {
             .setColor(0x00ffff)
             .setThumbnail(interaction.user.displayAvatarURL())
             .setAuthor({
-                name: interaction.user.tag,
+                name: interaction.user.username,
                 iconURL: interaction.user.displayAvatarURL(),
             })
             .setFooter({ text: `${data.length}/20` });

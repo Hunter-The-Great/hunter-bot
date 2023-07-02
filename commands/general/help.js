@@ -12,7 +12,7 @@ const execute = async (interaction) => {
         .setTitle("**Commands**:")
         .setThumbnail(process.env.AVATAR)
         .setAuthor({
-            name: interaction.user.tag,
+            name: interaction.user.username,
             iconURL: interaction.user.displayAvatarURL(),
         })
         .addFields(

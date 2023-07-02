@@ -20,7 +20,7 @@ const execute = async (interaction) => {
 
     const info = new EmbedBuilder()
         .setColor(0x00ffff)
-        .setTitle(target.tag)
+        .setTitle(target.username)
         .setThumbnail(target.displayAvatarURL())
         .addFields(
             {

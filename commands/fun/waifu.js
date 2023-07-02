@@ -86,7 +86,7 @@ const execute = async (interaction) => {
         },
         create: {
             uid: interaction.user.id,
-            username: interaction.user.tag,
+            username: interaction.user.username,
             waifuCount: 1,
         },
     });

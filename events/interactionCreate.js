@@ -72,7 +72,7 @@ const execute = async (interaction) => {
         //* -------------------------------------------------------------------- command logging
         try {
             const payload = {
-                user: interaction.user.tag,
+                user: interaction.user.username,
                 command: interaction.commandName,
                 ...interaction.options._hoistedOptions.reduce((acc, params) => {
                     return { [params.name]: params.value, ...acc };
