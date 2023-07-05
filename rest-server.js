@@ -31,10 +31,11 @@ const start = async (client) => {
         return "Acknowledged.";
     });
 
-    fastify.post("/gh", async (request) => {
+    fastify.post("/gh/:uid", async (request) => {
         //* -------------------------------------------------------------------------------------------- /gh
         const { uid } = request.params;
         console.log(request);
+        return { content: "Acknowledged." };
     });
 
     /* In case Drew ever makes that plugin
