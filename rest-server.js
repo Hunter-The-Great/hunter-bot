@@ -31,8 +31,9 @@ const start = async (client) => {
         return "Acknowledged.";
     });
 
-    fastify.post("/gh/::uid", async (request) => {
+    fastify.post("/gh/:uid", async (request) => {
         //* -------------------------------------------------------------------------------------------- /gh
+        const { uid } = request.params;
         console.log(request);
     });
 
