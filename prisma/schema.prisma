@@ -38,3 +38,13 @@ model User {
   waifuCount Int      @default(0)
   savedAt    DateTime @default(now())
 }
+
+model GitHubWebhook {
+  id            String   @id @default(cuid())
+  uid           String
+  discriminator String
+  channelId     String
+  savedAt       DateTime @default(now())
+
+  @@unique([uid, discriminator])
+}

@@ -31,9 +31,11 @@ const start = async (client) => {
         return "Acknowledged.";
     });
 
-    fastify.post("/gh/:uid", async (request) => {
+    fastify.post("/gh/:uid/:discriminator", async (request) => {
         //* -------------------------------------------------------------------------------------------- /gh
-        const { uid } = request.params;
+        const { uid, discriminator } = request.params;
+        const user = await client.users.fetch(uid);
+
         console.log(request);
         return { content: "Acknowledged." };
     });
