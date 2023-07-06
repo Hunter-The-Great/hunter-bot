@@ -1,5 +1,5 @@
 var randomstring = require("randomstring");
-const { prisma } = require("../../utilities/db");
+const { prisma } = require("../utilities/db");
 
 const execute = async (interaction) => {
     const discriminator =
