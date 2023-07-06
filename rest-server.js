@@ -1,3 +1,4 @@
+const { prisma } = require("./utilities/db");
 const fastify = require("fastify")({ logger: false });
 const cors = require("@fastify/cors");
 
@@ -35,6 +36,13 @@ const start = async (client) => {
         //* -------------------------------------------------------------------------------------------- /gh
         const { uid, discriminator } = request.params;
         const user = await client.users.fetch(uid);
+
+        const webhook = await prisma.GitHubWebhook.findUnique({
+            where: { uid, discriminator },
+        });
+        if (webhook.channelID === "0") {
+            await user.send(webhook.content);
+        }
 
         console.log(request);
         return { content: "Acknowledged." };

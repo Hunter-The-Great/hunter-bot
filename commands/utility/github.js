@@ -29,16 +29,15 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction) => {
     const discriminatorInput = new TextInputBuilder()
         .setCustomId("discriminator")
-        .setLabel("Discriminator:")
+        .setLabel("Discriminator (<=25):")
         .setPlaceholder("leave blank for random")
+        .setMaxLength(25)
         .setRequired(false)
         .setStyle(TextInputStyle.Short);
     const channelInput = new TextInputBuilder()
         .setCustomId("channel")
         .setLabel("Channel:")
-        .setPlaceholder(
-            "Channel ID of the channel to receive updates to (leave blank for DMs)"
-        )
+        .setPlaceholder("Requires admin privileges.")
         .setRequired(false)
         .setStyle(TextInputStyle.Short);
     const row1 = new ActionRowBuilder().addComponents(discriminatorInput);
