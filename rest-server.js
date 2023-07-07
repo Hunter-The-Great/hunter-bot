@@ -45,7 +45,7 @@ const start = async (client) => {
             await user.send(webhook.content);
         } else {
             const channel = await client.channels.fetch(webhook.channelID);
-            await channel.send(request.body);
+            await channel.send(request.body.name);
         }
         return { status: "Acknowledged." };
     });
