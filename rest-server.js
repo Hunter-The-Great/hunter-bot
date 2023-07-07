@@ -1,6 +1,7 @@
 const { prisma } = require("./utilities/db");
 const fastify = require("fastify")({ logger: false });
 const cors = require("@fastify/cors");
+const { EmbedBuilder } = require("discord.js");
 
 const start = async (client) => {
     await fastify.register(cors, {
@@ -45,7 +46,35 @@ const start = async (client) => {
             await user.send(webhook.content);
         } else {
             const channel = await client.channels.fetch(webhook.channelID);
-            await channel.send(request.body.name);
+            const embed = new EmbedBuilder()
+                .setColor(0x00ffff)
+                .setTitle(request.body.repository.full_name)
+                .setDescription(request.body.commit.message)
+                .addFields([
+                    {
+                        name: "Commit",
+                        value: `[${request.body.commit.id.slice(0, 7)}](${
+                            request.body.commit.url
+                        })`,
+                    },
+                    {
+                        name: "Author",
+                        value: `[${request.body.commit.author.name}](${request.body.commit.author.url})`,
+                    },
+                    {
+                        name: "Committer",
+                        value: `[${request.body.commit.committer.name}](${request.body.commit.committer.url})`,
+                    },
+                    {
+                        name: "Branch",
+                        value: request.body.ref,
+                    },
+                    {
+                        name: "Timestamp",
+                        value: request.body.repository.pushed_at,
+                    },
+                ]);
+            await channel.send({ embeds: [embed] });
         }
         return { status: "Acknowledged." };
     });
