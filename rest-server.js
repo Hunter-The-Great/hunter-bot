@@ -44,29 +44,42 @@ const start = async (client) => {
         });
         const embed = new EmbedBuilder()
             .setColor(0x00ffff)
-            .setTitle(request.body.repository.full_name)
-            .setDescription(request.body.head_commit.message)
+            .setTitle(
+                request.body.repository.full_name ||
+                    "Could not find repository information."
+            )
+            .setDescription(
+                request.body.head_commit.message ||
+                    "Could not find commit message."
+            )
             .addFields([
                 {
                     name: "Commit",
-                    value: `[${request.body.head_commit.id.slice(0, 7)}](${
-                        request.body.head_commit.url
-                    })`,
+                    value:
+                        `[${request.body.head_commit.id.slice(0, 7)}](${
+                            request.body.head_commit.url
+                        })` || "Could not find commit information.",
                     inline: true,
                 },
                 {
                     name: "Author",
-                    value: `[${request.body.sender.login}](${request.body.sender.url})`,
+                    value:
+                        `[${request.body.sender.login}](${request.body.sender.url})` ||
+                        "Could not find author information.",
                     inline: true,
                 },
                 {
                     name: "Branch",
-                    value: request.body.ref,
+                    value:
+                        request.body.ref ||
+                        "Could not find branch information.",
                     inline: true,
                 },
                 {
                     name: "Timestamp",
-                    value: request.body.head_commit.timestamp,
+                    value:
+                        request.body.head_commit.timestamp ||
+                        "Could not find timestamp.",
                     inline: true,
                 },
             ]);
