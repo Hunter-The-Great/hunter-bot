@@ -48,6 +48,17 @@ const start = async (client) => {
         return { content: "Acknowledged." };
     });
 
+    fastify.post("/drewh", async (request) => {
+        //* -------------------------------------------------------------------------------------------- /drewh
+        if (request.body.key !== process.env.DREW_KEY) {
+            console.log("Invalid key for /drewh.");
+            return "Invalid key.";
+        }
+        const drew = await client.users.fetch(process.env.DREW_ID);
+        await drew.send(request.body.message);
+        return "Acknowledged.";
+    });
+
     /* In case Drew ever makes that plugin
     fastify.post("/mc", async (request) => {
         // -------------------------------------------------------------------------------------------- /mc
