@@ -10,26 +10,27 @@ const start = async (client) => {
     fastify.post("/reminders", async (request) => {
         //* -------------------------------------------------------------------------------------------- /reminders
         if (request.body.key !== process.env.KEY) {
-            return "Invalid key.";
+            console.log("Invalid key for /reminders.");
+            return { status: "Invalid key." };
         }
 
         const { uid, content } = request.body;
         const user = await client.users.fetch(uid);
         await user.send(content);
-        return "Acknowledged.";
+        return { status: "Acknowledged." };
     });
 
     fastify.post("/message", async (request) => {
         //* -------------------------------------------------------------------------------------------- /message
         if (request.body.key !== process.env.MESSAGE_KEY) {
             console.log("Invalid key for /message.");
-            return "Invalid key.";
+            return { status: "Invalid key." };
         }
         const { channelID, message } = request.body;
 
         const channel = await client.channels.fetch(channelID);
         await channel.send(message);
-        return "Acknowledged.";
+        return { status: "Acknowledged." };
     });
 
     fastify.post("/gh/:uid/:discriminator", async (request) => {
@@ -37,26 +38,27 @@ const start = async (client) => {
         const { uid, discriminator } = request.params;
         const user = await client.users.fetch(uid);
 
-        const webhook = await prisma.GitHubWebhook.findUnique({
+        const webhook = await prisma.GitHubWebhook.findFirst({
             where: { uid, discriminator },
         });
         if (webhook.channelID === "0") {
             await user.send(webhook.content);
+        } else {
+            const channel = await client.channels.fetch(webhook.channelID);
+            await channel.send(request.content);
         }
-
-        console.log(request);
-        return { content: "Acknowledged." };
+        return { status: "Acknowledged." };
     });
 
     fastify.post("/drewh", async (request) => {
         //* -------------------------------------------------------------------------------------------- /drewh
         if (request.body.key !== process.env.DREW_KEY) {
             console.log("Invalid key for /drewh.");
-            return "Invalid key.";
+            return { status: "Invalid key." };
         }
         const drew = await client.users.fetch(process.env.DREW_ID);
         await drew.send(request.body.message);
-        return "Acknowledged.";
+        return { status: "Acknowledged." };
     });
 
     /* In case Drew ever makes that plugin
