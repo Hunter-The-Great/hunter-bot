@@ -42,38 +42,38 @@ const start = async (client) => {
         const webhook = await prisma.GitHubWebhook.findFirst({
             where: { uid, discriminator },
         });
+        const embed = new EmbedBuilder()
+            .setColor(0x00ffff)
+            .setTitle(request.body.repository.full_name)
+            .setDescription(request.body.head_commit.message)
+            .addFields([
+                {
+                    name: "Commit",
+                    value: `[${request.body.head_commit.id.slice(0, 7)}](${
+                        request.body.head_commit.url
+                    })`,
+                    inline: true,
+                },
+                {
+                    name: "Author",
+                    value: `[${request.body.sender.login}](${request.body.sender.url})`,
+                    inline: true,
+                },
+                {
+                    name: "Branch",
+                    value: request.body.ref,
+                    inline: true,
+                },
+                {
+                    name: "Timestamp",
+                    value: request.body.head_commit.timestamp,
+                    inline: true,
+                },
+            ]);
         if (webhook.channelID === "0") {
-            await user.send(webhook.content);
+            await user.send({ embeds: [embed] });
         } else {
             const channel = await client.channels.fetch(webhook.channelID);
-            const embed = new EmbedBuilder()
-                .setColor(0x00ffff)
-                .setTitle(request.body.repository.full_name)
-                .setDescription(request.body.commit.message)
-                .addFields([
-                    {
-                        name: "Commit",
-                        value: `[${request.body.commit.id.slice(0, 7)}](${
-                            request.body.commit.url
-                        })`,
-                    },
-                    {
-                        name: "Author",
-                        value: `[${request.body.commit.author.name}](${request.body.commit.author.url})`,
-                    },
-                    {
-                        name: "Committer",
-                        value: `[${request.body.commit.committer.name}](${request.body.commit.committer.url})`,
-                    },
-                    {
-                        name: "Branch",
-                        value: request.body.ref,
-                    },
-                    {
-                        name: "Timestamp",
-                        value: request.body.repository.pushed_at,
-                    },
-                ]);
             await channel.send({ embeds: [embed] });
         }
         return { status: "Acknowledged." };
