@@ -7,6 +7,16 @@ const execute = async (interaction) => {
         interaction.fields.getTextInputValue("discriminator") ||
         randomstring.generate({ charset: "alphanumeric", length: 25 });
     const channelID = interaction.fields.getTextInputValue("channel") || "0";
+    if (interaction.fields.getTextInputValue("discriminator")) {
+        const regex = new RegExp("^[a-zA-Z0-9_-]*$");
+        if (!regex.test(discriminator)) {
+            await interaction.reply({
+                content: "Invalid ID.",
+                ephemeral: true,
+            });
+            return;
+        }
+    }
     if (interaction.fields.getTextInputValue("channel")) {
         const channel = await interaction.client.channels.fetch(channelID);
         const member = await channel.guild.members.fetch({
