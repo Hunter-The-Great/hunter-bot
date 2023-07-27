@@ -34,7 +34,7 @@ const execute = async (interaction) => {
     };
 
     const response = await fetch(
-        "https://qstash.upstash.io/v1/publish/https://hunter-bot-production.up.railway.app/reminders",
+        "https://qstash.upstash.io/v1/publish/https://hunter-bot.drewh.net/reminders",
         {
             method: "POST",
             headers: {

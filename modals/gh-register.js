@@ -55,7 +55,7 @@ const execute = async (interaction) => {
         data: { uid: interaction.user.id, discriminator, channelID },
     });
     await interaction.reply({
-        content: `Endpoint registered:\nhttps://hunter-bot-production.up.railway.app/gh/${interaction.user.id}/${discriminator}`,
+        content: `Endpoint registered:\nhttps://hunter-bot.drewh.net/gh/${interaction.user.id}/${discriminator}`,
         ephemeral: true,
     });
 };

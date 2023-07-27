@@ -73,7 +73,7 @@ const execute = async (interaction) => {
     }
 
     await interaction.reply({
-        content: `Endpoint edited:\nhttps://hunter-bot-production.up.railway.app/gh/${interaction.user.id}/${discriminator}`,
+        content: `Endpoint edited:\nhttps://hunter-bot.drewh.net/gh/${interaction.user.id}/${discriminator}`,
         ephemeral: true,
     });
 };
