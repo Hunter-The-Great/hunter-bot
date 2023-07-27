@@ -41,6 +41,7 @@ const execute = async (interaction) => {
             text: "I am cowboy duck, and I approve of this message.",
             iconURL: process.env.AVATAR,
         });
+
     await interaction.reply({ embeds: [helpMenu] });
 };
 
