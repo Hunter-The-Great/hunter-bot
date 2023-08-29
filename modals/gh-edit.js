@@ -43,6 +43,17 @@ const execute = async (interaction) => {
     }
 
     if (interaction.fields.getTextInputValue("discriminator")) {
+        if (
+            !prisma.GitHubWebhook.findFirst({
+                where: { uid: interaction.user.id, discriminator },
+            })
+        ) {
+            await interaction.reply({
+                content: "Endpoint not registered.",
+                ephemeral: true,
+            });
+            return;
+        }
         const regex = new RegExp("^[a-zA-Z0-9_-]*$");
         if (!regex.test(discriminator)) {
             await interaction.reply({
