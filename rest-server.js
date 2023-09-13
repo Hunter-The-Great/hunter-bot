@@ -25,7 +25,7 @@ const start = async (client) => {
         //* -------------------------------------------------------------------------------------------- /message
         if (request.body.key !== process.env.MESSAGE_KEY) {
             console.log("Invalid key for /message.");
-            return { status: 401, statusText: "Invalid key." };
+            return { code: 401, statusText: "Invalid key." };
         }
         const { channelID, message } = request.body;
 
