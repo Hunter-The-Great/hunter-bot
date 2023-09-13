@@ -18,14 +18,14 @@ const start = async (client) => {
         const { uid, content } = request.body;
         const user = await client.users.fetch(uid);
         await user.send(content);
-        return { status: "Acknowledged." };
+        return { status: 200 };
     });
 
     fastify.post("/message", async (request) => {
         //* -------------------------------------------------------------------------------------------- /message
         if (request.body.key !== process.env.MESSAGE_KEY) {
             console.log("Invalid key for /message.");
-            return { code: 401, status: "Invalid key." };
+            return { status: 401, statusText: "Invalid key." };
         }
         const { channelID, message } = request.body;
 
@@ -34,7 +34,7 @@ const start = async (client) => {
         //TODO check if valid channel??
 
         await channel.send(message);
-        return { status: "Acknowledged." };
+        return { status: 200 };
     });
 
     fastify.post("/gh/:uid/:discriminator", async (request) => {
@@ -103,7 +103,7 @@ const start = async (client) => {
         }
         const drew = await client.users.fetch(process.env.DREW_ID);
         await drew.send(request.body.message);
-        return { status: "Acknowledged." };
+        return { status: 200 };
     });
 
     /* In case Drew ever makes that plugin
