@@ -25,13 +25,14 @@ const start = async (client) => {
         //* -------------------------------------------------------------------------------------------- /message
         if (request.body.key !== process.env.MESSAGE_KEY) {
             console.log("Invalid key for /message.");
-            return res.code(401).send({ statusText: "test" });
+            return res.code(401).send({ statusText: "Invalid Key" });
         }
         const { channelID, message } = request.body;
 
         const channel = await client.channels.fetch(channelID);
 
         //TODO check if valid channel??
+        console.log(channel);
 
         await channel.send(message);
         return { status: 200 };
