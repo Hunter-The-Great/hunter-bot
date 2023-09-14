@@ -21,10 +21,11 @@ const start = async (client) => {
         return { status: 200 };
     });
 
-    fastify.post("/message", async (request) => {
+    fastify.post("/message", async (request, res) => {
         //* -------------------------------------------------------------------------------------------- /message
         if (request.body.key !== process.env.MESSAGE_KEY) {
             console.log("Invalid key for /message.");
+            res.code(401);
             return { code: 401, statusText: "Invalid key." };
         }
         const { channelID, message } = request.body;
