@@ -12,6 +12,13 @@ const execute = async (message) => {
     }
     if (message.content.startsWith("~!")) {
         if (message.content === "~!synonyms") {
+            if (!message.reference) {
+                return;
+            }
+
+            if (message.author.id === process.env.CLIENT_ID) {
+                return;
+            }
             const thesaurus = require("thesaurus");
 
             const original = (
