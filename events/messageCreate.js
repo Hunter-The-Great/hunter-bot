@@ -2,7 +2,7 @@ const { Events } = require("discord.js");
 
 const name = Events.MessageCreate;
 
-const names = ["jarvis ", "alexa "]
+const names = ["jarvis ", "alexa ", "mods "]
 const inputs = ["send ", "hit us with ", "throw ", "hit me with ", "paste "]
 const words = ["the ", "up the ", "in the ", "a ", "up a ", "in a "]
 
