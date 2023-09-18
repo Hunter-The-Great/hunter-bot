@@ -2,9 +2,9 @@ const { Events } = require("discord.js");
 
 const name = Events.MessageCreate;
 
-const names = ["jarvis", "alexa"]
-const inputs = ["Jarvis send", "Jarvis hit us with", "Jarvis throw", "jarvis hit me with", "jarvis paste"]
-const words = ["the", "up the", "in the", "a", "up a", "in a"]
+const names = ["jarvis ", "alexa "]
+const inputs = ["send ", "hit us with ", "throw ", "hit me with ", "paste "]
+const words = ["the ", "up the ", "in the ", "a ", "up a ", "in a "]
 
 const execute = async (message) => {
     if (message.content.toLowerCase() === "hello there") {
@@ -47,7 +47,7 @@ const execute = async (message) => {
     }
     //jarvis bot
     if (message.content.toLowerCase().startsWith("jarvis") || message.content.toLowerCase().startsWith("alexa")) {
-        const commas = ["",","];
+        const commas = ["",", "];
         for (x = 0; x < names.length * commas.length * inputs.length * words.length; x++) {
             const name = names[Math.floor(x / (comma.length * inputs.length * words.length))];
             const comma = commas[Math.floor((x % (comma.length * inputs.length * words.length)) / (inputs.length * words.length))];
