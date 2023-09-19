@@ -48,3 +48,12 @@ model GitHubWebhook {
 
   @@unique([uid, discriminator])
 }
+
+model jarvis {
+  id      String   @id @default(cuid())
+  guild   String
+  status  Boolean  @default(false)
+  savedAt DateTime @default(now())
+
+  @@unique([guild])
+}
