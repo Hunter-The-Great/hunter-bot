@@ -66,8 +66,8 @@ const execute = async (message) => {
             const alias = message.content
                 .toLowerCase()
                 .replace("jarvis", "")
-                .replace(request, "")
                 .replace(/ a /g, " ")
+                .replace(request, "")
                 .replace(/in |the |me |here /g, "");
             const result = await prisma.gif.findFirst({
                 where: { uid: message.author.id, alias: { search: alias } },
