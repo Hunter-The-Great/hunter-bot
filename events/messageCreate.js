@@ -117,7 +117,7 @@ const execute = async (message) => {
                 .replace(/ a /g, " ")
                 .replace(request, "")
                 .replace(/in |the |me |here /g, "");
-            const waifuRequest = /(?:^|\W)fine art|waifu(?:$|\W)/;
+            const waifuRequest = /fine art|waifu/;
             if (message.content.toLowerCase().match(waifuRequest)) {
                 const url =
                     "https://api.waifu.im/search/?&included_tags=waifu&is_nsfw=false";
