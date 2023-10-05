@@ -63,6 +63,7 @@ const execute = async (interaction) => {
     const embed = new EmbedBuilder()
         .setColor(getColor(waifu1.rarity))
         .setImage(waifu1.image)
+        .setTitle(user.username + "'s Compendium")
         .setDescription(`Rarity: ${getStars(waifu1.rarity)}`);
 
     const prev = new ButtonBuilder()
