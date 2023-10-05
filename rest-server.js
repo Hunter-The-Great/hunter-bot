@@ -8,24 +8,24 @@ const start = async (client) => {
         origin: "*",
     });
 
-    fastify.post("/reminders", async (request) => {
+    fastify.post("/reminders", async (request, res) => {
         //* -------------------------------------------------------------------------------------------- /reminders
         if (request.body.key !== process.env.KEY) {
             console.log("Invalid key for /reminders.");
-            return { status: "Invalid key." };
+            return res.code(401).send({ message: "Invalid Key" });
         }
 
         const { uid, content } = request.body;
         const user = await client.users.fetch(uid);
         await user.send(content);
-        return { status: 200 };
+        return res.code(200).send({ message: "Acknowledged." });
     });
 
     fastify.post("/message", async (request, res) => {
         //* -------------------------------------------------------------------------------------------- /message
         if (request.body.key !== process.env.MESSAGE_KEY) {
             console.log("Invalid key for /message.");
-            return res.code(401).send({ statusText: "Invalid Key" });
+            return res.code(401).send({ message: "Invalid Key" });
         }
         const { channelID, message } = request.body;
 
@@ -35,10 +35,10 @@ const start = async (client) => {
         console.log(channel);
 
         await channel.send(message);
-        return { status: 200 };
+        return res.code(200).send({ message: "Acknowledged." });
     });
 
-    fastify.post("/gh/:uid/:discriminator", async (request) => {
+    fastify.post("/gh/:uid/:discriminator", async (request, res) => {
         //* -------------------------------------------------------------------------------------------- /gh
         const { uid, discriminator } = request.params;
         const user = await client.users.fetch(uid);
@@ -93,18 +93,18 @@ const start = async (client) => {
             const channel = await client.channels.fetch(webhook.channelID);
             await channel.send({ embeds: [embed] });
         }
-        return { status: "Acknowledged." };
+        return res.code(200).send({ statusText: "Acknowledged." });
     });
 
-    fastify.post("/drewh", async (request) => {
+    fastify.post("/drewh", async (request, res) => {
         //* -------------------------------------------------------------------------------------------- /drewh
         if (request.body.key !== process.env.DREW_KEY) {
             console.log("Invalid key for /drewh.");
-            return { status: "Invalid key." };
+            return res.code(401).send({ message: "Invalid Key" });
         }
         const drew = await client.users.fetch(process.env.DREW_ID);
         await drew.send(request.body.message);
-        return { status: 200 };
+        return res.code(200).send({ message: "Acknowledged." });
     });
 
     /* In case Drew ever makes that plugin
