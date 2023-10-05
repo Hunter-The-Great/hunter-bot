@@ -5,7 +5,7 @@ const data = new SlashCommandBuilder()
     .setName("waifu-stats")
     .setDescription("Displays a user's waifu stats.")
     .setDMPermission(false)
-    .setNSFW(true)
+    .setNSFW(false)
     .addUserOption((option) =>
         option
             .setName("target")
