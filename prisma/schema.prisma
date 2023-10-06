@@ -15,7 +15,7 @@ model Gif {
   id      String   @id @default(cuid())
   uid     String
   alias   String
-  link    String
+  link    String   @db.VarChar(1000)
   savedAt DateTime @default(now())
 
   @@unique([uid, alias])
