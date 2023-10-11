@@ -82,7 +82,7 @@ const execute = async (message) => {
             await message.channel.send("At your service.");
         }
         if (message.content.toLowerCase().match(witherCheck)) {
-            await message.channel.send("Yes?");
+            await message.channel.send("Fate spins along as it should...");
         }
 
         if (message.content.toLowerCase().match(/(?:^|\W)dont|don't(?:$|\W)/)) {
