@@ -157,6 +157,7 @@ const execute = async (interaction) => {
         }
         await interaction.editReply(data.link);
     } else if (interaction.options.getSubcommand() === "list") {
+        //* -------------------------------------------------------------------------------------------- List
         const data = await prisma.gif.findMany({
             where: { uid: id },
             orderBy: { savedAt: "asc" },

@@ -6,7 +6,7 @@ const name = Events.MessageCreate;
 
 const execute = async (message) => {
     try {
-        if (message.author.id === process.env.CLIENT_ID) {
+        if (message.author.id === process.env.CLIENT_ID || message.author.bot) {
             return;
         }
         if (message.content.toLowerCase() === "hello there") {

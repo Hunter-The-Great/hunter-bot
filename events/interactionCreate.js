@@ -8,6 +8,9 @@ const execute = async (interaction) => {
         console.log("interaction is undefined");
         return;
     }
+    if (interaction.user.bot) {
+        return;
+    }
     if (interaction.isButton()) {
         //* -------------------------------------------------------------------- buttons
         try {
