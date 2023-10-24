@@ -104,11 +104,12 @@ const execute = async (interaction) => {
 
     try {
         let index = 0;
-        const filter = (interaction) =>
-            interaction.customId.startsWith("waifu-compendium");
+        const filter = (i) =>
+            i.customId.startsWith("waifu-compendium") &&
+            i.user.id === interaction.user.id;
         const collector = rsp.createMessageComponentCollector({
             filter,
-            time: 180_000,
+            time: 600_000,
         });
         collector.on("collect", async (i) => {
             if (i.customId.includes("prev")) {

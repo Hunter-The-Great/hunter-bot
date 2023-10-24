@@ -14,29 +14,16 @@ const execute = async (interaction) => {
     if (interaction.isButton()) {
         //* -------------------------------------------------------------------- buttons
         try {
-            if (
-                !(
-                    interaction.customId.startsWith("waifu-compendium-prev") ||
-                    interaction.customId.startsWith("waifu-compendium-next") ||
-                    interaction.customId.startsWith("waifu-compendium-delete")
-                )
-            ) {
-                if (!interaction.customId.endsWith(interaction.user.id)) {
-                    if (interaction.customId.startsWith("waifu-save")) {
-                        return interaction.reply({
-                            content:
-                                "This is not the waifu you're looking for.",
-                            ephemeral: true,
-                        });
-                    } else {
-                        return interaction.reply({
-                            content:
-                                "This is not the button you're looking for.",
-                            ephemeral: true,
-                        });
-                    }
-                }
+            if (interaction.customId.endsWith(interaction.user.id)) {
+                return;
             }
+            if (interaction.customId.startsWith("waifu-save")) {
+                return interaction.reply({
+                    content: "This is not the waifu you're looking for.",
+                    ephemeral: true,
+                });
+            }
+            return;
         } catch (err) {
             console.error("An error has occurred:\n", err);
         }

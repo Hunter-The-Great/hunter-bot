@@ -187,7 +187,7 @@ const execute = async (interaction) => {
             i.user.id === interaction.user.id;
         const collector = rsp.createMessageComponentCollector({
             filter,
-            time: 120_000,
+            time: 600_000,
         });
         collector.on("collect", async (i) => {
             //* ------------------------------------------------------------------------------ console.on("collect")
