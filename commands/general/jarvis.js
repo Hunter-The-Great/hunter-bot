@@ -32,7 +32,7 @@ const execute = async (interaction) => {
         return;
     }
 
-    await prisma.guildSettings.upsert({
+    await prisma.guild.upsert({
         where: { guildID: interaction.guild.id },
         update: { jarvis: interaction.options.getBoolean("status") },
         create: {

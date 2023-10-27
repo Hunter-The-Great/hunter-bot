@@ -16,6 +16,7 @@ model Gif {
   uid     String
   alias   String
   link    String   @db.VarChar(500)
+  user    User     @relation(fields: [uid], references: [id])
   savedAt DateTime @default(now())
 
   @@unique([uid, alias])
@@ -27,18 +28,22 @@ model Waifu {
   uid     String
   image   String
   rarity  Int
+  user    User     @relation(fields: [uid], references: [id])
   savedAt DateTime @default(now())
 
   @@unique([uid, image])
 }
 
 model User {
-  id         String   @id @default(cuid())
-  uid        String   @unique
-  username   String
+  id             String          @id
+  username       String
   //? display name
-  waifuCount Int      @default(0)
-  savedAt    DateTime @default(now())
+  waifuCount     Int             @default(0)
+  savedAt        DateTime        @default(now())
+  messages       Message[]
+  waifus         Waifu[]
+  gifs           Gif[]
+  gitHubWebhooks GitHubWebhook[]
 }
 
 model GitHubWebhook {
@@ -46,14 +51,27 @@ model GitHubWebhook {
   uid           String
   discriminator String
   channelID     String
+  user          User     @relation(fields: [uid], references: [id])
   savedAt       DateTime @default(now())
 
   @@unique([uid, discriminator])
 }
 
-model GuildSettings {
-  id      String   @id @default(cuid())
-  guildID String   @unique
-  jarvis  Boolean  @default(false)
-  savedAt DateTime @default(now())
+model Message {
+  id        String   @id
+  guildID   String
+  channel   String
+  author    String
+  timestamp DateTime
+  content   String   @db.VarChar(4000)
+  guild     Guild    @relation(fields: [guildID], references: [id])
+  user      User     @relation(fields: [author], references: [id])
+  savedAt   DateTime @default(now())
+}
+
+model Guild {
+  id       String    @id
+  jarvis   Boolean   @default(false)
+  savedAt  DateTime  @default(now())
+  messages Message[]
 }

@@ -57,7 +57,7 @@ const execute = async (message) => {
         }
         //* Jarvis
         if (
-            !(await prisma.guildSettings.findFirst({
+            !(await prisma.guild.findFirst({
                 where: { guildID: message.guild.id },
             }))
         ) {
