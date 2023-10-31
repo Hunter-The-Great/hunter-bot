@@ -1,4 +1,5 @@
-const { SlashCommandBuilder, TextChannel } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
+const { prisma } = require("../../utilities/db");
 
 const data = new SlashCommandBuilder()
     .setName("guessing-game")
@@ -7,41 +8,25 @@ const data = new SlashCommandBuilder()
     .setNSFW(false);
 
 const execute = async (interaction) => {
-    const channels = (await interaction.guild.channels.fetch()).values();
-    let messages = [];
-    messages.push(
-        ...(await interaction.channel.messages.fetch({ limit: 1 })).values()
+    await interaction.deferReply();
+    const messages = await prisma.message.findMany({
+        where: {
+            guildID: interaction.guild.id,
+        },
+        orderBy: {
+            id: "desc",
+        },
+    });
+
+    let message;
+    do {
+        message = messages[Math.floor(Math.random() * messages.length)];
+    } while (
+        (await prisma.user.findUnique({ where: { id: message.author } })).bot ||
+        message.content === "" ||
+        message.content === null
     );
-    try {
-        for (const channel of channels) {
-            if (!(channel instanceof TextChannel)) continue;
-
-            if (!messages[0])
-                messages.push(
-                    ...(await channel.messages.fetch({ limit: 1 })).values()
-                );
-            if (!messages[0]) continue;
-
-            let lastMessage;
-            console.log(channel.name);
-            do {
-                lastMessage = messages[messages.length - 1];
-                const fetchedMessages = await channel.messages.fetch({
-                    limit: 100,
-                    before: messages[messages.length - 1].id
-                        ? messages[messages.length - 1].id
-                        : undefined,
-                });
-                messages.push(...fetchedMessages.values());
-                console.log(
-                    lastMessage.id + " " + messages[messages.length - 1].id
-                );
-            } while (lastMessage.id !== messages[messages.length - 1].id);
-        }
-    } catch (err) {
-        console.error(err);
-    }
-    console.log(messages.length);
+    interaction.editReply({ content: message.content, ephemeral: false });
 };
 
 module.exports = {

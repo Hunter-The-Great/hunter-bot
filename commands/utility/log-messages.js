@@ -29,36 +29,98 @@ const execute = async (interaction) => {
         return;
     }
 
+    await prisma.message.deleteMany({
+        where: {
+            guildID: interaction.guild.id,
+        },
+    });
+
     await interaction.reply({
         content: "Please wait, this may take a long time.",
         ephemeral: false,
     });
     const channels = (await interaction.guild.channels.fetch()).values();
-    let messages = [];
-    messages.push(
-        ...(await interaction.channel.messages.fetch({ limit: 1 })).values()
-    );
     try {
         for (const channel of channels) {
             if (!(channel instanceof TextChannel)) continue;
 
-            if (!messages[0])
-                messages.push(
-                    ...(await channel.messages.fetch({ limit: 1 })).values()
-                );
-            if (!messages[0]) continue;
+            let lastMessage = (
+                await channel.messages.fetch({ limit: 1 })
+            ).first();
 
-            let lastMessage;
+            if (!lastMessage) continue;
+
+            await prisma.message.create({
+                data: {
+                    id: lastMessage.id,
+                    content: lastMessage.content,
+                    timestamp: new Date(lastMessage.createdTimestamp),
+                    user: {
+                        connectOrCreate: {
+                            where: {
+                                id: lastMessage.author.id,
+                            },
+                            create: {
+                                id: lastMessage.author.id,
+                                username: lastMessage.author.username,
+                                bot: lastMessage.author.bot,
+                            },
+                        },
+                    },
+                    channel: lastMessage.channel.id,
+                    guild: {
+                        connectOrCreate: {
+                            where: {
+                                id: lastMessage.guild.id,
+                            },
+                            create: {
+                                id: lastMessage.guild.id,
+                            },
+                        },
+                    },
+                },
+            });
+
             console.log(channel.name);
+            let messages = [];
             do {
-                lastMessage = messages[messages.length - 1];
-                const fetchedMessages = await channel.messages.fetch({
-                    limit: 100,
-                    before: messages[messages.length - 1].id
-                        ? messages[messages.length - 1].id
-                        : undefined,
+                if (messages.length > 0)
+                    lastMessage = messages[messages.length - 1];
+                messages = await channel.messages.fetch({
+                    limit: 2,
+                    before: lastMessage.id,
                 });
-                messages.push(...fetchedMessages.values());
+
+                await prisma.message.createMany({
+                    data: messages.map((message) => ({
+                        id: message.id,
+                        content: message.content,
+                        timestamp: new Date(message.createdTimestamp),
+                        user: {
+                            connectOrCreate: {
+                                where: {
+                                    id: message.author.id,
+                                },
+                                create: {
+                                    id: message.author.id,
+                                    username: message.author.username,
+                                    bot: message.author.bot,
+                                },
+                            },
+                        },
+                        channel: message.channel.id,
+                        guild: {
+                            connectOrCreate: {
+                                where: {
+                                    id: message.guild.id,
+                                },
+                                create: {
+                                    id: message.guild.id,
+                                },
+                            },
+                        },
+                    })),
+                });
                 console.log(
                     lastMessage.id + " " + messages[messages.length - 1].id
                 );
@@ -67,44 +129,9 @@ const execute = async (interaction) => {
     } catch (err) {
         console.error(err);
     }
-    await interaction.channel.send("Uploading messages to database.");
-    for (const message of messages) {
-        await prisma.message.upsert({
-            where: { id: message.id },
-            update: {
-                content: message.content,
-            },
-            create: {
-                id: message.id,
-                content: message.content,
-                timestamp: new Date(message.createdTimestamp),
-                user: {
-                    connectOrCreate: {
-                        where: {
-                            id: message.author.id,
-                        },
-                        create: {
-                            id: message.author.id,
-                            username: message.author.username,
-                        },
-                    },
-                },
-                channel: message.channel.id,
-                guild: {
-                    connectOrCreate: {
-                        where: {
-                            id: message.guild.id,
-                        },
-                        create: {
-                            id: message.guild.id,
-                        },
-                    },
-                },
-            },
-        });
-    }
+
     await interaction.channel.send({
-        content: `Logged ${messages.length} messages.`,
+        content: `done`,
     });
 };
 

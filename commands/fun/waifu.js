@@ -80,13 +80,14 @@ const execute = async (interaction) => {
     */
     await interaction.deferReply();
     await prisma.user.upsert({
-        where: { uid: interaction.user.id },
+        where: { id: interaction.user.id },
         update: {
             waifuCount: { increment: 1 },
         },
         create: {
-            uid: interaction.user.id,
+            id: interaction.user.id,
             username: interaction.user.username,
+            bot: interaction.user.bot,
             waifuCount: 1,
         },
     });
@@ -216,7 +217,18 @@ const execute = async (interaction) => {
 
             await prisma.waifu.create({
                 data: {
-                    uid: interaction.user.id,
+                    user: {
+                        connectOrCreate: {
+                            where: {
+                                id: interaction.user.id,
+                            },
+                            create: {
+                                id: interaction.user.id,
+                                username: interaction.user.username,
+                                bot: interaction.user.bot,
+                            },
+                        },
+                    },
                     image,
                     rarity,
                 },

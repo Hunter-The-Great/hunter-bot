@@ -39,6 +39,7 @@ model User {
   username       String
   //? display name
   waifuCount     Int             @default(0)
+  bot            Boolean         @default(false)
   savedAt        DateTime        @default(now())
   messages       Message[]
   waifus         Waifu[]
