@@ -40,14 +40,26 @@ const execute = async (interaction) => {
         ephemeral: false,
     });
     const channels = (await interaction.guild.channels.fetch()).values();
+    let total = 0;
     try {
+        if (
+            !(await prisma.guild.findUnique({
+                where: { id: interaction.guild.id },
+            }))
+        ) {
+            await prisma.guild.create({
+                data: {
+                    id: interaction.guild.id,
+                },
+            });
+        }
+
         for (const channel of channels) {
             if (!(channel instanceof TextChannel)) continue;
 
             let lastMessage = (
                 await channel.messages.fetch({ limit: 1 })
             ).first();
-
             if (!lastMessage) continue;
 
             await prisma.message.create({
@@ -69,69 +81,73 @@ const execute = async (interaction) => {
                     },
                     channel: lastMessage.channel.id,
                     guild: {
-                        connectOrCreate: {
-                            where: {
-                                id: lastMessage.guild.id,
-                            },
-                            create: {
-                                id: lastMessage.guild.id,
-                            },
+                        connect: {
+                            id: lastMessage.guild.id,
                         },
                     },
                 },
             });
 
-            console.log(channel.name);
+            total += 1;
+
             let messages = [];
+            let messageMap = [];
+            let clearedUsers = [];
+            let count = 0;
             do {
-                if (messages.length > 0)
-                    lastMessage = messages[messages.length - 1];
+                if (count !== 0) {
+                    lastMessage = messageMap[messageMap.length - 1];
+                }
+                count++;
                 messages = await channel.messages.fetch({
-                    limit: 2,
+                    limit: 100,
                     before: lastMessage.id,
                 });
 
+                messageMap = messages.map((message) => ({
+                    id: message.id,
+                    content: message.content,
+                    timestamp: new Date(message.createdTimestamp),
+                    author: message.author.id,
+                    guildID: interaction.guild.id,
+                    channel: message.channel.id,
+                }));
+                for (const message of messages.values()) {
+                    if (clearedUsers.includes(message.author.id)) continue;
+                    if (
+                        await prisma.user.findUnique({
+                            where: { id: message.author.id },
+                        })
+                    ) {
+                        clearedUsers.push(message.author.id);
+                        continue;
+                    }
+                    await prisma.user.create({
+                        data: {
+                            id: message.author.id,
+                            username: message.author.username,
+                            bot: message.author.bot,
+                        },
+                    });
+                }
                 await prisma.message.createMany({
-                    data: messages.map((message) => ({
-                        id: message.id,
-                        content: message.content,
-                        timestamp: new Date(message.createdTimestamp),
-                        user: {
-                            connectOrCreate: {
-                                where: {
-                                    id: message.author.id,
-                                },
-                                create: {
-                                    id: message.author.id,
-                                    username: message.author.username,
-                                    bot: message.author.bot,
-                                },
-                            },
-                        },
-                        channel: message.channel.id,
-                        guild: {
-                            connectOrCreate: {
-                                where: {
-                                    id: message.guild.id,
-                                },
-                                create: {
-                                    id: message.guild.id,
-                                },
-                            },
-                        },
-                    })),
+                    data: messageMap,
                 });
-                console.log(
-                    lastMessage.id + " " + messages[messages.length - 1].id
-                );
-            } while (lastMessage.id !== messages[messages.length - 1].id);
+                total += messageMap.length;
+                await interaction.editReply({
+                    content: `Please wait, this may take a long time.\nLogged ${total} messages.`,
+                });
+            } while (messageMap.length !== 0);
         }
     } catch (err) {
         console.error(err);
+        await interaction.editReply({
+            content: `An error occurred while logging messages.`,
+        });
     }
 
-    await interaction.channel.send({
-        content: `done`,
+    await interaction.editReply({
+        content: `Successfully logged ${total} messages.`,
     });
 };
 
