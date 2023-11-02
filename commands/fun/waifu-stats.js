@@ -18,7 +18,7 @@ const execute = async (interaction) => {
         ? interaction.options.getUser("target")
         : interaction.user;
 
-    const user = await prisma.user.findUnique({ where: { uid: target.id } });
+    const user = await prisma.user.findUnique({ where: { id: target.id } });
 
     const info = new EmbedBuilder()
         .setColor(0x00ffff)

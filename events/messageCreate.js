@@ -83,7 +83,7 @@ const execute = async (message) => {
         //* Jarvis
         if (
             !(await prisma.guild.findFirst({
-                where: { guildID: message.guild.id },
+                where: { id: message.guild.id },
             }))
         ) {
             return;
