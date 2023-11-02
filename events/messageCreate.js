@@ -6,6 +6,31 @@ const name = Events.MessageCreate;
 
 const execute = async (message) => {
     try {
+        await prisma.message.create({
+            data: {
+                id: message.id,
+                channel: message.channel.id,
+                user: {
+                    connectOrCreate: {
+                        where: { id: message.author.id },
+                        create: {
+                            id: message.author.id,
+                            username: message.author.username,
+                        },
+                    },
+                },
+                guild: {
+                    connectOrCreate: {
+                        where: { id: message.guild.id },
+                        create: {
+                            id: message.guild.id,
+                        },
+                    },
+                },
+                content: message.content,
+                timestamp: new Date(message.createdTimestamp),
+            },
+        });
         if (message.author.id === process.env.CLIENT_ID || message.author.bot) {
             return;
         }
