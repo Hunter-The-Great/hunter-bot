@@ -19,6 +19,9 @@ const execute = async (interaction) => {
         where: {
             guildID: interaction.guild.id,
         },
+        include: {
+            user: true,
+        },
         orderBy: {
             id: "desc",
         },
@@ -28,27 +31,109 @@ const execute = async (interaction) => {
     do {
         message = messages[Math.floor(Math.random() * messages.length)];
     } while (
-        (await prisma.user.findUnique({ where: { id: message.author } })).bot ||
+        message.user.bot ||
         message.content === "" ||
         message.content === null
     );
 
     let usernames = [];
-    console.log("e");
-    const list = await interaction.guild.members;
-    const users = list.cache.map((member) => member.user);
-    console.log(users);
-    while (usernames.length < 4) {
-        const user = users[Math.floor(Math.random() * users.length)];
-        if (!usernames.includes(user.username)) {
-            usernames.push(user.username);
-        }
+    usernames.push(message.user.username);
+    await interaction.guild.members.fetch({ force: true });
+    const blacklist = ["1164630646124195890"];
+    const users = interaction.guild.members.cache.filter(
+        (member) => !member.user.bot && !blacklist.includes(member.id)
+    );
+    while (usernames.length < 3 && usernames.length < users.size) {
+        const user = users.random().user.username;
+        if (usernames.includes(user)) continue;
+        usernames.push(user);
     }
-    console.log(usernames);
+    usernames = usernames.sort();
+    const row = new ActionRowBuilder().addComponents(
+        usernames.map((username) =>
+            new ButtonBuilder()
+                .setCustomId(`guessing-game:${username}`)
+                .setLabel(username)
+                .setStyle(ButtonStyle.Primary)
+        )
+    );
+    const userMap = usernames.map((username) => ({
+        name: username,
+        value: " ",
+        inline: true,
+    }));
     const response = new EmbedBuilder()
         .setColor(0x00ffff)
-        .setTitle(`${message.content}`);
-    interaction.editReply({ embeds: [response], ephemeral: false });
+        .setTitle(`${message.content}`)
+        .addFields(
+            usernames.map((username) => ({
+                name: username,
+                value: " ",
+                inline: true,
+            }))
+        );
+
+    const rsp = await interaction.editReply({
+        embeds: [response],
+        components: [row],
+    });
+
+    try {
+        const filter = (i) => i.customId.startsWith("guessing-game");
+        const collector = rsp.createMessageComponentCollector({
+            filter,
+            time: 10_000,
+        });
+        let guessed = [];
+        collector.on("collect", async (i) => {
+            if (guessed.includes(i.user.id)) {
+                await i.reply({
+                    content: "You already guessed!",
+                    ephemeral: true,
+                });
+                return;
+            }
+            guessed.push(i.user.id);
+            const user = userMap.find(
+                (user) => user.name === i.customId.split(":")[1]
+            );
+            if (user.value === " ") {
+                user.value = i.user.username;
+            } else {
+                user.value += `\n${i.user.username}`;
+            }
+            const response = new EmbedBuilder()
+                .setColor(0x00ffff)
+                .setTitle(`${message.content}`)
+                .addFields(userMap);
+            await i.update({ embeds: [response], components: [row] });
+        });
+        collector.on("end", async () => {
+            const row = new ActionRowBuilder().addComponents(
+                usernames.map((username) =>
+                    new ButtonBuilder()
+                        .setCustomId(`guessing-game:${username}`)
+                        .setLabel(username)
+                        .setStyle(ButtonStyle.Primary)
+                        .setDisabled(true)
+                )
+            );
+            const user = userMap.find(
+                (user) => user.name === message.user.username
+            );
+            user.name = `*${user.name}*`;
+            const response = new EmbedBuilder()
+                .setColor(0x00ffff)
+                .setTitle(`${message.content}`)
+                .setDescription(
+                    `Author: <@${message.author}>\nLink: https://discord.com/channels/${interaction.guild.id}/${message.channel}/${message.id}`
+                )
+                .addFields(userMap);
+            interaction.editReply({ embeds: [response], components: [row] });
+        });
+    } catch (err) {
+        console.error(err);
+    }
 };
 
 module.exports = {
