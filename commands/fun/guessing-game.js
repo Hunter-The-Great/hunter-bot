@@ -1,4 +1,10 @@
-const { SlashCommandBuilder } = require("discord.js");
+const {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ButtonBuilder,
+    ActionRowBuilder,
+    ButtonStyle,
+} = require("discord.js");
 const { prisma } = require("../../utilities/db");
 
 const data = new SlashCommandBuilder()
@@ -26,7 +32,23 @@ const execute = async (interaction) => {
         message.content === "" ||
         message.content === null
     );
-    interaction.editReply({ content: message.content, ephemeral: false });
+
+    let usernames = [];
+    console.log("e");
+    const list = await interaction.guild.members;
+    const users = list.cache.map((member) => member.user);
+    console.log(users);
+    while (usernames.length < 4) {
+        const user = users[Math.floor(Math.random() * users.length)];
+        if (!usernames.includes(user.username)) {
+            usernames.push(user.username);
+        }
+    }
+    console.log(usernames);
+    const response = new EmbedBuilder()
+        .setColor(0x00ffff)
+        .setTitle(`${message.content}`);
+    interaction.editReply({ embeds: [response], ephemeral: false });
 };
 
 module.exports = {
