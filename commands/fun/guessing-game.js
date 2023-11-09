@@ -151,10 +151,13 @@ const execute = async (interaction) => {
                             .setDisabled(true)
                     )
                 );
-                const user = userMap.find(
-                    (user) => user.name === message.user.username
-                );
-                user.name = `*${user.name}*`;
+                for (const user of userMap) {
+                    if (user.name === message.user.username) {
+                        user.name = `:white_check_mark:${user.name}:white_check_mark:`;
+                        continue;
+                    }
+                    user.name = `:x:${user.name}:x:`;
+                }
                 const response = new EmbedBuilder()
                     .setColor(0x00ffff)
                     .setTitle(`${message.content}`)
