@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder, hyperlink } = require("discord.js");
+const { prisma } = require("../../utilities/db");
 
 const data = new SlashCommandBuilder()
     .setName("whois")
@@ -17,25 +18,16 @@ const execute = async (interaction) => {
         ? interaction.options.getUser("target")
         : interaction.user;
     const date = new Date(target.createdAt);
-    await interaction.deferReply({ ephemeral: true });
-    /* 
-    * counting messages sent, only gets 100 most recent per channel,
-    * needs to repeat for this to work properly, but thats a lot of expensive requests
-    
-    const channels = (await interaction.guild.channels.fetch()).values();
-    let messages = [];
-    try {
-        for (const channel of channels) {
-            if (!(channel instanceof TextChannel)) continue;
-            const fetchedMessages = await channel.messages
-                .fetch()
-                .then((i) => i.filter((m) => m.author.id === target.id));
-            messages.push(...fetchedMessages.values());
-        }
-    } catch (err) {
-        console.error(err);
-    }
-    */
+    await interaction.deferReply({ ephemeral: false });
+
+    const user = await prisma.user.findUnique({
+        where: { id: target.id },
+        include: { messages: true },
+    });
+
+    const messages = user.messages.filter(
+        (message) => message.guildID === interaction.guild.id
+    );
 
     const info = new EmbedBuilder()
         .setColor(0x00ffff)
@@ -62,17 +54,15 @@ const execute = async (interaction) => {
                 name: "__**Bot?**__",
                 value: target.bot ? "Yes" : "No",
                 inline: true,
-            }
-            /*
+            },
             {
                 name: "__**Messages Sent**__",
                 value: `${messages.length}`,
                 inline: true,
             }
-            */
         );
 
-    await interaction.editReply({ embeds: [info], ephemeral: true });
+    await interaction.editReply({ embeds: [info], ephemeral: false });
 };
 
 module.exports = {

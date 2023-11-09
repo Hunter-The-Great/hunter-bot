@@ -35,16 +35,18 @@ model Waifu {
 }
 
 model User {
-  id             String          @id
-  username       String
+  id               String          @id
+  username         String
   //? display name
-  waifuCount     Int             @default(0)
-  bot            Boolean         @default(false)
-  savedAt        DateTime        @default(now())
-  messages       Message[]
-  waifus         Waifu[]
-  gifs           Gif[]
-  gitHubWebhooks GitHubWebhook[]
+  waifuCount       Int             @default(0)
+  guessingPoints   Int             @default(0)
+  guessingAttempts Int             @default(0)
+  bot              Boolean         @default(false)
+  savedAt          DateTime        @default(now())
+  messages         Message[]
+  waifus           Waifu[]
+  gifs             Gif[]
+  gitHubWebhooks   GitHubWebhook[]
 }
 
 model GitHubWebhook {
