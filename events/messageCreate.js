@@ -13,6 +13,7 @@ const execute = async (message) => {
             )
         ) {
             message.delete();
+            return;
         }
         */
         await prisma.message.create({
