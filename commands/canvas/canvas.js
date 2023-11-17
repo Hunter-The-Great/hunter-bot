@@ -47,10 +47,28 @@ const execute = async (interaction) => {
             })
         ).canvasToken;
 
+        if (!rawToken) {
+            await interaction.reply({
+                content: "No token found.",
+                ephemeral: true,
+            });
+            return;
+        }
+
         const token = await decrypt(rawToken);
 
         await interaction.reply({
             content: token,
+            ephemeral: true,
+        });
+    } else if (command === "delete") {
+        await prisma.user.update({
+            where: { id: interaction.user.id },
+            data: { canvasToken: null },
+        });
+
+        await interaction.reply({
+            content: "Token deleted.",
             ephemeral: true,
         });
     }
