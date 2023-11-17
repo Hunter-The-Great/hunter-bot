@@ -38,6 +38,7 @@ model User {
   id               String          @id
   username         String
   //? display name
+  canvasToken      Bytes?
   waifuCount       Int             @default(0)
   guessingPoints   Int             @default(0)
   guessingAttempts Int             @default(0)
