@@ -113,7 +113,7 @@ const execute = async (interaction) => {
         }
 
         const scrapeMeta = await fetch(
-            `https://jsonlink.io/api/extract?url=${link}`
+            `https://jsonlink.io/api/extract?api_key=${process.env.SCRAPER_KEY}&url=${link}`
         );
         const meta = await scrapeMeta.json();
         const response = await fetch(link);

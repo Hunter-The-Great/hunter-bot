@@ -6,7 +6,7 @@ const {
     ActionRowBuilder,
 } = require("discord.js");
 const { redis } = require("../../utilities/db.js");
-
+//TODO: update this to use prisma
 const data = new SlashCommandBuilder()
     .setName("override")
     .setDescription("Overrides a command.")
