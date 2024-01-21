@@ -93,7 +93,7 @@ const start = async (client) => {
             const channel = await client.channels.fetch(webhook.channelID);
             await channel.send({ embeds: [embed] });
         }
-        return res.code(200).send({ statusText: "Acknowledged." });
+        return res.code(200).send({ message: "Acknowledged." });
     });
 
     fastify.post("/drewh", async (request, res) => {
@@ -107,28 +107,16 @@ const start = async (client) => {
         return res.code(200).send({ message: "Acknowledged." });
     });
 
-    /* In case Drew ever makes that plugin
-    fastify.post("/mc", async (request) => {
-        // -------------------------------------------------------------------------------------------- /mc
-        if (request.body.key !== process.env.MC_KEY) {
-            console.log("Invalid key for /mc.");
-            return "Invalid key.";
-        }
-
-        const channel = await client.channels.fetch(process.env.MC_CHANNEL_ID);
-        if (request.body.type === "join") {
-            // -------------------------------------------------------------------------------------------- join
-            await channel.send(
-                `**${request.body.username}** joined the server.`
-            );
-        } else if (request.body.type === "leave") {
-            // -------------------------------------------------------------------------------------------- leave
-            await channel.send(`**${request.body.username}** left the server.`);
-        }
-
-        return "Acknowledged.";
+    fastify.post("/coolthing", async (request, res) => {
+        await client.channels
+            .fetch(process.env.COOL_CHANNEL)
+            .then((channel) => {
+                channel.send(
+                    `${request.body.user ?? "SOMEONE"} FOUND THE COOL THING!`
+                );
+            });
+        return res.code(200).send({ message: "Cool thing acknowledged." });
     });
-    */
 
     //* running the server
     try {
