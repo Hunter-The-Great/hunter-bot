@@ -112,7 +112,9 @@ const start = async (client) => {
             .fetch(process.env.COOL_CHANNEL)
             .then((channel) => {
                 channel.send(
-                    `${request.body.user ?? "SOMEONE"} FOUND THE COOL THING!`
+                    `${request.body.user ?? "SOMEONE"} ${
+                        request.body.code ? `(${request.body.code}) ` : ""
+                    }FOUND THE COOL THING!`
                 );
             });
         return res.code(200).send({ message: "Cool thing acknowledged." });
