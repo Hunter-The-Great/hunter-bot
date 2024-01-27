@@ -11,7 +11,7 @@ const execute = async (client) => {
         client.channels.fetch("1126759333733085214").then((channel) => {
             channel.send(
                 `# Hunter bot is live on ${
-                    process.env
+                    process.env.NODE
                 }.\n \`${new Date().toLocaleString()}\``
             );
         });
