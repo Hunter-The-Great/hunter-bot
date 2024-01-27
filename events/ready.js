@@ -8,10 +8,10 @@ const execute = async (client) => {
     console.log(`Logged in as ${client.user.tag}`);
     console.log(process.env);
     try {
-        client.channels.fetch(process.env.UPDATE_CHANNEL).then((channel) => {
+        client.channels.fetch("1126759333733085214").then((channel) => {
             channel.send(
                 `# Hunter bot is live on ${
-                process.env
+                    process.env
                 }.\n \`${new Date().toLocaleString()}\``
             );
         });

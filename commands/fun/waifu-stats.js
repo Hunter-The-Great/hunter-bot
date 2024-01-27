@@ -25,7 +25,7 @@ const execute = async (interaction) => {
         .setTitle(target.username)
         .setDescription(
             `has run the /waifu command ${user ? user.waifuCount : 0} times. ${
-                target.id === process.env.MY_ID
+                target.id === "386758028533170177"
                     ? "\n(it's for testing, ok?)"
                     : " "
             }`

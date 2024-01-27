@@ -72,7 +72,7 @@ const data = new SlashCommandBuilder()
 
 const execute = async (interaction) => {
     /*
-    if (interaction.user.id === process.env.HID) {
+    if (interaction.user.id === "472069345569144843") {
         await interaction.reply("*Down __**ATROCIOUS**__*.");
     } else {
         await interaction.reply("*Down bad*.");

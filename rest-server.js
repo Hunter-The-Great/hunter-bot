@@ -102,21 +102,19 @@ const start = async (client) => {
             console.log("Invalid key for /drewh.");
             return res.code(401).send({ message: "Invalid Key" });
         }
-        const drew = await client.users.fetch(process.env.DREW_ID);
+        const drew = await client.users.fetch("254591447284711424");
         await drew.send(request.body.message);
         return res.code(200).send({ message: "Acknowledged." });
     });
 
     fastify.post("/coolthing", async (request, res) => {
-        await client.channels
-            .fetch(process.env.COOL_CHANNEL)
-            .then((channel) => {
-                channel.send(
-                    `${request.body.user ?? "SOMEONE"} ${
-                        request.body.code ? `(${request.body.code}) ` : ""
-                    }FOUND THE COOL THING!`
-                );
-            });
+        await client.channels.fetch("1198755163612119163").then((channel) => {
+            channel.send(
+                `${request.body.user ?? "SOMEONE"} ${
+                    request.body.code ? `(${request.body.code}) ` : ""
+                }FOUND THE COOL THING!`
+            );
+        });
         return res.code(200).send({ message: "Cool thing acknowledged." });
     });
 
