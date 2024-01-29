@@ -244,17 +244,21 @@ const execute = async (interaction) => {
         });
         collector.on("end", async () => {
             //* ------------------------------------------------------------------------------ console.on("end")
-            const save = new ButtonBuilder()
-                .setCustomId("save")
-                .setLabel(
-                    await interaction
-                        .fetchReply()
-                        .then((r) => r.components[0].components[0].label)
-                )
-                .setStyle(ButtonStyle.Primary)
-                .setDisabled(true);
-            row.setComponents(save);
-            interaction.editReply({ components: [row] });
+            try {
+                const save = new ButtonBuilder()
+                    .setCustomId("save")
+                    .setLabel(
+                        await interaction
+                            .fetchReply()
+                            .then((r) => r.components[0].components[0].label)
+                    )
+                    .setStyle(ButtonStyle.Primary)
+                    .setDisabled(true);
+                row.setComponents(save);
+                interaction.editReply({ components: [row] });
+            } catch (err) {
+                console.error(err);
+            }
         });
     }
 };
