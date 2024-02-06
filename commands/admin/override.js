@@ -5,8 +5,8 @@ const {
     ButtonStyle,
     ActionRowBuilder,
 } = require("discord.js");
-const { redis } = require("../../utilities/db.js");
-//TODO: update this to use prisma
+const { prisma } = require("../../utilities/db.js");
+
 const data = new SlashCommandBuilder()
     .setName("override")
     .setDescription("Overrides a command.")
@@ -82,43 +82,46 @@ const execute = async (interaction) => {
     if (interaction.options.getSubcommand().includes("gif")) {
         await interaction.deferReply();
         const alias = interaction.options.getString("alias");
-        const hash = "GIF:" + interaction.options.getString("uid");
 
         if (interaction.options.getSubcommand() === "gif-list") {
-            const data = await redis.hkeys(hash);
+            const data = await prisma.gif.findMany({
+                where: { uid: puppet.id },
+                orderBy: { savedAt: "asc" },
+            });
             let listEmbed = new EmbedBuilder()
                 .setColor(0x00ffff)
-                .setThumbnail(puppet.displayAvatarURL())
+                .setThumbnail(interaction.user.displayAvatarURL())
                 .setAuthor({
-                    name: puppet.tag,
-                    iconURL: puppet.displayAvatarURL(),
+                    name: interaction.user.username,
+                    iconURL: interaction.user.displayAvatarURL(),
                 })
                 .setFooter({ text: `${data.length}/20` });
 
             if (data.length === 0) {
                 listEmbed.setTitle(
-                    "No aliases in use by " + puppet.username + "."
+                    "No aliases in use by " + interaction.user.username + "."
                 );
                 await interaction.editReply({ embeds: [listEmbed] });
                 return;
             }
 
-            data.sort();
             listEmbed
-                .setTitle("Aliases in use by " + puppet.username + ": ")
-                .setDescription(data.join("\n"));
+                .setTitle("Aliases in use by " + interaction.user.username + ": ")
+                .setDescription(data.map((gif) => gif.alias).join("\n"));
 
             await interaction.editReply({ embeds: [listEmbed] });
+
             return;
         } else if (interaction.options.getSubcommand() === "gif-load") {
-            const data = await redis.hget(hash, alias);
+            const data = await prisma.gif.findFirst({ where: { uid: puppet.id, alias } });
             if (!data) {
                 await interaction.editReply("No GIF by that alias found.");
                 return;
             }
-            await interaction.editReply(data);
+            await interaction.editReply(data.link);
+
         } else if (interaction.options.getSubcommand() === "gif-delete") {
-            if (await redis.hdel(hash, alias)) {
+            if (await prisma.gid.deleteMany({ where: { uid: puppet.id, alias } })) {
                 await interaction.editReply("GIF deleted");
             } else {
                 await interaction.editReply("No GIF by that alias found.");
@@ -149,10 +152,7 @@ const execute = async (interaction) => {
                 });
 
                 if (confirmation.customId === "confirm") {
-                    const list = await redis.hkeys(hash);
-                    for (const item of list) {
-                        await redis.hdel(hash, item);
-                    }
+                    await prisma.gif.deleteMany({ where: { uid: puppet.id } });
                     await confirmation.update({
                         content: "GIFs deleted.",
                         components: [],
