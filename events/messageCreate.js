@@ -145,14 +145,20 @@ const execute = async (message) => {
             // 10 second delay
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            const alias = message.content
+            let alias = message.content
                 .toLowerCase()
                 .replace("jarvis", "")
                 .replace("withers", "")
                 .replace(/ a /g, " ")
                 .replace(request, "")
-                .replace(/in |the |me |here /g, "");
+                .replace(/in |the |me |here |up /g, "");
             const waifuRequest = /fine art|waifu/;
+            if (alias.startsWith(" ")) {
+                alias = alias.slice(1);
+            }
+            if (alias.endsWith(" ")) {
+                alias = alias.slice(0, -1);
+            }
             if (message.content.toLowerCase().match(waifuRequest)) {
                 const url =
                     "https://api.waifu.im/search/?&included_tags=waifu&is_nsfw=false";
