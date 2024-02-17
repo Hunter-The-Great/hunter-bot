@@ -21,6 +21,9 @@ const commandFolders = fs.readdirSync(foldersPath);
 
 //Registers commands
 for (const folder of commandFolders) {
+    if (!fs.lstatSync(path.join(foldersPath, folder)).isDirectory()) {
+        continue;
+    }
     const commandsPath = path.join(foldersPath, folder);
     const commandFiles = fs
         .readdirSync(commandsPath)
