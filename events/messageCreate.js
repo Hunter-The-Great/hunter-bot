@@ -172,11 +172,11 @@ const execute = async (message) => {
                     ).images[0].url
                 );
                 return;
-            } else if (alias.toLowerCase() === "l l"){
+            } else if (alias.toLowerCase() === "l l") {
                 const data = fs.readFileSync("resources/l.txt", "utf8");
                 await message.channel.send(data);
                 return;
-            }else if (alias.toLowerCase() === "w w"){
+            } else if (alias.toLowerCase() === "w w") {
                 const data = fs.readFileSync("resources/w.txt", "utf8");
                 await message.channel.send(data);
                 return;
