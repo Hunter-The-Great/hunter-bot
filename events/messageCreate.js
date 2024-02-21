@@ -124,7 +124,7 @@ const execute = async (message) => {
         }
 
         const request =
-            /send |paste in |paste up |throw in |throw up |hit (\w)+ with |get |summon /;
+            /send |paste in |paste up |throw in |throw up |hit (\w)+ with |get |summon |search |search for /;
         if (message.content.toLowerCase().match(request)) {
             const initialResponse = jarvis
                 ? jarvisStart[Math.floor(Math.random() * jarvisStart.length)] +
@@ -142,7 +142,8 @@ const execute = async (message) => {
                 .replace("withers", "")
                 .replace(/ a /g, " ")
                 .replace(request, "")
-                .replace(/in |the |me |here |up /g, "");
+                .replace(/in |the |me |here |up /g, "")
+                .replace("\"", "");
             const waifuRequest = /fine art|waifu/;
             if (alias.startsWith(" ")) {
                 alias = alias.slice(1);
@@ -150,6 +151,7 @@ const execute = async (message) => {
             if (alias.endsWith(" ")) {
                 alias = alias.slice(0, -1);
             }
+            console.log(alias)
             if (message.content.toLowerCase().match(waifuRequest)) {
                 const url =
                     "https://api.waifu.im/search/?&included_tags=waifu&is_nsfw=false";
@@ -176,10 +178,17 @@ const execute = async (message) => {
                 const data = fs.readFileSync("resources/l.txt", "utf8");
                 await message.channel.send(data);
                 return;
+            }else if(alias.toLowerCase() === "l l prime" || alias.toLowerCase() === "prime l l"){
+                const data = fs.readFileSync("resources/l-prime.txt", "utf8");
+                await message.channel.send(data);
+                return;
             } else if (alias.toLowerCase() === "w w") {
                 const data = fs.readFileSync("resources/w.txt", "utf8");
                 await message.channel.send(data);
                 return;
+            } else if (alias.toLowerCase() === "shadow h gifs then click on first one"){
+                await message.channel.send("https://tenor.com/view/jarvis-shadow-h-iron-man-sped-up-gif-24172792");
+                return
             }
 
             const result = await prisma.gif.findFirst({
