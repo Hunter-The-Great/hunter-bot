@@ -151,7 +151,6 @@ const execute = async (message) => {
             if (alias.endsWith(" ")) {
                 alias = alias.slice(0, -1);
             }
-            console.log(alias)
             if (message.content.toLowerCase().match(waifuRequest)) {
                 const url =
                     "https://api.waifu.im/search/?&included_tags=waifu&is_nsfw=false";
