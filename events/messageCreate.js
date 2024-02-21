@@ -98,8 +98,23 @@ const execute = async (message) => {
         ];
         const jarvisEnd = [".", ", sir."];
         const withersResponse = ["It shall be done...", "As you wish..."];
-
         const jarvis = message.content.toLowerCase().startsWith("jarvis");
+        const initialResponse = jarvis
+            ? jarvisStart[Math.floor(Math.random() * jarvisStart.length)] +
+            jarvisEnd[Math.floor(Math.random() * jarvisEnd.length)]
+            : withersResponse[
+            Math.floor(Math.random() * withersResponse.length)
+            ];
+
+        const shadowCheck = message.content.toLowerCase().replaceAll("\"", "").replaceAll(",", "").replaceAll(".", "");
+        console.log(shadowCheck)
+        if (shadowCheck === "jarvis search shadow h in gifs then click on the first one") {
+            await message.channel.send(initialResponse);
+            // 10 second delay
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await message.channel.send("https://tenor.com/view/jarvis-shadow-h-iron-man-sped-up-gif-24172792");
+            return;
+        }
 
         const jarvisCheck = /^jarvis+(\W$|$)/;
         const witherCheck = /^withers+(\W$|$)/;
@@ -126,12 +141,6 @@ const execute = async (message) => {
         const request =
             /send |paste in |paste up |throw in |throw up |hit (\w)+ with |get |summon |search |search for /;
         if (message.content.toLowerCase().match(request)) {
-            const initialResponse = jarvis
-                ? jarvisStart[Math.floor(Math.random() * jarvisStart.length)] +
-                jarvisEnd[Math.floor(Math.random() * jarvisEnd.length)]
-                : withersResponse[
-                Math.floor(Math.random() * withersResponse.length)
-                ];
             await message.channel.send(initialResponse);
             // 10 second delay
             await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -143,7 +152,8 @@ const execute = async (message) => {
                 .replace(/ a /g, " ")
                 .replace(request, "")
                 .replace(/in |the |me |here |up /g, "")
-                .replace("\"", "");
+                .replaceAll(",", "")
+                .replaceAll("\"", "");
             const waifuRequest = /fine art|waifu/;
             if (alias.startsWith(" ")) {
                 alias = alias.slice(1);
@@ -177,7 +187,7 @@ const execute = async (message) => {
                 const data = fs.readFileSync("resources/l.txt", "utf8");
                 await message.channel.send(data);
                 return;
-            }else if(alias.toLowerCase() === "l l prime" || alias.toLowerCase() === "prime l l"){
+            } else if (alias.toLowerCase() === "l l prime" || alias.toLowerCase() === "prime l l") {
                 const data = fs.readFileSync("resources/l-prime.txt", "utf8");
                 await message.channel.send(data);
                 return;
@@ -185,11 +195,7 @@ const execute = async (message) => {
                 const data = fs.readFileSync("resources/w.txt", "utf8");
                 await message.channel.send(data);
                 return;
-            } else if (alias.toLowerCase() === "shadow h gifs then click on first one"){
-                await message.channel.send("https://tenor.com/view/jarvis-shadow-h-iron-man-sped-up-gif-24172792");
-                return
             }
-
             const result = await prisma.gif.findFirst({
                 where: { uid: message.author.id, alias: { search: alias } },
             });
