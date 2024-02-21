@@ -1,21 +1,12 @@
 const { Events } = require("discord.js");
 const { prisma } = require("../utilities/db");
 const fetch = require("isomorphic-fetch");
+const fs = require("fs");
 
 const name = Events.MessageCreate;
 
 const execute = async (message) => {
     try {
-        /*
-        if (
-            message.content.includes(
-                "The Thermal DMR is a semi automatic, fast-firing rifle that shoots quick-moving projectiles. It has a large magazine and can deal quick successive damage over range. It features a low-power scope with toggleable thermal vision. Stats: The Thermal DMR uses Medium Ammo and has a headshot multiplier of 1.65x. The Thermal DMR is a Fast Moving Projectile weapon, with a scope. There is no falloff damage on the DMR's projectiles. The Thermal DMR cannot reload whilst aiming. Strategy Guide: When using this weapon, bare in mind that you have traded raw damage output for the ability to scout out for players easier. Enemies using the Twin Mag Assault Rifle can outplay you from longer ranges, due to their gun being hitscan and yours not. Use the scope's thermal vision to pick out enemies that you may not have been able to see otherwise. The Thermal DMR excels at medium to longer ranges, so it is ideal to keep a closer ranged weapon for close quarters engagements. If you have been cornered and do not have other weapon in your hand, remember that Thermal DMR fires only slightly slower than most assault rifles, thus can be used at close range, though ineffectively. Consider the range you engage an enemy, you may need to predict your ballistics when firing at a moving target. Despite the high fire rate, you should fire more slowly when taking an enemy on a distance as to not waste ammo trying to control the wild recoil. History: Chapter 4 Season 3 - Update v25.00: Introduced the Thermal DMR in Common to Mythic."
-            )
-        ) {
-            message.delete();
-            return;
-        }
-        */
         await prisma.message.create({
             data: {
                 id: message.id,
@@ -75,7 +66,7 @@ const execute = async (message) => {
                     } else {
                         newMessage +=
                             synonyms[
-                                Math.floor(Math.random() * synonyms.length)
+                            Math.floor(Math.random() * synonyms.length)
                             ] + " ";
                     }
                 }
@@ -124,9 +115,9 @@ const execute = async (message) => {
             await message.channel.send(
                 jarvis
                     ? "Of course not" +
-                          jarvisEnd[
-                              Math.floor(Math.random() * jarvisEnd.length)
-                          ]
+                    jarvisEnd[
+                    Math.floor(Math.random() * jarvisEnd.length)
+                    ]
                     : "As you wish..."
             );
             return;
@@ -137,10 +128,10 @@ const execute = async (message) => {
         if (message.content.toLowerCase().match(request)) {
             const initialResponse = jarvis
                 ? jarvisStart[Math.floor(Math.random() * jarvisStart.length)] +
-                  jarvisEnd[Math.floor(Math.random() * jarvisEnd.length)]
+                jarvisEnd[Math.floor(Math.random() * jarvisEnd.length)]
                 : withersResponse[
-                      Math.floor(Math.random() * withersResponse.length)
-                  ];
+                Math.floor(Math.random() * withersResponse.length)
+                ];
             await message.channel.send(initialResponse);
             // 10 second delay
             await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -169,9 +160,9 @@ const execute = async (message) => {
                     );
                     console.log(
                         "Waifu.im communication failure, code: " +
-                            response.status +
-                            "\n\n" +
-                            response.statusText
+                        response.status +
+                        "\n\n" +
+                        response.statusText
                     );
                     return;
                 }
@@ -181,7 +172,16 @@ const execute = async (message) => {
                     ).images[0].url
                 );
                 return;
+            } else if (alias.toLowerCase() === "l l"){
+                const data = fs.readFileSync("resources/l.txt", "utf8");
+                await message.channel.send(data);
+                return;
+            }else if (alias.toLowerCase() === "w w"){
+                const data = fs.readFileSync("resources/w.txt", "utf8");
+                await message.channel.send(data);
+                return;
             }
+
             const result = await prisma.gif.findFirst({
                 where: { uid: message.author.id, alias: { search: alias } },
             });
