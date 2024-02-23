@@ -42,6 +42,25 @@ for (const folder of commandFolders) {
     }
 }
 
+// Registers text commands
+client.textCommands = new Collection();
+const textPath = path.join(__dirname, "text-commands");
+const textFiles = fs
+        .readdirSync(textPath)
+        .filter((file) => file.endsWith(".js"));
+for (const file of textFiles) {
+    const filePath = path.join(textPath, file);
+    const command = require(filePath);
+    // Set a new item in the Collection with the key as the command name and the value as the exported module
+    if ("name" in command && "execute" in command) {
+        client.textCommands.set(command.name, command);
+    } else {
+        console.log(
+            `[WARNING] The text command at ${filePath} is missing a required "name" or "execute" property.`
+        );
+    }
+}
+
 //registers modals
 client.modals = new Collection();
 const modalsPath = path.join(__dirname, "modals");
