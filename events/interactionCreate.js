@@ -1,5 +1,6 @@
 const { Events } = require("discord.js");
 const { log } = require("../utilities/log.js");
+const { checkPermissions } = require("../utilities/permission-check.js");
 
 const name = Events.InteractionCreate;
 
@@ -12,7 +13,7 @@ const execute = async (interaction) => {
         return;
     }
     if (interaction.isButton()) {
-        //* -------------------------------------------------------------------- buttons
+        //* buttons
         try {
             if (interaction.customId.endsWith(interaction.user.id)) {
                 return;
@@ -29,7 +30,7 @@ const execute = async (interaction) => {
         }
     }
     if (interaction.isChatInputCommand()) {
-        //* -------------------------------------------------------------------- slash commands
+        //* slash commands
         try {
             const command = interaction.client.commands.get(
                 interaction.commandName
@@ -38,6 +39,12 @@ const execute = async (interaction) => {
                 throw new Error(
                     `Command "${interaction.commandName}" not found`
                 );
+            }
+            if(command.category === "moderation"){
+               if(!await checkPermissions(interaction.user, interaction.channel)) {
+                    interaction.reply("Insufficient permissions to use this command.");
+                    return;
+                }
             }
             await command.execute(interaction);
         } catch (err) {
@@ -59,7 +66,7 @@ const execute = async (interaction) => {
                 return;
             }
         }
-        //* -------------------------------------------------------------------- command logging
+        //* command logging
         try {
             const payload = {
                 user: interaction.user.username,
@@ -74,7 +81,7 @@ const execute = async (interaction) => {
             console.error("Axiom communications failure:\n", err);
         }
     } else if (interaction.isModalSubmit()) {
-        //* -------------------------------------------------------------------- modals
+        //* modals
         try {
             const modal = interaction.client.modals.get(interaction.customId);
             await modal.execute(interaction);
