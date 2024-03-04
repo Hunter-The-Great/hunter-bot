@@ -38,7 +38,6 @@ const data = new SlashCommandBuilder()
 
 const execute = async (interaction) => {
     if (interaction.options.getSubcommand() === "register") {
-        //* ----------------------------------------------------------------------- register
         const discriminatorInput = new TextInputBuilder()
             .setCustomId("discriminator")
             .setLabel("ID (<=25):")
@@ -60,7 +59,6 @@ const execute = async (interaction) => {
             .addComponents(row1, row2);
         await interaction.showModal(modal);
     } else if (interaction.options.getSubcommand() === "list") {
-        //* ----------------------------------------------------------------------- list
         const webhooks = await prisma.gitHubWebhook.findMany({
             where: { uid: interaction.user.id },
         });
@@ -82,7 +80,6 @@ const execute = async (interaction) => {
             return;
         }
     } else if (interaction.options.getSubcommand() === "delete") {
-        //* ----------------------------------------------------------------------- delete
         if (
             !(await prisma.gitHubWebhook.findFirst({
                 where: {
@@ -140,9 +137,7 @@ const execute = async (interaction) => {
         console.log(
             `ERROR: subcommand not found for /github: ${interaction.options.getSubcommand()}`
         );
-        await interaction.editReply(
-            "An error occured, please try again later."
-        );
+        await interaction.reply("An error occured, please try again later.");
     }
 };
 
