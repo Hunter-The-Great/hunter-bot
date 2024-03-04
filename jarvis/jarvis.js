@@ -14,17 +14,24 @@ const executeJarvis = async (message) => {
     const jarvis = message.content.toLowerCase().startsWith("jarvis");
     const initialResponse = jarvis
         ? jarvisStart[Math.floor(Math.random() * jarvisStart.length)] +
-        jarvisEnd[Math.floor(Math.random() * jarvisEnd.length)]
-        : withersResponse[
-        Math.floor(Math.random() * withersResponse.length)
-        ];
+          jarvisEnd[Math.floor(Math.random() * jarvisEnd.length)]
+        : withersResponse[Math.floor(Math.random() * withersResponse.length)];
 
-    const shadowCheck = message.content.toLowerCase().replaceAll("\"", "").replaceAll(",", "").replaceAll(".", "");
-    if (shadowCheck === "jarvis search shadow h in gifs then click on the first one") {
+    const shadowCheck = message.content
+        .toLowerCase()
+        .replaceAll('"', "")
+        .replaceAll(",", "")
+        .replaceAll(".", "");
+    if (
+        shadowCheck ===
+        "jarvis search shadow h in gifs then click on the first one"
+    ) {
         await message.channel.send(initialResponse);
         // 10 second delay
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        await message.channel.send("https://tenor.com/view/jarvis-shadow-h-iron-man-sped-up-gif-24172792");
+        await message.channel.send(
+            "https://tenor.com/view/jarvis-shadow-h-iron-man-sped-up-gif-24172792"
+        );
         return;
     }
 
@@ -42,9 +49,7 @@ const executeJarvis = async (message) => {
         await message.channel.send(
             jarvis
                 ? "Of course not" +
-                jarvisEnd[
-                Math.floor(Math.random() * jarvisEnd.length)
-                ]
+                      jarvisEnd[Math.floor(Math.random() * jarvisEnd.length)]
                 : "As you wish..."
         );
         return;
@@ -65,7 +70,7 @@ const executeJarvis = async (message) => {
             .replace(request, "")
             .replace(/in |the |me |here |up /g, "")
             .replaceAll(",", "")
-            .replaceAll("\"", "");
+            .replaceAll('"', "");
         const waifuRequest = /fine art|waifu/;
         if (alias.startsWith(" ")) {
             alias = alias.slice(1);
@@ -83,23 +88,22 @@ const executeJarvis = async (message) => {
                 );
                 console.log(
                     "Waifu.im communication failure, code: " +
-                    response.status +
-                    "\n\n" +
-                    response.statusText
+                        response.status +
+                        "\n\n" +
+                        response.statusText
                 );
                 return;
             }
-            await message.channel.send(
-                (
-                    await response.json()
-                ).images[0].url
-            );
+            await message.channel.send((await response.json()).images[0].url);
             return;
         } else if (alias.toLowerCase() === "l l") {
             const data = fs.readFileSync("resources/l.txt", "utf8");
             await message.channel.send(data);
             return;
-        } else if (alias.toLowerCase() === "l l prime" || alias.toLowerCase() === "prime l l") {
+        } else if (
+            alias.toLowerCase() === "l l prime" ||
+            alias.toLowerCase() === "prime l l"
+        ) {
             const data = fs.readFileSync("resources/l-prime.txt", "utf8");
             await message.channel.send(data);
             return;
@@ -119,8 +123,8 @@ const executeJarvis = async (message) => {
         }
         await message.channel.send(result.link);
     }
-}
+};
 
 module.exports = {
-    executeJarvis
-}
+    executeJarvis,
+};

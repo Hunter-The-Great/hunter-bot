@@ -70,6 +70,9 @@ const execute = async (interaction) => {
             content: "Token deleted.",
             ephemeral: true,
         });
+    } else {
+        console.log(`ERROR: subcommand not found for /canvas: ${command}`);
+        await interaction.reply("An error occured, please try again later.");
     }
 };
 

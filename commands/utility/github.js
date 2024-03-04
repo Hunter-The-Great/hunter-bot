@@ -136,6 +136,11 @@ const execute = async (interaction) => {
             )
             .addComponents(row1, row2, row3);
         await interaction.showModal(modal);
+    } else {
+        console.log(
+            `ERROR: subcommand not found for /github: ${interaction.options.getSubcommand()}`
+        );
+        await interaction.reply("An error occured, please try again later.");
     }
 };
 

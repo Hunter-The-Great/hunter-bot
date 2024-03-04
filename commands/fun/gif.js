@@ -75,7 +75,6 @@ const execute = async (interaction) => {
     });
 
     if (interaction.options.getSubcommand() === "save") {
-        //* -------------------------------------------------------------------------------------------- Save
         if (await prisma.gif.findFirst({ where: { uid: id, alias } })) {
             interaction.editReply("Alias already in use.");
             return;
@@ -142,7 +141,6 @@ const execute = async (interaction) => {
 
         await interaction.editReply("Error: invalid link.");
     } else if (interaction.options.getSubcommand() === "load") {
-        //* -------------------------------------------------------------------------------------------- Load
         const regex = /^[A-Za-z0-9\s-_,.]+$/;
         if (!alias.match(regex) || alias.toLowerCase() === "null") {
             await interaction.editReply(
@@ -157,7 +155,6 @@ const execute = async (interaction) => {
         }
         await interaction.editReply(data.link);
     } else if (interaction.options.getSubcommand() === "list") {
-        //* -------------------------------------------------------------------------------------------- List
         const data = await prisma.gif.findMany({
             where: { uid: id },
             orderBy: { savedAt: "asc" },
@@ -185,14 +182,12 @@ const execute = async (interaction) => {
 
         await interaction.editReply({ embeds: [listEmbed] });
     } else if (interaction.options.getSubcommand() === "delete") {
-        //* -------------------------------------------------------------------------------------------- Delete
         if (await prisma.gif.deleteMany({ where: { uid: id, alias } })) {
             await interaction.editReply("GIF deleted");
         } else {
             await interaction.editReply("No GIF by that alias found.");
         }
     } else if (interaction.options.getSubcommand() === "clear") {
-        //* -------------------------------------------------------------------------------------------- Clear
         const confirm = new ButtonBuilder()
             .setCustomId(`confirm:${interaction.user.id}`)
             .setLabel("Confirm clear")
@@ -237,10 +232,10 @@ const execute = async (interaction) => {
             console.error("An error has occurred: \n", err);
         }
     } else {
-        interaction.editReply(
-            "Something has gone wrong, please try again later."
+        console.log(
+            `ERROR: subcommand not found for /guessing: ${interaction.options.getSubcommand()}`
         );
-        console.log("An invalid command was given");
+        await interaction.reply("An error occured, please try again later.");
     }
 };
 

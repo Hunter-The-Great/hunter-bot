@@ -106,22 +106,29 @@ const execute = async (interaction) => {
             }
 
             listEmbed
-                .setTitle("Aliases in use by " + interaction.user.username + ": ")
+                .setTitle(
+                    "Aliases in use by " + interaction.user.username + ": "
+                )
                 .setDescription(data.map((gif) => gif.alias).join("\n"));
 
             await interaction.editReply({ embeds: [listEmbed] });
 
             return;
         } else if (interaction.options.getSubcommand() === "gif-load") {
-            const data = await prisma.gif.findFirst({ where: { uid: puppet.id, alias } });
+            const data = await prisma.gif.findFirst({
+                where: { uid: puppet.id, alias },
+            });
             if (!data) {
                 await interaction.editReply("No GIF by that alias found.");
                 return;
             }
             await interaction.editReply(data.link);
-
         } else if (interaction.options.getSubcommand() === "gif-delete") {
-            if (await prisma.gid.deleteMany({ where: { uid: puppet.id, alias } })) {
+            if (
+                await prisma.gid.deleteMany({
+                    where: { uid: puppet.id, alias },
+                })
+            ) {
                 await interaction.editReply("GIF deleted");
             } else {
                 await interaction.editReply("No GIF by that alias found.");
@@ -171,11 +178,18 @@ const execute = async (interaction) => {
                 console.error("An error has occurred: \n", err);
             }
         } else {
-            interaction.editReply(
-                "Something has gone wrong, please try again later."
+            console.log(
+                `ERROR: subcommand not found for /override gif: ${interaction.options.getSubcommand()}`
             );
-            console.log("An invalid command was given");
+            await interaction.reply(
+                "An error occured, please try again later."
+            );
         }
+    } else {
+        console.log(
+            `ERROR: subcommand not found for /override: ${interaction.options.getSubcommand()}`
+        );
+        await interaction.reply("An error occured, please try again later.");
     }
 };
 

@@ -197,6 +197,11 @@ const execute = async (interaction) => {
                 }
             );
         await interaction.editReply({ embeds: [response] });
+    } else {
+        console.log(
+            `ERROR: subcommand not found for /guessing: ${interaction.options.getSubcommand()}`
+        );
+        await interaction.reply("An error occured, please try again later.");
     }
 };
 
