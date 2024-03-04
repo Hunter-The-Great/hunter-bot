@@ -1,6 +1,6 @@
 const { Events } = require("discord.js");
 const { prisma } = require("../utilities/db");
-const { executeJarvis } = require("../jarvis/jarvis.js")
+const { executeJarvis } = require("../jarvis/jarvis.js");
 
 const name = Events.MessageCreate;
 
@@ -44,7 +44,7 @@ const execute = async (message) => {
 
         //* Text commands
         if (message.content.startsWith("~!")) {
-           try{
+            try {
                 const command = message.client.textCommands.get(
                     message.content.slice(2)
                 );
@@ -54,7 +54,7 @@ const execute = async (message) => {
                     );
                 }
                 await command.execute(message);
-            } catch (err){
+            } catch (err) {
                 console.error("Failed to execute text command:\n", err);
             }
         }
@@ -74,7 +74,6 @@ const execute = async (message) => {
         ) {
             executeJarvis(message);
         }
-
     } catch (err) {
         console.error("An error has occurred:\n", err);
     }

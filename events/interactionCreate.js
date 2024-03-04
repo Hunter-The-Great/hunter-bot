@@ -40,9 +40,16 @@ const execute = async (interaction) => {
                     `Command "${interaction.commandName}" not found`
                 );
             }
-            if(command.category === "moderation"){
-               if(!await checkPermissions(interaction.user, interaction.channel)) {
-                    interaction.reply("Insufficient permissions to use this command.");
+            if (command.category === "moderation") {
+                if (
+                    !(await checkPermissions(
+                        interaction.user,
+                        interaction.channel
+                    ))
+                ) {
+                    interaction.reply(
+                        "Insufficient permissions to use this command."
+                    );
                     return;
                 }
             }

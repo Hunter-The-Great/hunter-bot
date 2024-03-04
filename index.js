@@ -46,8 +46,8 @@ for (const folder of commandFolders) {
 client.textCommands = new Collection();
 const textPath = path.join(__dirname, "text-commands");
 const textFiles = fs
-        .readdirSync(textPath)
-        .filter((file) => file.endsWith(".js"));
+    .readdirSync(textPath)
+    .filter((file) => file.endsWith(".js"));
 for (const file of textFiles) {
     const filePath = path.join(textPath, file);
     const command = require(filePath);

@@ -1,4 +1,4 @@
-const name = "synonyms"
+const name = "synonyms";
 const thesaurus = require("thesaurus");
 
 const execute = async (message) => {
@@ -7,9 +7,7 @@ const execute = async (message) => {
     }
 
     const original = (
-        await message.channel.messages.fetch(
-            message.reference.messageId
-        )
+        await message.channel.messages.fetch(message.reference.messageId)
     ).content.split(" ");
 
     var newMessage = "";
@@ -19,15 +17,13 @@ const execute = async (message) => {
             newMessage += word + " ";
         } else {
             newMessage +=
-                synonyms[
-                Math.floor(Math.random() * synonyms.length)
-                ] + " ";
+                synonyms[Math.floor(Math.random() * synonyms.length)] + " ";
         }
     }
     await message.reply({ content: newMessage });
-}
+};
 
 module.exports = {
     name,
     execute,
-}
+};

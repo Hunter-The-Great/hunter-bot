@@ -1,4 +1,4 @@
-const {SlashCommandBuilder} = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 const fs = require("fs");
 
 const data = new SlashCommandBuilder()
@@ -16,4 +16,4 @@ module.exports = {
     data,
     category: "moderation",
     execute,
-}
+};
