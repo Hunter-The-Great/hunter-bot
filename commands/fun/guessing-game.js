@@ -201,7 +201,9 @@ const execute = async (interaction) => {
         console.log(
             `ERROR: subcommand not found for /guessing: ${interaction.options.getSubcommand()}`
         );
-        await interaction.reply("An error occured, please try again later.");
+        await interaction.editReply(
+            "An error occured, please try again later."
+        );
     }
 };
 
