@@ -6,13 +6,13 @@ WORKDIR /bot
 
 # Copy and Install our bot
 COPY package.json .
-COPY package-lock.json .
-RUN npm install
+COPY bun.lockb .
+RUN bun install
 
 # Our precious bot
 COPY . .
 
-RUN npm run db-gen
+RUN bun run db-gen
 
 # Start me!
 CMD ["npm", "run", "start"]
