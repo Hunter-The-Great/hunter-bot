@@ -3,21 +3,22 @@ const { prisma } = require("../utilities/db");
 
 const name = Events.MessageUpdate;
 
-const execute = async (message) => {
+const execute = async (oldMessage, newMessage) => {
+    if (oldMessage.content === newMessage.content) return;
     try {
         await prisma.message.update({
-            where: { id: message.id },
-            data: { content: message.content },
+            where: { id: oldMessage.id },
+            data: { content: newMessage.content },
         });
     } catch (err) {
         console.error(
             `Failed to update message:
-            ID: ${message.id}
-            Author: ${message.author.username} | ${message.author.id}
-            Guild: ${message.guild.name} | ${message.guild.id}
-            Channel: ${message.channel.name} | ${message.channel.id}
-            Link: https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id}
-            Content: ${message.content}\n-------------------------------\n`,
+            ID: ${newMessage.id}
+            Author: ${newMessage.author.username} | ${newMessage.author.id}
+            Guild: ${newMessage.guild.name} | ${newMessage.guild.id}
+            Channel: ${newMessage.channel.name} | ${newMessage.channel.id}
+            Link: https://discord.com/channels/${newMessage.guild.id}/${newMessage.channel.id}/${newMessage.id}
+            Content: ${newMessage.content}\n-------------------------------\n`,
             err
         );
     }

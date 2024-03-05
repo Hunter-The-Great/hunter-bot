@@ -197,6 +197,41 @@ const execute = async (interaction) => {
                 }
             );
         await interaction.editReply({ embeds: [response] });
+    } else if (interaction.options.getSubcommand() === "leaderboard") {
+        const guildMembers = (
+            await interaction.guild.members.fetch({
+                force: true,
+            })
+        ).filter((member) => !member.user.bot);
+        const users = (
+            await prisma.user.findMany({
+                where: {
+                    id: {
+                        in: guildMembers.map((member) => member.id),
+                    },
+                },
+                orderBy: {
+                    guessingPoints: "desc",
+                },
+                take: 10,
+            })
+        ).filter((user) => user.guessingPoints > 0);
+        const response = new EmbedBuilder()
+            .setColor(0x00ffff)
+            .setTitle(`Leaderboard for ${interaction.guild.name}`)
+            .addFields(
+                users.map((user, index) => ({
+                    name: `${index + 1}. ${user.username}`,
+                    value: `${user.guessingPoints} points (${Number(
+                        (
+                            (user.guessingPoints / user.guessingAttempts) *
+                            100
+                        ).toFixed(2)
+                    )}% accuracy)`,
+                    inline: false,
+                }))
+            );
+        await interaction.editReply({ embeds: [response] });
     } else {
         console.log(
             `ERROR: subcommand not found for /guessing: ${interaction.options.getSubcommand()}`
