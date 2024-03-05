@@ -1,21 +1,25 @@
-const { Client, GatewayIntentBits, Collection } = require("discord.js");
-require("dotenv/config");
+import { Client, GatewayIntentBits, Collection } from "discord.js";
+import("dotenv/config");
 const { start } = require("./rest-server.js");
+import fs from "node:fs";
+import path from "node:path";
 
-const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildMembers,
-    ],
-});
-
-const fs = require("node:fs");
-const path = require("node:path");
+const client = {
+    ...new Client({
+        intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildMembers,
+        ],
+    }),
+    commands: new Map<string, any>(),
+    textCommands: new Map<string, any>(),
+    modals: new Map<string, any>(),
+};
+console.log(client);
 
 // reading in all commands from the commands folder
-client.commands = new Collection();
 let foldersPath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(foldersPath);
 
@@ -27,7 +31,7 @@ for (const folder of commandFolders) {
     const commandsPath = path.join(foldersPath, folder);
     const commandFiles = fs
         .readdirSync(commandsPath)
-        .filter((file) => file.endsWith(".js"));
+        .filter((file) => file.endsWith(".ts"));
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
         const command = require(filePath);
@@ -43,11 +47,10 @@ for (const folder of commandFolders) {
 }
 
 // Registers text commands
-client.textCommands = new Collection();
 const textPath = path.join(__dirname, "text-commands");
 const textFiles = fs
     .readdirSync(textPath)
-    .filter((file) => file.endsWith(".js"));
+    .filter((file) => file.endsWith(".ts"));
 for (const file of textFiles) {
     const filePath = path.join(textPath, file);
     const command = require(filePath);
@@ -62,11 +65,10 @@ for (const file of textFiles) {
 }
 
 //registers modals
-client.modals = new Collection();
 const modalsPath = path.join(__dirname, "modals");
 const modalFiles = fs
     .readdirSync(modalsPath)
-    .filter((file) => file.endsWith(".js"));
+    .filter((file) => file.endsWith(".ts"));
 
 for (const file of modalFiles) {
     const filePath = path.join(modalsPath, file);
@@ -85,7 +87,7 @@ for (const file of modalFiles) {
 const eventsPath = path.join(__dirname, "events");
 const eventFiles = fs
     .readdirSync(eventsPath)
-    .filter((file) => file.endsWith(".js"));
+    .filter((file) => file.endsWith(".ts"));
 
 for (const file of eventFiles) {
     const filePath = path.join(eventsPath, file);
