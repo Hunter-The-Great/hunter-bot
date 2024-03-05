@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("thesaurus")
@@ -89,8 +89,6 @@ const execute = async (interaction) => {
     });
 };
 
-module.exports = {
-    data,
-    category: "utility",
-    execute,
-};
+const category = "utility";
+
+export { data, category, execute };

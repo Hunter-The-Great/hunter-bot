@@ -1,5 +1,7 @@
-const { prisma } = require("../utilities/db");
-const { encrypt } = require("../utilities/encryption");
+import { prisma } from "../utilities/db";
+import { encrypt } from "../utilities/encryption";
+
+const name = "canvas-register";
 
 const execute = async (interaction) => {
     const token = interaction.fields.getTextInputValue("token");
@@ -17,7 +19,4 @@ const execute = async (interaction) => {
     });
 };
 
-module.exports = {
-    name: "canvas-register",
-    execute,
-};
+export { name, execute };

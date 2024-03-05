@@ -1,6 +1,8 @@
-var randomstring = require("randomstring");
-const { prisma } = require("../utilities/db");
-const { PermissionsBitField } = require("discord.js");
+import randomstring from "randomstring";
+import { prisma } from "../utilities/db";
+import { PermissionsBitField } from "discord.js";
+
+const name = "gh-register";
 
 const execute = async (interaction) => {
     const discriminator =
@@ -60,7 +62,4 @@ const execute = async (interaction) => {
     });
 };
 
-module.exports = {
-    name: "gh-register",
-    execute,
-};
+export { name, execute };

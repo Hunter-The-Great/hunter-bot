@@ -1,5 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
-const fetch = require("isomorphic-fetch");
+import { SlashCommandBuilder } from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("more-waifus")
@@ -80,8 +79,6 @@ const execute = async (interaction) => {
     await interaction.editReply(data.url);
 };
 
-module.exports = {
-    data,
-    category: "testing",
-    execute,
-};
+const category = "testing";
+
+export { data, category, execute };

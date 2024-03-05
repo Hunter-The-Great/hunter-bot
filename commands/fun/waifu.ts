@@ -1,12 +1,11 @@
-const {
+import {
     SlashCommandBuilder,
     EmbedBuilder,
     ButtonBuilder,
     ActionRowBuilder,
     ButtonStyle,
-} = require("discord.js");
-const fetch = require("isomorphic-fetch");
-const { prisma } = require("../../utilities/db.js");
+} from "discord.js";
+import { prisma } from "../../utilities/db.js";
 
 const data = new SlashCommandBuilder()
     .setName("waifu")
@@ -243,7 +242,6 @@ const execute = async (interaction) => {
             i.update({ components: [row] });
         });
         collector.on("end", async () => {
-            //* ------------------------------------------------------------------------------ console.on("end")
             try {
                 const save = new ButtonBuilder()
                     .setCustomId("save")
@@ -263,8 +261,6 @@ const execute = async (interaction) => {
     }
 };
 
-module.exports = {
-    data,
-    category: "fun",
-    execute,
-};
+const category = "fun";
+
+export { data, category, execute };

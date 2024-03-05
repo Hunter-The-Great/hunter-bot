@@ -1,4 +1,4 @@
-const { PermissionsBitField } = require("discord.js");
+import { PermissionsBitField } from "discord.js";
 
 const checkPermissions = async (uid, channel) => {
     const member = await channel.guild.members.fetch({
@@ -12,6 +12,4 @@ const checkPermissions = async (uid, channel) => {
     );
 };
 
-module.exports = {
-    checkPermissions,
-};
+export { checkPermissions };

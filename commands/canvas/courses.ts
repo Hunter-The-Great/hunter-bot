@@ -1,7 +1,6 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-require("isomorphic-fetch");
-const { prisma } = require("../../utilities/db.js");
-const { decrypt } = require("../../utilities/encryption.js");
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import { prisma } from "../../utilities/db.js";
+import { decrypt } from "../../utilities/encryption.js";
 
 const data = new SlashCommandBuilder()
     .setName("courses")
@@ -10,11 +9,10 @@ const data = new SlashCommandBuilder()
     .setNSFW(false);
 
 const execute = async (interaction) => {
-    const rawToken = (
-        await prisma.user.findUnique({
-            where: { id: interaction.user.id },
-        })
-    ).canvasToken;
+    const user = await prisma.user.findUnique({
+        where: { id: interaction.user.id },
+    });
+    const rawToken = user?.canvasToken;
     const token = await decrypt(rawToken);
     const response = await fetch(
         "https://canvas.instructure.com/api/v1/courses?enrollment_state=active",
@@ -32,11 +30,10 @@ const execute = async (interaction) => {
     }
     const courses = await response.json();
     const courseList = courses.map((course) => course.name).join("\n");
-
     const embed = new EmbedBuilder()
         .setColor(0x00ffff)
         .setTitle("Courses")
-        .setThumbnail(process.env.AVATAR)
+        .setThumbnail(process.env.AVATAR || null)
         .setAuthor({
             name: interaction.user.username,
             iconURL: interaction.user.displayAvatarURL(),
@@ -45,8 +42,6 @@ const execute = async (interaction) => {
     await interaction.reply({ embeds: [embed] });
 };
 
-module.exports = {
-    data,
-    category: "canvas",
-    execute,
-};
+const category = "canvas";
+
+export { data, category, execute };

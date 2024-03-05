@@ -1,6 +1,5 @@
-const fetch = require("isomorphic-fetch");
-const fs = require("fs");
-const { prisma } = require("../utilities/db");
+import fs from "fs";
+import { prisma } from "../utilities/db";
 
 const executeJarvis = async (message) => {
     const jarvisStart = [
@@ -125,6 +124,4 @@ const executeJarvis = async (message) => {
     }
 };
 
-module.exports = {
-    executeJarvis,
-};
+export { executeJarvis };

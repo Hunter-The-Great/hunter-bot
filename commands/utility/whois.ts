@@ -1,5 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder, hyperlink } = require("discord.js");
-const { prisma } = require("../../utilities/db");
+import { SlashCommandBuilder, EmbedBuilder, hyperlink } from "discord.js";
+import { prisma } from "../../utilities/db";
 
 const data = new SlashCommandBuilder()
     .setName("whois")
@@ -25,7 +25,7 @@ const execute = async (interaction) => {
         include: { messages: true },
     });
 
-    const messages = user.messages.filter(
+    const messages = user?.messages.filter(
         (message) => message.guildID === interaction.guild.id
     );
 
@@ -57,7 +57,7 @@ const execute = async (interaction) => {
             },
             {
                 name: "__**Messages Sent**__",
-                value: `${messages.length}`,
+                value: `${messages?.length}`,
                 inline: true,
             }
         );
@@ -65,8 +65,6 @@ const execute = async (interaction) => {
     await interaction.editReply({ embeds: [info], ephemeral: false });
 };
 
-module.exports = {
-    data,
-    category: "utility",
-    execute,
-};
+const category = "utility";
+
+export { data, category, execute };

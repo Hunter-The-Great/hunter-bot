@@ -1,11 +1,11 @@
-const {
+import {
     SlashCommandBuilder,
     EmbedBuilder,
     ButtonBuilder,
     ActionRowBuilder,
     ButtonStyle,
-} = require("discord.js");
-const { prisma } = require("../../utilities/db.js");
+} from "discord.js";
+import { prisma } from "../../utilities/db.js";
 
 const data = new SlashCommandBuilder()
     .setName("waifu-compendium")
@@ -220,8 +220,6 @@ const execute = async (interaction) => {
     }
 };
 
-module.exports = {
-    data,
-    category: "fun",
-    execute,
-};
+const category = "fun";
+
+export { data, category, execute };

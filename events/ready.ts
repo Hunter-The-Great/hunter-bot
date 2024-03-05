@@ -1,4 +1,5 @@
-const { Events } = require("discord.js");
+import { Events } from "discord.js";
+import os from "os";
 
 const name = Events.ClientReady;
 
@@ -6,7 +7,6 @@ const once = true;
 
 const execute = async (client) => {
     console.log(`Logged in as ${client.user.tag}`);
-    var os = require("os");
     try {
         if (os.hostname() === "MacBook-Pro.local") return;
         client.channels.fetch("1126759333733085214").then((channel) => {
@@ -18,8 +18,4 @@ const execute = async (client) => {
         console.log(err);
     }
 };
-module.exports = {
-    name,
-    once,
-    execute,
-};
+export { name, once, execute };

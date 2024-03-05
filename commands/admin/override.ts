@@ -1,11 +1,11 @@
-const {
+import {
     SlashCommandBuilder,
     EmbedBuilder,
     ButtonBuilder,
     ButtonStyle,
     ActionRowBuilder,
-} = require("discord.js");
-const { prisma } = require("../../utilities/db.js");
+} from "discord.js";
+import { prisma } from "../../utilities/db.js";
 
 const data = new SlashCommandBuilder()
     .setName("override")
@@ -125,7 +125,7 @@ const execute = async (interaction) => {
             await interaction.editReply(data.link);
         } else if (interaction.options.getSubcommand() === "gif-delete") {
             if (
-                await prisma.gid.deleteMany({
+                await prisma.gif.deleteMany({
                     where: { uid: puppet.id, alias },
                 })
             ) {
@@ -193,8 +193,6 @@ const execute = async (interaction) => {
     }
 };
 
-module.exports = {
-    data,
-    category: "admin",
-    execute,
-};
+const category = "admin";
+
+export { data, category, execute };

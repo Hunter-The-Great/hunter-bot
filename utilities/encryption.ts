@@ -1,6 +1,7 @@
-const crypto = require("crypto");
+import crypto from "crypto";
 
 async function encrypt(text) {
+    //@ts-ignore
     const binaryDerStringPub = atob(process.env.PUBLIC_KEY);
     const binaryDerPub = str2ab(binaryDerStringPub);
     const publicKey = await crypto.subtle.importKey(
@@ -19,9 +20,10 @@ async function encrypt(text) {
 
 async function decrypt(text) {
     const dec = new TextDecoder();
+    //@ts-ignore
     const binaryDerStringPriv = atob(process.env.PRIVATE_KEY);
     const binaryDerPriv = str2ab(binaryDerStringPriv);
-
+    //@ts-ignore
     const privateKey = await crypto.subtle.importKey(
         "pkcs8",
         binaryDerPriv,
@@ -46,7 +48,4 @@ function str2ab(str) {
     return buf;
 }
 
-module.exports = {
-    encrypt,
-    decrypt,
-};
+export { encrypt, decrypt };

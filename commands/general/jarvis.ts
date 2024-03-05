@@ -1,5 +1,5 @@
-const { SlashCommandBuilder, PermissionsBitField } = require("discord.js");
-const { prisma } = require("../../utilities/db");
+import { SlashCommandBuilder, PermissionsBitField } from "discord.js";
+import { prisma } from "../../utilities/db";
 
 const data = new SlashCommandBuilder()
     .setName("jarvis")
@@ -54,8 +54,6 @@ const execute = async (interaction) => {
     }
 };
 
-module.exports = {
-    data,
-    category: "utility",
-    execute,
-};
+const category = "general";
+
+export { data, category, execute };

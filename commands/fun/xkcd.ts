@@ -1,5 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const fetch = require("isomorphic-fetch");
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("xkcd")
@@ -67,8 +66,6 @@ const execute = async (interaction) => {
     await interaction.editReply({ embeds: [embed] });
 };
 
-module.exports = {
-    data,
-    category: "fun",
-    execute,
-};
+const category = "fun";
+
+export { data, category, execute };

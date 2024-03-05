@@ -1,10 +1,11 @@
-const {
+import {
     SlashCommandBuilder,
     ModalBuilder,
     ActionRowBuilder,
     TextInputBuilder,
     TextInputStyle,
-} = require("discord.js");
+    ModalActionRowComponentBuilder,
+} from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("remind")
@@ -34,9 +35,18 @@ const execute = async (interaction) => {
         .setRequired(true)
         .setStyle(TextInputStyle.Paragraph);
 
-    const row1 = new ActionRowBuilder().addComponents(dateInput);
-    const row2 = new ActionRowBuilder().addComponents(delayInput);
-    const row3 = new ActionRowBuilder().addComponents(reminderInput);
+    const row1 =
+        new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+            dateInput
+        );
+    const row2 =
+        new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+            delayInput
+        );
+    const row3 =
+        new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+            reminderInput
+        );
 
     const modal = new ModalBuilder()
         .setCustomId("reminder")
@@ -46,8 +56,6 @@ const execute = async (interaction) => {
     await interaction.showModal(modal);
 };
 
-module.exports = {
-    data,
-    category: "utility",
-    execute,
-};
+const category = "utility";
+
+export { data, category, execute };

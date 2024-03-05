@@ -1,5 +1,5 @@
-const { SlashCommandBuilder } = require("discord.js");
-const fs = require("fs");
+import { SlashCommandBuilder } from "discord.js";
+import fs from "fs";
 
 const data = new SlashCommandBuilder()
     .setName("buffer")
@@ -12,8 +12,6 @@ const execute = async (interaction) => {
     await interaction.reply(data);
 };
 
-module.exports = {
-    data,
-    category: "moderation",
-    execute,
-};
+const category = "moderation";
+
+export { data, category, execute };

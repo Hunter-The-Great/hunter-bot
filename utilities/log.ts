@@ -1,5 +1,4 @@
-const { Client, ContentType, ContentEncoding } = require("@axiomhq/axiom-node");
-//require("isomorphic-fetch");
+import { Client, ContentType, ContentEncoding } from "@axiomhq/axiom-node";
 
 const axiom = new Client({
     token: process.env.AXIOM_TOKEN,
@@ -14,9 +13,4 @@ async function log(type, payload) {
     }
 }
 
-module.exports = {
-    axiom,
-    ContentType,
-    ContentEncoding,
-    log,
-};
+export { axiom, ContentType, ContentEncoding, log };

@@ -1,5 +1,5 @@
-const { Events } = require("discord.js");
-const { prisma } = require("../utilities/db");
+import { Events } from "discord.js";
+import { prisma } from "../utilities/db";
 
 const name = Events.MessageDelete;
 
@@ -20,7 +20,4 @@ const execute = async (message) => {
     }
 };
 
-module.exports = {
-    name,
-    execute,
-};
+export { name, execute };

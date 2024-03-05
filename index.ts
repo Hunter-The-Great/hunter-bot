@@ -1,23 +1,23 @@
 import { Client, GatewayIntentBits, Collection } from "discord.js";
 import("dotenv/config");
-const { start } = require("./rest-server.js");
+import { start } from "./rest-server.js";
 import fs from "node:fs";
 import path from "node:path";
 
-const client = {
-    ...new Client({
-        intents: [
-            GatewayIntentBits.Guilds,
-            GatewayIntentBits.GuildMessages,
-            GatewayIntentBits.MessageContent,
-            GatewayIntentBits.GuildMembers,
-        ],
-    }),
-    commands: new Map<string, any>(),
-    textCommands: new Map<string, any>(),
-    modals: new Map<string, any>(),
-};
-console.log(client);
+class ExtendedClient extends Client {
+    commands: Collection<string, any> = new Collection();
+    textCommands: Collection<string, any> = new Collection();
+    modals: Collection<string, any> = new Collection();
+}
+
+const client = new ExtendedClient({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
+    ],
+});
 
 // reading in all commands from the commands folder
 let foldersPath = path.join(__dirname, "commands");

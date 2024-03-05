@@ -1,6 +1,6 @@
-const { Events } = require("discord.js");
-const { log } = require("../utilities/log.js");
-const { checkPermissions } = require("../utilities/permission-check.js");
+import { Events } from "discord.js";
+import { log } from "../utilities/log.js";
+import { checkPermissions } from "../utilities/permission-check.js";
 
 const name = Events.InteractionCreate;
 
@@ -100,7 +100,4 @@ const execute = async (interaction) => {
     }
 };
 
-module.exports = {
-    name,
-    execute,
-};
+export { name, execute };

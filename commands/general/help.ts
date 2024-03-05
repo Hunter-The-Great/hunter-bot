@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("help")
@@ -10,7 +10,7 @@ const execute = async (interaction) => {
     const helpMenu = new EmbedBuilder()
         .setColor(0x00ffff)
         .setTitle("**Commands**:")
-        .setThumbnail(process.env.AVATAR)
+        .setThumbnail(process.env.AVATAR || null)
         .setAuthor({
             name: interaction.user.username,
             iconURL: interaction.user.displayAvatarURL(),
@@ -45,8 +45,6 @@ const execute = async (interaction) => {
     await interaction.reply({ embeds: [helpMenu] });
 };
 
-module.exports = {
-    data,
-    category: "general",
-    execute,
-};
+const category = "general";
+
+export { data, category, execute };

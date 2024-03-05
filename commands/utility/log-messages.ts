@@ -1,9 +1,9 @@
-const {
+import {
     SlashCommandBuilder,
     TextChannel,
     PermissionsBitField,
-} = require("discord.js");
-const { prisma } = require("../../utilities/db");
+} from "discord.js";
+import { prisma } from "../../utilities/db";
 
 const data = new SlashCommandBuilder()
     .setName("log-messages")
@@ -151,8 +151,6 @@ const execute = async (interaction) => {
     });
 };
 
-module.exports = {
-    data,
-    category: "utility",
-    execute,
-};
+const category = "utility";
+
+export { data, category, execute };

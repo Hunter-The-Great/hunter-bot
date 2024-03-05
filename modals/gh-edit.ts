@@ -1,5 +1,7 @@
-const { prisma } = require("../utilities/db");
-const { PermissionsBitField } = require("discord.js");
+import { prisma } from "../utilities/db";
+import { PermissionsBitField } from "discord.js";
+
+const name = "gh-edit";
 
 const execute = async (interaction) => {
     const discriminator = interaction.fields.getTextInputValue("discriminator");
@@ -89,7 +91,4 @@ const execute = async (interaction) => {
     });
 };
 
-module.exports = {
-    name: "gh-edit",
-    execute,
-};
+export { name, execute };

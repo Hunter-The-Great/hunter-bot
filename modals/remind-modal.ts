@@ -1,5 +1,6 @@
-const fetch = require("isomorphic-fetch");
 const chrono = require("chrono-node");
+
+const name = "reminder";
 
 const execute = async (interaction) => {
     const reminder = interaction.fields.getTextInputValue("remindercontent");
@@ -65,7 +66,4 @@ const execute = async (interaction) => {
     await interaction.reply({ content: "Reminder set.", ephemeral: true });
 };
 
-module.exports = {
-    name: "reminder",
-    execute,
-};
+export { name, execute };

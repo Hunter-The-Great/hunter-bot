@@ -1,12 +1,13 @@
-const {
+import {
     SlashCommandBuilder,
     ModalBuilder,
     ActionRowBuilder,
     TextInputBuilder,
     TextInputStyle,
-} = require("discord.js");
-const { prisma } = require("../../utilities/db.js");
-const { decrypt } = require("../../utilities/encryption.js");
+    ModalActionRowComponentBuilder,
+} from "discord.js";
+import { prisma } from "../../utilities/db.js";
+import { decrypt } from "../../utilities/encryption.js";
 
 const data = new SlashCommandBuilder()
     .setName("canvas")
@@ -32,7 +33,10 @@ const execute = async (interaction) => {
             .setPlaceholder("WARNING: will replace any existing token.")
             .setRequired(true)
             .setStyle(TextInputStyle.Short);
-        const row1 = new ActionRowBuilder().addComponents(tokenInput);
+        const row1 =
+            new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+                tokenInput
+            );
 
         const modal = new ModalBuilder()
             .setCustomId("canvas-register")
@@ -40,11 +44,10 @@ const execute = async (interaction) => {
             .addComponents(row1);
         await interaction.showModal(modal);
     } else if (command === "show") {
-        const rawToken = (
-            await prisma.user.findUnique({
-                where: { id: interaction.user.id },
-            })
-        ).canvasToken;
+        const user = await prisma.user.findUnique({
+            where: { id: interaction.user.id },
+        });
+        const rawToken = user?.canvasToken;
 
         if (!rawToken) {
             await interaction.reply({
@@ -76,8 +79,6 @@ const execute = async (interaction) => {
     }
 };
 
-module.exports = {
-    data,
-    category: "canvas",
-    execute,
-};
+const category = "canvas";
+
+export { data, category, execute };

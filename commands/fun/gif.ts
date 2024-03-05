@@ -1,12 +1,11 @@
-const {
+import {
     SlashCommandBuilder,
     ButtonBuilder,
     ButtonStyle,
     ActionRowBuilder,
     EmbedBuilder,
-} = require("discord.js");
-const { prisma } = require("../../utilities/db.js");
-require("isomorphic-fetch");
+} from "discord.js";
+import { prisma } from "../../utilities/db.js";
 
 const data = new SlashCommandBuilder()
     .setName("gif")
@@ -117,7 +116,7 @@ const execute = async (interaction) => {
         const meta = await scrapeMeta.json();
         const response = await fetch(link);
         const type = response.headers.get("content-type");
-        if (type.includes("gif") || type.includes("image")) {
+        if (type && (type.includes("gif") || type.includes("image"))) {
             await prisma.gif.create({
                 data: {
                     alias,
@@ -241,8 +240,6 @@ const execute = async (interaction) => {
     }
 };
 
-module.exports = {
-    data,
-    category: "fun",
-    execute,
-};
+const category = "fun";
+
+export { data, category, execute };

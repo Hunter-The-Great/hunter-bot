@@ -1,5 +1,6 @@
+import thesaurus from "thesaurus";
+
 const name = "synonyms";
-const thesaurus = require("thesaurus");
 
 const execute = async (message) => {
     if (!message.reference) {
@@ -23,7 +24,4 @@ const execute = async (message) => {
     await message.reply({ content: newMessage });
 };
 
-module.exports = {
-    name,
-    execute,
-};
+export { name, execute };

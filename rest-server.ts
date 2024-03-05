@@ -1,7 +1,7 @@
-const { prisma } = require("./utilities/db");
-const fastify = require("fastify")({ logger: false });
-const cors = require("@fastify/cors");
-const { EmbedBuilder } = require("discord.js");
+import { fastify } from "./fastify";
+import { prisma } from "./utilities/db";
+import cors from "@fastify/cors";
+import { EmbedBuilder } from "discord.js";
 
 const start = async (client) => {
     await fastify.register(cors, {
@@ -9,7 +9,6 @@ const start = async (client) => {
     });
 
     fastify.post("/reminders", async (request, res) => {
-        //* -------------------------------------------------------------------------------------------- /reminders
         if (request.body.key !== process.env.KEY) {
             console.log("Invalid key for /reminders.");
             return res.code(401).send({ message: "Invalid Key" });
@@ -22,7 +21,6 @@ const start = async (client) => {
     });
 
     fastify.post("/message", async (request, res) => {
-        //* -------------------------------------------------------------------------------------------- /message
         if (request.body.key !== process.env.MESSAGE_KEY) {
             console.log("Invalid key for /message.");
             return res.code(401).send({ message: "Invalid Key" });
@@ -39,7 +37,6 @@ const start = async (client) => {
     });
 
     fastify.post("/gh/:uid/:discriminator", async (request, res) => {
-        //* -------------------------------------------------------------------------------------------- /gh
         const { uid, discriminator } = request.params;
         const user = await client.users.fetch(uid);
 
@@ -97,7 +94,6 @@ const start = async (client) => {
     });
 
     fastify.post("/drewh", async (request, res) => {
-        //* -------------------------------------------------------------------------------------------- /drewh
         if (request.body.key !== process.env.DREW_KEY) {
             console.log("Invalid key for /drewh.");
             return res.code(401).send({ message: "Invalid Key" });
@@ -128,6 +124,4 @@ const start = async (client) => {
     }
 };
 
-module.exports = {
-    start,
-};
+export { start };

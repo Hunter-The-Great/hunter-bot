@@ -26,12 +26,12 @@ const execute = async (interaction) => {
     }
 
     delete require.cache[
-        require.resolve(`../${command.category}/${command.data.name}.js`)
+        require.resolve(`../${command.category}/${command.data.name}.ts`)
     ];
 
     try {
         interaction.client.commands.delete(command.data.name);
-        const newCommand = require(`../${command.category}/${command.data.name}.js`);
+        const newCommand = require(`../${command.category}/${command.data.name}.ts`);
         interaction.client.commands.set(newCommand.data.name, newCommand);
         await interaction.reply(
             `Command \`${newCommand.data.name}\` was reloaded!`
@@ -45,8 +45,6 @@ const execute = async (interaction) => {
     console.log("complete");
 };
 
-module.exports = {
-    data,
-    category: "admin",
-    execute,
-};
+const category = "admin";
+
+export { data, category, execute };

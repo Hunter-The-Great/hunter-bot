@@ -1,12 +1,13 @@
-const {
+import {
     SlashCommandBuilder,
     ModalBuilder,
     EmbedBuilder,
     ActionRowBuilder,
     TextInputBuilder,
     TextInputStyle,
-} = require("discord.js");
-const { prisma } = require("../../utilities/db.js");
+    ModalActionRowComponentBuilder,
+} from "discord.js";
+import { prisma } from "../../utilities/db.js";
 
 const data = new SlashCommandBuilder()
     .setName("github")
@@ -51,8 +52,14 @@ const execute = async (interaction) => {
             .setPlaceholder("Requires admin privileges.")
             .setRequired(false)
             .setStyle(TextInputStyle.Short);
-        const row1 = new ActionRowBuilder().addComponents(discriminatorInput);
-        const row2 = new ActionRowBuilder().addComponents(channelInput);
+        const row1 =
+            new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+                discriminatorInput
+            );
+        const row2 =
+            new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+                channelInput
+            );
         const modal = new ModalBuilder()
             .setCustomId("gh-register")
             .setTitle("Endpoint Generator")
@@ -123,9 +130,18 @@ const execute = async (interaction) => {
             .setLabel("original ID:")
             .setRequired(true)
             .setStyle(TextInputStyle.Short);
-        const row1 = new ActionRowBuilder().addComponents(endpointInput);
-        const row2 = new ActionRowBuilder().addComponents(discriminatorInput);
-        const row3 = new ActionRowBuilder().addComponents(channelInput);
+        const row1 =
+            new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+                endpointInput
+            );
+        const row2 =
+            new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+                discriminatorInput
+            );
+        const row3 =
+            new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+                channelInput
+            );
         const modal = new ModalBuilder()
             .setCustomId("gh-edit")
             .setTitle(
@@ -141,8 +157,6 @@ const execute = async (interaction) => {
     }
 };
 
-module.exports = {
-    data,
-    category: "utility",
-    execute,
-};
+const category = "utility";
+
+export { data, category, execute };

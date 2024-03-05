@@ -1,6 +1,6 @@
-const { Events } = require("discord.js");
-const { prisma } = require("../utilities/db");
-const { executeJarvis } = require("../jarvis/jarvis.js");
+import { Events } from "discord.js";
+import { prisma } from "../utilities/db";
+import { executeJarvis } from "../jarvis/jarvis.js";
 
 const name = Events.MessageCreate;
 
@@ -79,7 +79,4 @@ const execute = async (message) => {
     }
 };
 
-module.exports = {
-    name,
-    execute,
-};
+export { name, execute };
