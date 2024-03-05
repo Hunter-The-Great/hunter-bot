@@ -56,7 +56,7 @@ const execute = async (interaction) => {
             message.content === null
         );
 
-        let usernames = [];
+        let usernames: string[] = [];
         usernames.push(message.user.username);
         await interaction.guild.members.fetch({ force: true });
         const blacklist = ["1164630646124195890"];
@@ -104,7 +104,7 @@ const execute = async (interaction) => {
                 filter,
                 time: 10_000,
             });
-            let guessed = [];
+            let guessed: string[] = [];
             collector.on("collect", async (i) => {
                 if (guessed.includes(i.user.id)) {
                     await i.reply({
@@ -130,9 +130,9 @@ const execute = async (interaction) => {
                 const user = userMap.find(
                     (user) => user.name === i.customId.split(":")[1]
                 );
-                if (user.value === " ") {
+                if (user?.value === " ") {
                     user.value = i.user.username;
-                } else {
+                } else if (user) {
                     user.value += `\n${i.user.username}`;
                 }
                 const response = new EmbedBuilder()
@@ -179,20 +179,27 @@ const execute = async (interaction) => {
         const user = await prisma.user.findUnique({
             where: { id: target.id },
         });
+        if (!user) {
+            await interaction.editReply("User not found.");
+            return;
+        }
         const response = new EmbedBuilder()
             .setColor(0x00ffff)
             .setTitle(`${target.username}'s stats`)
             .addFields(
                 {
                     name: "Points",
-                    value: `${user.guessingPoints}`,
+                    value: `${user?.guessingPoints}`,
                     inline: true,
                 },
                 {
                     name: "Accuracy",
-                    value: `${
-                        (user.guessingPoints / user.guessingAttempts) * 100
-                    }%`,
+                    value: `${Number(
+                        (
+                            (user.guessingPoints / user.guessingAttempts) *
+                            100
+                        ).toFixed(2)
+                    )}%`,
                     inline: true,
                 }
             );

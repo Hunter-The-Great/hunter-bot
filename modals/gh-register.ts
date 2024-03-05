@@ -41,7 +41,7 @@ const execute = async (interaction) => {
     }
 
     if (
-        await prisma.GitHubWebhook.findFirst({
+        await prisma.gitHubWebhook.findFirst({
             where: { uid: interaction.user.id, discriminator },
         })
     ) {
@@ -53,7 +53,7 @@ const execute = async (interaction) => {
         return;
     }
 
-    await prisma.GitHubWebhook.create({
+    await prisma.gitHubWebhook.create({
         data: { uid: interaction.user.id, discriminator, channelID },
     });
     await interaction.reply({

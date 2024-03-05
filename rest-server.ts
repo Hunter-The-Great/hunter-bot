@@ -40,9 +40,12 @@ const start = async (client) => {
         const { uid, discriminator } = request.params;
         const user = await client.users.fetch(uid);
 
-        const webhook = await prisma.GitHubWebhook.findFirst({
+        const webhook = await prisma.gitHubWebhook.findFirst({
             where: { uid, discriminator },
         });
+        if (!webhook) {
+            return res.code(404).send({ message: "Endpoint not found." });
+        }
         const embed = new EmbedBuilder()
             .setColor(0x00ffff)
             .setTitle(

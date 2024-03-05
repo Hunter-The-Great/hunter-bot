@@ -35,7 +35,7 @@ const execute = async (interaction) => {
             });
             return;
         }
-        await prisma.GitHubWebhook.updateMany({
+        await prisma.gitHubWebhook.updateMany({
             where: {
                 uid: interaction.user.id,
                 discriminator: interaction.fields.getTextInputValue("endpoint"),
@@ -46,7 +46,7 @@ const execute = async (interaction) => {
 
     if (interaction.fields.getTextInputValue("discriminator")) {
         if (
-            !prisma.GitHubWebhook.findFirst({
+            !prisma.gitHubWebhook.findFirst({
                 where: { uid: interaction.user.id, discriminator },
             })
         ) {
@@ -65,7 +65,7 @@ const execute = async (interaction) => {
             return;
         }
         if (
-            await prisma.GitHubWebhook.findFirst({
+            await prisma.gitHubWebhook.findFirst({
                 where: { uid: interaction.user.id, discriminator },
             })
         ) {
@@ -76,7 +76,7 @@ const execute = async (interaction) => {
             });
             return;
         }
-        await prisma.GitHubWebhook.updateMany({
+        await prisma.gitHubWebhook.updateMany({
             where: {
                 uid: interaction.user.id,
                 discriminator: interaction.fields.getTextInputValue("endpoint"),
