@@ -34,27 +34,34 @@ const data = new SlashCommandBuilder()
 
 const execute = async (interaction) => {
     await interaction.deferReply();
+    const numMessages = await prisma.message.count({
+        where: {
+            guildID: interaction.guild.id,
+            NOT: {
+                content: "",
+            },
+        },
+    });
+    const skip = Math.floor(Math.random() * (numMessages - 1));
     if (interaction.options.getSubcommand() === "game") {
-        const messages = await prisma.message.findMany({
-            where: {
-                guildID: interaction.guild.id,
-            },
-            include: {
-                user: true,
-            },
-            orderBy: {
-                id: "desc",
-            },
-        });
-
         let message;
         do {
-            message = messages[Math.floor(Math.random() * messages.length)];
-        } while (
-            message.user.bot ||
-            message.content === "" ||
-            message.content === null
-        );
+            message = (
+                await prisma.message.findMany({
+                    take: 1,
+                    skip: skip,
+                    where: {
+                        guildID: interaction.guild.id,
+                        NOT: {
+                            content: "",
+                        },
+                    },
+                    include: {
+                        user: true,
+                    },
+                })
+            )[0];
+        } while (message.user.bot);
 
         let usernames: string[] = [];
         usernames.push(message.user.username);
