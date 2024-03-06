@@ -1,4 +1,4 @@
-FROM oven/bun:1 as base
+FROM oven/bun:latest as base
 
 RUN mkdir -p /bot
 WORKDIR /bot
