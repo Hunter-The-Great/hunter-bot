@@ -38,6 +38,7 @@ const execute = async (interaction) => {
         "https://qstash.upstash.io/v1/publish/https://hunter-bot.drewh.net/reminders",
         {
             method: "POST",
+            // @ts-ignore
             headers: {
                 Authorization: "Bearer " + process.env.QSTASH_TOKEN,
                 "Content-type": "application/json",

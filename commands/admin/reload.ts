@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+import { SlashCommandBuilder } from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("reload")
@@ -39,7 +39,7 @@ const execute = async (interaction) => {
     } catch (error) {
         console.error(error);
         await interaction.reply(
-            `There was an error while reloading a command \`${command.data.name}\`:\n\`${error.message}\``
+            `There was an error while reloading a command '${command.data.name}'`
         );
     }
     console.log("complete");

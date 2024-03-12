@@ -2,6 +2,8 @@ import {
     SlashCommandBuilder,
     TextChannel,
     PermissionsBitField,
+    Message,
+    Collection,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
 
@@ -90,13 +92,19 @@ const execute = async (interaction) => {
 
             total += 1;
 
-            let messages = [];
-            let messageMap = [];
-            let clearedUsers = [];
+            let messages: Awaited<ReturnType<typeof channel.messages.fetch>>;
+            let messageMap;
+            let clearedUsers: string[] = [];
             let count = 0;
             do {
                 if (count !== 0) {
                     lastMessage = messageMap[messageMap.length - 1];
+                }
+                if (!lastMessage) {
+                    await interaction.editReply({
+                        content: "Error logging messages.",
+                    });
+                    break;
                 }
                 count++;
                 messages = await channel.messages.fetch({

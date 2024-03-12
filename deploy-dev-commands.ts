@@ -1,9 +1,9 @@
 // Run to deploy commands
-import { REST, Routes } from "discord.js";
+import { REST, Routes, SlashCommandBuilder } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
 
-const commands = [];
+const commands: SlashCommandBuilder[] = [];
 // Grab all the command files from the commands directory you created earlier
 const foldersPath = path.join(__dirname, "commands");
 const commandFolders = ["admin", "testing"];
@@ -28,11 +28,11 @@ for (const folder of commandFolders) {
     }
 }
 
-const rest = new REST().setToken(process.env.TOKEN);
+const rest = new REST().setToken(process.env.TOKEN!);
 rest.put(
     Routes.applicationGuildCommands(
-        process.env.CLIENT_ID,
-        process.env.DEV_GUILD_ID
+        process.env.CLIENT_ID!,
+        process.env.DEV_GUILD_ID!
     ),
     { body: commands }
 );
