@@ -26,9 +26,13 @@ const execute = async (interaction) => {
         }
     }
 
-    const getParams = (time, date, delay) => {
+    const getParams = (time, date, delay): Record<string, string> => {
         if (time) {
-            return { "Upstash-Not-Before": Math.floor(date.getTime() / 1000) };
+            return {
+                "Upstash-Not-Before": Math.floor(
+                    date.getTime() / 1000
+                ).toString(),
+            };
         } else {
             return { "Upstash-Delay": `${delay}m` };
         }
@@ -38,7 +42,6 @@ const execute = async (interaction) => {
         "https://qstash.upstash.io/v1/publish/https://hunter-bot.drewh.net/reminders",
         {
             method: "POST",
-            // @ts-ignore
             headers: {
                 Authorization: "Bearer " + process.env.QSTASH_TOKEN,
                 "Content-type": "application/json",
