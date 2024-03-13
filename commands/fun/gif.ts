@@ -4,6 +4,7 @@ import {
     ButtonStyle,
     ActionRowBuilder,
     EmbedBuilder,
+    ChatInputCommandInteraction,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 
