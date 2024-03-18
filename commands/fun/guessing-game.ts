@@ -40,28 +40,31 @@ const execute = async (interaction) => {
             NOT: {
                 content: "",
             },
+            user: {
+                bot: false,
+            },
         },
     });
     const skip = Math.floor(Math.random() * (numMessages - 1));
     if (interaction.options.getSubcommand() === "game") {
-        let message;
-        do {
-            message = (
-                await prisma.message.findMany({
-                    take: 1,
-                    skip: skip,
-                    where: {
-                        guildID: interaction.guild.id,
-                        NOT: {
-                            content: "",
-                        },
+        const message = (
+            await prisma.message.findMany({
+                take: 1,
+                skip: skip,
+                where: {
+                    guildID: interaction.guild.id,
+                    NOT: {
+                        content: "",
                     },
-                    include: {
-                        user: true,
+                    user: {
+                        bot: false,
                     },
-                })
-            )[0];
-        } while (message.user.bot);
+                },
+                include: {
+                    user: true,
+                },
+            })
+        )[0];
 
         let usernames: string[] = [];
         usernames.push(message.user.username);
