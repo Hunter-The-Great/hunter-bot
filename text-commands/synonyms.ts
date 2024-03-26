@@ -1,14 +1,15 @@
+import { Message } from "discord.js";
 import thesaurus from "thesaurus";
 
 const name = "synonyms";
 
-const execute = async (message) => {
+const execute = async (message: Message) => {
     if (!message.reference) {
         return;
     }
 
     const original = (
-        await message.channel.messages.fetch(message.reference.messageId)
+        await message.channel.messages.fetch(message.reference.messageId!)
     ).content.split(" ");
 
     var newMessage = "";

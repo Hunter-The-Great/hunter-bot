@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("reload")
@@ -12,11 +12,12 @@ const data = new SlashCommandBuilder()
             .setRequired(true)
     );
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     console.log("start");
     const commandName = interaction.options
         .getString("command", true)
         .toLowerCase();
+    //@ts-ignore
     const command = interaction.client.commands.get(commandName);
 
     if (!command) {
@@ -30,8 +31,10 @@ const execute = async (interaction) => {
     ];
 
     try {
+        //@ts-ignore
         interaction.client.commands.delete(command.data.name);
         const newCommand = require(`../${command.category}/${command.data.name}.ts`);
+        //@ts-ignore
         interaction.client.commands.set(newCommand.data.name, newCommand);
         await interaction.reply(
             `Command \`${newCommand.data.name}\` was reloaded!`

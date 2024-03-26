@@ -1,4 +1,8 @@
-import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ChatInputCommandInteraction,
+} from "discord.js";
 import { prisma } from "../../utilities/db.js";
 
 const data = new SlashCommandBuilder()
@@ -13,10 +17,9 @@ const data = new SlashCommandBuilder()
             .setRequired(false)
     );
 
-const execute = async (interaction) => {
-    const target = interaction.options.getUser("target")
-        ? interaction.options.getUser("target")
-        : interaction.user;
+const execute = async (interaction: ChatInputCommandInteraction) => {
+    const target = interaction.options.getUser("target") || interaction.user;
+    if (!target) throw new Error("Is this even possible?");
 
     const user = await prisma.user.findUnique({ where: { id: target.id } });
 

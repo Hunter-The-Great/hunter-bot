@@ -1,4 +1,8 @@
-import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ChatInputCommandInteraction,
+} from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("xkcd")
@@ -18,7 +22,7 @@ const data = new SlashCommandBuilder()
     .setDMPermission(false)
     .setNSFW(false);
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();
 
     if (interaction.options.getBoolean("latest")) {
@@ -42,9 +46,10 @@ const execute = async (interaction) => {
         async (res) => await res.json().then((res2) => res2.num)
     );
 
-    const index =
-        interaction.options.getString("number") ||
-        Math.floor(Math.random() * max) + 1;
+    const number = interaction.options.getString("number");
+    let index: number;
+    if (number) index = parseInt(number);
+    else index = Math.floor(Math.random() * max) + 1;
 
     if (index > max || index < 1) {
         await interaction.editReply("Invalid comic number.");

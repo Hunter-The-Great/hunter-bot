@@ -2,8 +2,7 @@ import {
     SlashCommandBuilder,
     TextChannel,
     PermissionsBitField,
-    Message,
-    Collection,
+    ChatInputCommandInteraction,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
 
@@ -11,26 +10,11 @@ const data = new SlashCommandBuilder()
     .setName("log-messages")
     .setDescription("Logs all messages in a server.")
     .setDMPermission(false)
-    .setNSFW(false);
+    .setNSFW(false)
+    .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator);
 
-const execute = async (interaction) => {
-    const member = await interaction.channel.guild.members.fetch({
-        force: true,
-        user: interaction.user.id,
-    });
-    if (
-        !(
-            member.permissions.has(PermissionsBitField.Flags.Administrator) ||
-            interaction.user.id === interaction.channel.guild.ownerId
-        )
-    ) {
-        await interaction.reply({
-            content: "You do not have admin permissions in this server.",
-            ephemeral: true,
-        });
-        return;
-    }
-
+const execute = async (interaction: ChatInputCommandInteraction) => {
+    if (!interaction.guild) return;
     await prisma.message.deleteMany({
         where: {
             guildID: interaction.guild.id,
@@ -117,7 +101,7 @@ const execute = async (interaction) => {
                     content: message.content,
                     timestamp: new Date(message.createdTimestamp),
                     author: message.author.id,
-                    guildID: interaction.guild.id,
+                    guildID: interaction.guild!.id,
                     channel: message.channel.id,
                 }));
                 for (const message of messages.values()) {

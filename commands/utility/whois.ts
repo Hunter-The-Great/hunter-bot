@@ -1,4 +1,9 @@
-import { SlashCommandBuilder, EmbedBuilder, hyperlink } from "discord.js";
+import {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    hyperlink,
+    ChatInputCommandInteraction,
+} from "discord.js";
 import { prisma } from "../../utilities/db";
 
 const data = new SlashCommandBuilder()
@@ -13,10 +18,8 @@ const data = new SlashCommandBuilder()
             .setRequired(false)
     );
 
-const execute = async (interaction) => {
-    const target = interaction.options.getUser("target")
-        ? interaction.options.getUser("target")
-        : interaction.user;
+const execute = async (interaction: ChatInputCommandInteraction) => {
+    const target = interaction.options.getUser("target") || interaction.user;
     const date = new Date(target.createdAt);
     await interaction.deferReply({ ephemeral: false });
 
@@ -26,7 +29,7 @@ const execute = async (interaction) => {
     });
 
     const messages = user?.messages.filter(
-        (message) => message.guildID === interaction.guild.id
+        (message) => message.guildID === interaction.guild!.id
     );
 
     const info = new EmbedBuilder()
@@ -62,7 +65,7 @@ const execute = async (interaction) => {
             }
         );
 
-    await interaction.editReply({ embeds: [info], ephemeral: false });
+    await interaction.editReply({ embeds: [info] });
 };
 
 const category = "utility";

@@ -5,6 +5,7 @@ import {
     TextInputBuilder,
     TextInputStyle,
     ModalActionRowComponentBuilder,
+    ChatInputCommandInteraction,
 } from "discord.js";
 
 const data = new SlashCommandBuilder()
@@ -13,7 +14,7 @@ const data = new SlashCommandBuilder()
     .setDMPermission(true)
     .setNSFW(false);
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     const dateInput = new TextInputBuilder()
         .setCustomId("date")
         .setLabel("Date:")

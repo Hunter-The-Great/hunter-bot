@@ -4,6 +4,9 @@ import {
     ButtonBuilder,
     ActionRowBuilder,
     ButtonStyle,
+    ChatInputCommandInteraction,
+    CategoryChannel,
+    VoiceChannel,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
 
@@ -32,27 +35,87 @@ const data = new SlashCommandBuilder()
     .setDMPermission(false)
     .setNSFW(false);
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();
-    const numMessages = await prisma.message.count({
+    const guild = await prisma.guild.findUnique({
         where: {
-            guildID: interaction.guild.id,
-            NOT: {
-                content: "",
-            },
-            user: {
-                bot: false,
-            },
+            id: interaction.guild!.id,
         },
     });
-    const skip = Math.floor(Math.random() * (numMessages - 1));
+    if (!guild) throw new Error("No guild found.");
+
     if (interaction.options.getSubcommand() === "game") {
-        const message = (
-            await prisma.message.findMany({
-                take: 1,
-                skip: skip,
+        let message;
+        let usernames: string[] = [];
+        let messageAuthor;
+        let correctAnswer;
+        let messageLink: string;
+        if (!guild.logging) {
+            const numChannels = await prisma.activeChannel.count({
                 where: {
-                    guildID: interaction.guild.id,
+                    guildID: interaction.guild!.id,
+                },
+            });
+            let channelID;
+            if (numChannels < 1) channelID = interaction.channel!.id;
+            else {
+                const skip = Math.floor(Math.random() * numChannels);
+                channelID = (
+                    await prisma.activeChannel.findMany({
+                        take: 1,
+                        skip,
+                        where: {
+                            guildID: interaction.guild!.id,
+                        },
+                    })
+                )[0].id;
+            }
+
+            const channel = await interaction.guild!.channels.fetch(channelID);
+            if (
+                !channel ||
+                channel instanceof CategoryChannel ||
+                channel instanceof VoiceChannel
+            ) {
+                await interaction.editReply("Error fetching channels");
+                return;
+            }
+
+            let start = channel.createdTimestamp!;
+            const today = new Date().getTime();
+            for (let i = 0; i < 10; i++) {
+                const randDate = new Date(
+                    start + Math.random() * (today - start)
+                );
+                const snowflake = (
+                    (BigInt(randDate.valueOf()) - BigInt(1420070400000)) <<
+                    BigInt(22)
+                ).toString();
+                message = (
+                    await channel.messages.fetch({
+                        limit: 50,
+                        before: snowflake,
+                    })
+                ).random();
+                if (!message) continue;
+                if (message && message.content !== "" && !message.author.bot)
+                    break;
+                start = randDate.valueOf();
+            }
+            if (message.content === "" || message.author.bot) {
+                await interaction.editReply({
+                    content: "Unable to find suitable message.",
+                });
+                return;
+            }
+            usernames.push(message.author.username);
+            messageAuthor = message.author.id;
+            messageLink = message.url;
+            correctAnswer = message.author.username;
+        } else {
+            const numMessages = await prisma.message.count({
+                where: {
+                    guildID: interaction.guild!.id,
                     NOT: {
                         content: "",
                     },
@@ -60,26 +123,60 @@ const execute = async (interaction) => {
                         bot: false,
                     },
                 },
-                include: {
-                    user: true,
-                },
-            })
-        )[0];
+            });
+            if (numMessages <= 0) {
+                await interaction.editReply({
+                    content:
+                        "No messages found in database, try running /log-messages or turn off message logging.",
+                });
+                return;
+            }
+            const skip = Math.floor(Math.random() * numMessages);
 
-        let usernames: string[] = [];
-        usernames.push(message.user.username);
-        await interaction.guild.members.fetch({ force: true });
-        const blacklist = ["1164630646124195890"];
-        const users = interaction.guild.members.cache.filter(
-            (member) => !member.user.bot && !blacklist.includes(member.id)
+            message = (
+                await prisma.message.findMany({
+                    take: 1,
+                    skip: skip,
+                    where: {
+                        guildID: interaction.guild!.id,
+                        NOT: {
+                            content: "",
+                        },
+                        user: {
+                            bot: false,
+                        },
+                    },
+                    include: {
+                        user: true,
+                    },
+                })
+            )[0];
+            usernames.push(message.user.username);
+            messageAuthor = message.user.id;
+            messageLink = `https://discord.com/channels/${
+                interaction.guild!.id
+            }/${message.channel}/${message.id}`;
+            correctAnswer = message.user.username;
+        }
+        if (!message) {
+            await interaction.editReply({ content: "No messages found." });
+            return;
+        }
+
+        await interaction.guild!.members.fetch({ force: true });
+        const users = interaction.guild!.members.cache.filter(
+            (member) => !member.user.bot
         );
+
         while (usernames.length < 3 && usernames.length < users.size) {
-            const user = users.random().user.username;
+            const user = users.random()!.user.username;
+            if (!user) throw new Error("No user");
             if (usernames.includes(user)) continue;
             usernames.push(user);
         }
+
         usernames = usernames.sort();
-        const row = new ActionRowBuilder().addComponents(
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
             usernames.map((username) =>
                 new ButtonBuilder()
                     .setCustomId(`guessing-game:${username}`)
@@ -131,7 +228,7 @@ const execute = async (interaction) => {
                         guessingPoints: {
                             increment:
                                 i.customId.split(":")[1] ===
-                                message.user.username
+                                message.author.username
                                     ? 1
                                     : 0,
                         },
@@ -152,7 +249,7 @@ const execute = async (interaction) => {
                 await i.update({ embeds: [response], components: [row] });
             });
             collector.on("end", async () => {
-                const row = new ActionRowBuilder().addComponents(
+                const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
                     usernames.map((username) =>
                         new ButtonBuilder()
                             .setCustomId(`guessing-game:${username}`)
@@ -162,7 +259,7 @@ const execute = async (interaction) => {
                     )
                 );
                 for (const user of userMap) {
-                    if (user.name === message.user.username) {
+                    if (user.name === correctAnswer) {
                         user.name = `:white_check_mark:${user.name}:white_check_mark:`;
                         continue;
                     }
@@ -172,7 +269,7 @@ const execute = async (interaction) => {
                     .setColor(0x00ffff)
                     .setTitle(`${message.content}`)
                     .setDescription(
-                        `Author: <@${message.author}>\nLink: https://discord.com/channels/${interaction.guild.id}/${message.channel}/${message.id}`
+                        `Author: <@${messageAuthor}>\nLink: ${messageLink}`
                     )
                     .addFields(userMap);
                 interaction.editReply({
@@ -215,11 +312,10 @@ const execute = async (interaction) => {
             );
         await interaction.editReply({ embeds: [response] });
     } else if (interaction.options.getSubcommand() === "leaderboard") {
-        const guildMembers = (
-            await interaction.guild.members.fetch({
-                force: true,
-            })
-        ).filter((member) => !member.user.bot);
+        await interaction.guild!.members.fetch({ force: true });
+        const guildMembers = (await interaction.guild!.members.fetch()).filter(
+            (member) => !member.user.bot
+        );
         const users = (
             await prisma.user.findMany({
                 where: {
@@ -235,7 +331,7 @@ const execute = async (interaction) => {
         ).filter((user) => user.guessingPoints > 0);
         const response = new EmbedBuilder()
             .setColor(0x00ffff)
-            .setTitle(`Leaderboard for ${interaction.guild.name}`)
+            .setTitle(`Leaderboard for ${interaction.guild!.name}`)
             .addFields(
                 users.map((user, index) => ({
                     name: `${index + 1}. ${user.username}`,

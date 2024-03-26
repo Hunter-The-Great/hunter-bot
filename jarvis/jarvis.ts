@@ -1,7 +1,8 @@
+import { Message } from "discord.js";
 import fs from "fs";
 import { prisma } from "../utilities/db";
 
-const executeJarvis = async (message) => {
+const executeJarvis = async (message: Message) => {
     const jarvisStart = [
         "One moment",
         "Of course",
@@ -18,6 +19,7 @@ const executeJarvis = async (message) => {
 
     const shadowCheck = message.content
         .toLowerCase()
+        //@ts-ignore
         .replaceAll('"', "")
         .replaceAll(",", "")
         .replaceAll(".", "");
@@ -68,6 +70,7 @@ const executeJarvis = async (message) => {
             .replace(/ a /g, " ")
             .replace(request, "")
             .replace(/in |the |me |here |up /g, "")
+            //@ts-ignore
             .replaceAll(",", "")
             .replaceAll('"', "");
         const waifuRequest = /fine art|waifu/;

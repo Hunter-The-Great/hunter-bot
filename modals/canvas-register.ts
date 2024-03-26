@@ -1,9 +1,10 @@
+import { ModalSubmitInteraction } from "discord.js";
 import { prisma } from "../utilities/db";
 import { encrypt } from "../utilities/encryption";
 
 const name = "canvas-register";
 
-const execute = async (interaction) => {
+const execute = async (interaction: ModalSubmitInteraction) => {
     const token = interaction.fields.getTextInputValue("token");
 
     const encrypted = await encrypt(token);

@@ -1,9 +1,10 @@
 import { prisma } from "../utilities/db";
-import { PermissionsBitField } from "discord.js";
+import { checkPermissions } from "../utilities/permission-check";
+import { ModalSubmitInteraction } from "discord.js";
 
 const name = "gh-edit";
 
-const execute = async (interaction) => {
+const execute = async (interaction: ModalSubmitInteraction) => {
     const discriminator = interaction.fields.getTextInputValue("discriminator");
     const channelID = interaction.fields.getTextInputValue("channel") || "0";
 
@@ -18,17 +19,7 @@ const execute = async (interaction) => {
                 return;
             });
 
-        const member = await channel.guild.members.fetch({
-            force: true,
-            user: interaction.user.id,
-        });
-        if (
-            !(
-                member.permissions.has(
-                    PermissionsBitField.Flags.Administrator
-                ) || interaction.user.id === channel.guild.ownerId
-            )
-        ) {
+        if (!checkPermissions(interaction.user.id, channel)) {
             await interaction.reply({
                 content: "You do not have admin permissions in this server.",
                 ephemeral: true,

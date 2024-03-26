@@ -6,6 +6,7 @@ import {
     TextInputBuilder,
     TextInputStyle,
     ModalActionRowComponentBuilder,
+    ChatInputCommandInteraction,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 
@@ -37,7 +38,7 @@ const data = new SlashCommandBuilder()
         subcommand.setName("edit").setDescription("Edits an endpoint.")
     );
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     if (interaction.options.getSubcommand() === "register") {
         const discriminatorInput = new TextInputBuilder()
             .setCustomId("discriminator")
@@ -91,7 +92,7 @@ const execute = async (interaction) => {
             !(await prisma.gitHubWebhook.findFirst({
                 where: {
                     uid: interaction.user.id,
-                    discriminator: interaction.options.getString("id"),
+                    discriminator: interaction.options.getString("id")!,
                 },
             }))
         ) {
@@ -104,7 +105,7 @@ const execute = async (interaction) => {
         await prisma.gitHubWebhook.deleteMany({
             where: {
                 uid: interaction.user.id,
-                discriminator: interaction.options.getString("id"),
+                discriminator: interaction.options.getString("id")!,
             },
         });
         await interaction.reply({

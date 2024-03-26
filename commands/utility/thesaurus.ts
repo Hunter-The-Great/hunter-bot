@@ -1,4 +1,8 @@
-import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ChatInputCommandInteraction,
+} from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("thesaurus")
@@ -11,7 +15,7 @@ const data = new SlashCommandBuilder()
             .setDescription("The word to search for.")
             .setRequired(true)
     );
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     const thesaurus = require("thesaurus");
 
     const synonyms = thesaurus.find(interaction.options.getString("word"));

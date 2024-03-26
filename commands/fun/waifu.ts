@@ -4,6 +4,7 @@ import {
     ButtonBuilder,
     ActionRowBuilder,
     ButtonStyle,
+    ChatInputCommandInteraction,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 
@@ -69,7 +70,7 @@ const data = new SlashCommandBuilder()
     .setDMPermission(false)
     .setNSFW(true);
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     /*
     if (interaction.user.id === "472069345569144843") {
         await interaction.reply("*Down __**ATROCIOUS**__*.");
@@ -175,7 +176,7 @@ const execute = async (interaction) => {
             .setLabel("Save")
             .setStyle(ButtonStyle.Primary);
 
-        const row = new ActionRowBuilder().addComponents(save);
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(save);
 
         const rsp = await interaction.editReply({
             embeds: [embed],
@@ -198,7 +199,6 @@ const execute = async (interaction) => {
                 rsp.reply({
                     content:
                         "Too many waifus saved, please delete one before saving another.",
-                    ephemeral: true,
                 });
                 return;
             }
@@ -248,6 +248,7 @@ const execute = async (interaction) => {
                     .setLabel(
                         await interaction
                             .fetchReply()
+                            //@ts-ignore
                             .then((r) => r.components[0].components[0].label)
                     )
                     .setStyle(ButtonStyle.Primary)

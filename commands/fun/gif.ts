@@ -65,10 +65,11 @@ const data = new SlashCommandBuilder()
             .setDescription("Clears all your saved GIFs.")
     );
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     const link = interaction.options.getString("link");
     const alias = interaction.options.getString("alias");
     const id = interaction.user.id;
+    if (!alias || !link) throw new Error("Is this even possible?");
 
     await interaction.deferReply({
         ephemeral: !(interaction.options.getSubcommand() === "load"),
@@ -198,7 +199,10 @@ const execute = async (interaction) => {
             .setLabel("Cancel")
             .setStyle(ButtonStyle.Secondary);
 
-        const row = new ActionRowBuilder().addComponents(cancel, confirm);
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            cancel,
+            confirm
+        );
         const response = await interaction.editReply({
             content: "Are you sure you want to clear all saved GIFs?",
             components: [row],
