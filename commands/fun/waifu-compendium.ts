@@ -4,6 +4,7 @@ import {
     ButtonBuilder,
     ActionRowBuilder,
     ButtonStyle,
+    ChatInputCommandInteraction,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 
@@ -19,7 +20,7 @@ const data = new SlashCommandBuilder()
     .setDMPermission(false)
     .setNSFW(true);
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();
     const user = interaction.options.getUser("target") || interaction.user;
     const waifus = await prisma.waifu.findMany({
@@ -30,7 +31,6 @@ const execute = async (interaction) => {
     if (waifus.length === 0) {
         await interaction.editReply({
             content: "No waifus found.",
-            ephemeral: true,
         });
         return;
     }
@@ -90,7 +90,7 @@ const execute = async (interaction) => {
         .setStyle(ButtonStyle.Danger)
         .setDisabled(false);
 
-    const row = new ActionRowBuilder().addComponents(
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
         prev,
         num,
         next,
@@ -207,7 +207,7 @@ const execute = async (interaction) => {
                 .setStyle(ButtonStyle.Danger)
                 .setDisabled(true);
 
-            const row = new ActionRowBuilder().addComponents(
+            const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
                 prev,
                 num,
                 next,

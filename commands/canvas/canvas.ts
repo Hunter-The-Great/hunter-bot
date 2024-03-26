@@ -5,6 +5,7 @@ import {
     TextInputBuilder,
     TextInputStyle,
     ModalActionRowComponentBuilder,
+    ChatInputCommandInteraction,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 import { decrypt } from "../../utilities/encryption.js";
@@ -24,7 +25,7 @@ const data = new SlashCommandBuilder()
         subcommand.setName("delete").setDescription("Deletes your token.")
     );
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     const command = interaction.options.getSubcommand();
     if (command === "register") {
         const tokenInput = new TextInputBuilder()

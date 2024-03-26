@@ -1,13 +1,15 @@
-const chrono = require("chrono-node");
+import { ModalSubmitInteraction } from "discord.js";
+
+import chrono from "chrono-node";
 
 const name = "reminder";
 
-const execute = async (interaction) => {
+const execute = async (interaction: ModalSubmitInteraction) => {
     const reminder = interaction.fields.getTextInputValue("remindercontent");
     const delay = interaction.fields.getTextInputValue("delay");
     const time = chrono.parseDate(interaction.fields.getTextInputValue("date"));
 
-    const date = new Date(time);
+    const date = new Date(time!);
 
     if (date.toString() === "Invalid Date") {
         interaction.reply({

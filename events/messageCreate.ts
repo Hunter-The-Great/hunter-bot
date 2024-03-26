@@ -1,36 +1,54 @@
-import { Events } from "discord.js";
+import { Events, Message } from "discord.js";
 import { prisma } from "../utilities/db";
 import { executeJarvis } from "../jarvis/jarvis.js";
 
 const name = Events.MessageCreate;
 
-const execute = async (message) => {
+const execute = async (message: Message) => {
+    if (!message.guild) return;
+    await prisma.guild.upsert({
+        where: {
+            id: message.guild.id,
+        },
+        create: {
+            id: message.guild.id,
+        },
+        update: {},
+    });
+    const guild = await prisma.guild.findUnique({
+        where: {
+            id: message.guild.id,
+        },
+    });
+
     try {
-        await prisma.message.create({
-            data: {
-                id: message.id,
-                channel: message.channel.id,
-                user: {
-                    connectOrCreate: {
-                        where: { id: message.author.id },
-                        create: {
-                            id: message.author.id,
-                            username: message.author.username,
+        if (guild?.logging && message.content !== "") {
+            await prisma.message.create({
+                data: {
+                    id: message.id,
+                    channel: message.channel.id,
+                    user: {
+                        connectOrCreate: {
+                            where: { id: message.author.id },
+                            create: {
+                                id: message.author.id,
+                                username: message.author.username,
+                            },
                         },
                     },
-                },
-                guild: {
-                    connectOrCreate: {
-                        where: { id: message.guild.id },
-                        create: {
-                            id: message.guild.id,
+                    guild: {
+                        connectOrCreate: {
+                            where: { id: message.guild.id },
+                            create: {
+                                id: message.guild.id,
+                            },
                         },
                     },
+                    content: message.content,
+                    timestamp: new Date(message.createdTimestamp),
                 },
-                content: message.content,
-                timestamp: new Date(message.createdTimestamp),
-            },
-        });
+            });
+        }
         if (message.author.id === process.env.CLIENT_ID || message.author.bot) {
             return;
         }
@@ -45,6 +63,7 @@ const execute = async (message) => {
         //* Text commands
         if (message.content.startsWith("~!")) {
             try {
+                //@ts-ignore
                 const command = message.client.textCommands.get(
                     message.content.slice(2)
                 );

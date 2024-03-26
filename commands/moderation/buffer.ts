@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import fs from "fs";
 
 const data = new SlashCommandBuilder()
@@ -7,7 +7,7 @@ const data = new SlashCommandBuilder()
     .setDMPermission(false)
     .setNSFW(false);
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     const data = fs.readFileSync("resources/buffer.txt", "utf8");
     await interaction.reply(data);
 };

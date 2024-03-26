@@ -74,8 +74,16 @@ model Message {
 }
 
 model Guild {
-  id       String    @id
-  jarvis   Boolean   @default(false)
-  savedAt  DateTime  @default(now())
-  messages Message[]
+  id             String          @id
+  jarvis         Boolean         @default(false)
+  logging        Boolean         @default(false)
+  savedAt        DateTime        @default(now())
+  activeChannels activeChannel[]
+  messages       Message[]
+}
+
+model activeChannel {
+  id      String @id
+  guildID String
+  guild   Guild  @relation(fields: [guildID], references: [id])
 }

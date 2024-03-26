@@ -1,10 +1,10 @@
-import { Events } from "discord.js";
+import { Events, Interaction } from "discord.js";
 import { log } from "../utilities/log.js";
 import { checkPermissions } from "../utilities/permission-check.js";
 
 const name = Events.InteractionCreate;
 
-const execute = async (interaction) => {
+const execute = async (interaction: Interaction) => {
     if (!interaction) {
         console.log("interaction is undefined");
         return;
@@ -32,6 +32,7 @@ const execute = async (interaction) => {
     if (interaction.isChatInputCommand()) {
         //* slash commands
         try {
+            //@ts-ignore
             const command = interaction.client.commands.get(
                 interaction.commandName
             );
@@ -78,9 +79,11 @@ const execute = async (interaction) => {
             const payload = {
                 user: interaction.user.username,
                 command: interaction.commandName,
+                //@ts-ignore
                 ...interaction.options._hoistedOptions.reduce((acc, params) => {
                     return { [params.name]: params.value, ...acc };
                 }, {}),
+                //@ts-ignore
                 subcommand: interaction.options._subcommand,
             };
             await log("commands", payload);
@@ -90,6 +93,7 @@ const execute = async (interaction) => {
     } else if (interaction.isModalSubmit()) {
         //* modals
         try {
+            //@ts-ignore
             const modal = interaction.client.modals.get(interaction.customId);
             await modal.execute(interaction);
         } catch (err) {

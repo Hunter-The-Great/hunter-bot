@@ -4,6 +4,7 @@ import {
     ButtonBuilder,
     ButtonStyle,
     ActionRowBuilder,
+    ChatInputCommandInteraction,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 
@@ -69,11 +70,11 @@ const data = new SlashCommandBuilder()
     .setDMPermission(false)
     .setNSFW(false);
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     let puppet;
     try {
         puppet = await interaction.client.users.fetch(
-            interaction.options.getString("uid")
+            interaction.options.getString("uid")!
         );
     } catch (err) {
         interaction.reply("User not found.");
@@ -82,6 +83,7 @@ const execute = async (interaction) => {
     if (interaction.options.getSubcommand().includes("gif")) {
         await interaction.deferReply();
         const alias = interaction.options.getString("alias");
+        if (!alias) throw new Error("Is this even possible?");
 
         if (interaction.options.getSubcommand() === "gif-list") {
             const data = await prisma.gif.findMany({
@@ -144,7 +146,10 @@ const execute = async (interaction) => {
                 .setLabel("Cancel")
                 .setStyle(ButtonStyle.Secondary);
 
-            const row = new ActionRowBuilder().addComponents(cancel, confirm);
+            const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+                cancel,
+                confirm
+            );
             const response = await interaction.editReply({
                 content: `Are you sure you want to clear all saved GIFs of ${puppet.tag}?`,
                 components: [row],

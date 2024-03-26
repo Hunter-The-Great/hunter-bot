@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("bored")
@@ -6,7 +6,7 @@ const data = new SlashCommandBuilder()
     .setDMPermission(false)
     .setNSFW(false);
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();
 
     const response = await fetch("https://www.boredapi.com/api/activity");

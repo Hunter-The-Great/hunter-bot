@@ -1,4 +1,8 @@
-import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ChatInputCommandInteraction,
+} from "discord.js";
 import { prisma } from "../../utilities/db.js";
 import { decrypt } from "../../utilities/encryption.js";
 
@@ -8,7 +12,7 @@ const data = new SlashCommandBuilder()
     .setDMPermission(true)
     .setNSFW(false);
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     const user = await prisma.user.findUnique({
         where: { id: interaction.user.id },
     });

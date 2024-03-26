@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("more-waifus")
@@ -61,7 +61,7 @@ const data = new SlashCommandBuilder()
             )
     );
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();
 
     const response = await fetch(

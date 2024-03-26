@@ -1,4 +1,8 @@
-import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
+import {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ChatInputCommandInteraction,
+} from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("help")
@@ -6,7 +10,7 @@ const data = new SlashCommandBuilder()
     .setDMPermission(false)
     .setNSFW(false);
 
-const execute = async (interaction) => {
+const execute = async (interaction: ChatInputCommandInteraction) => {
     const helpMenu = new EmbedBuilder()
         .setColor(0x00ffff)
         .setTitle("**Commands**:")

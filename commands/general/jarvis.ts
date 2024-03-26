@@ -1,4 +1,8 @@
-import { SlashCommandBuilder, PermissionsBitField } from "discord.js";
+import {
+    SlashCommandBuilder,
+    PermissionsBitField,
+    ChatInputCommandInteraction,
+} from "discord.js";
 import { prisma } from "../../utilities/db";
 
 const data = new SlashCommandBuilder()
@@ -6,6 +10,7 @@ const data = new SlashCommandBuilder()
     .setDescription("Toggles Jarvis mode.")
     .setDMPermission(false)
     .setNSFW(false)
+    .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
     .addBooleanOption((option) =>
         option
             .setName("status")
@@ -13,31 +18,14 @@ const data = new SlashCommandBuilder()
             .setRequired(true)
     );
 
-const execute = async (interaction) => {
-    const channel = await interaction.channel;
-    const member = await channel.guild.members.fetch({
-        force: true,
-        user: interaction.user.id,
-    });
-    if (
-        !(
-            member.permissions.has(PermissionsBitField.Flags.Administrator) ||
-            interaction.user.id === channel.guild.ownerId
-        )
-    ) {
-        await interaction.reply({
-            content: "You do not have admin permissions in this server.",
-            ephemeral: true,
-        });
-        return;
-    }
-
+const execute = async (interaction: ChatInputCommandInteraction) => {
+    if (!interaction.guild) throw new Error("Is this even possible?");
     await prisma.guild.upsert({
         where: { id: interaction.guild.id },
-        update: { jarvis: interaction.options.getBoolean("status") },
+        update: { jarvis: interaction.options.getBoolean("status")! },
         create: {
             id: interaction.guild.id,
-            jarvis: interaction.options.getBoolean("status"),
+            jarvis: interaction.options.getBoolean("status")!,
         },
     });
 

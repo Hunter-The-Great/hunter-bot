@@ -1,10 +1,11 @@
 import randomstring from "randomstring";
 import { prisma } from "../utilities/db";
-import { PermissionsBitField } from "discord.js";
+import { ModalSubmitInteraction } from "discord.js";
+import { checkPermissions } from "../utilities/permission-check";
 
 const name = "gh-register";
 
-const execute = async (interaction) => {
+const execute = async (interaction: ModalSubmitInteraction) => {
     const discriminator =
         interaction.fields.getTextInputValue("discriminator") ||
         randomstring.generate({ charset: "alphanumeric", length: 25 });
@@ -21,17 +22,8 @@ const execute = async (interaction) => {
     }
     if (interaction.fields.getTextInputValue("channel")) {
         const channel = await interaction.client.channels.fetch(channelID);
-        const member = await channel.guild.members.fetch({
-            force: true,
-            user: interaction.user.id,
-        });
-        if (
-            !(
-                member.permissions.has(
-                    PermissionsBitField.Flags.Administrator
-                ) || interaction.user.id === channel.guild.ownerId
-            )
-        ) {
+
+        if (!checkPermissions(interaction.user.id, channel)) {
             await interaction.reply({
                 content: "You do not have admin permissions in this server.",
                 ephemeral: true,
