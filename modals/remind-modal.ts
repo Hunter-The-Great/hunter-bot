@@ -1,6 +1,6 @@
 import { ModalSubmitInteraction } from "discord.js";
 
-import chrono from "chrono-node";
+const chrono = require("chrono-node");
 
 const name = "reminder";
 
