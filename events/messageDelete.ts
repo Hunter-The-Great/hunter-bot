@@ -30,7 +30,7 @@ const execute = async (message: Message) => {
             Author: ${message.author.username} | ${message.author.id}
             Guild: ${message.guild.name} | ${message.guild.id}
             Channel: ${message.channel.name} | ${message.channel.id}
-            Link: https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id}
+            Link: ${message.url}
             Content: ${message.content}\n-------------------------------\n`,
             err
         );

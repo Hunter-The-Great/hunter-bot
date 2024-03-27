@@ -37,7 +37,7 @@ const execute = async (oldMessage: Message, newMessage: Message) => {
             Author: ${newMessage.author.username} | ${newMessage.author.id}
             Guild: ${newMessage.guild.name} | ${newMessage.guild.id}
             Channel: ${newMessage.channel.name} | ${newMessage.channel.id}
-            Link: https://discord.com/channels/${newMessage.guild.id}/${newMessage.channel.id}/${newMessage.id}
+            Link: ${newMessage.url}
             Content: ${newMessage.content}\n-------------------------------\n`,
             err
         );
