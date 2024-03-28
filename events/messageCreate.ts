@@ -1,27 +1,29 @@
 import { Events, Message } from "discord.js";
 import { prisma } from "../utilities/db";
 import { executeJarvis } from "../jarvis/jarvis.js";
+import { sentry } from "../utilities/sentry";
 
 const name = Events.MessageCreate;
 
 const execute = async (message: Message) => {
     if (!message.guild) return;
-    await prisma.guild.upsert({
-        where: {
-            id: message.guild.id,
-        },
-        create: {
-            id: message.guild.id,
-        },
-        update: {},
-    });
-    const guild = await prisma.guild.findUnique({
-        where: {
-            id: message.guild.id,
-        },
-    });
 
     try {
+        await prisma.guild.upsert({
+            where: {
+                id: message.guild.id,
+            },
+            create: {
+                id: message.guild.id,
+            },
+            update: {},
+        });
+        const guild = await prisma.guild.findUnique({
+            where: {
+                id: message.guild.id,
+            },
+        });
+
         if (guild?.logging && message.content !== "") {
             await prisma.message.create({
                 data: {
@@ -57,6 +59,7 @@ const execute = async (message: Message) => {
                 await message.channel.send("General Kenobi");
             } catch (err) {
                 console.error("An error has ocurred.", err);
+                sentry.captureException(err);
             }
         }
 
@@ -75,6 +78,7 @@ const execute = async (message: Message) => {
                 await command.execute(message);
             } catch (err) {
                 console.error("Failed to execute text command:\n", err);
+                sentry.captureException(err);
             }
         }
         if (
@@ -95,6 +99,7 @@ const execute = async (message: Message) => {
         }
     } catch (err) {
         console.error("An error has occurred:\n", err);
+        sentry.captureException(err);
     }
 };
 

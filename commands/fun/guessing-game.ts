@@ -9,6 +9,7 @@ import {
     VoiceChannel,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
+import { sentry } from "../../utilities/sentry";
 
 const data = new SlashCommandBuilder()
     .setName("guessing")
@@ -278,6 +279,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
                 });
             });
         } catch (err) {
+            sentry.captureException(err);
             console.error(err);
         }
     } else if (interaction.options.getSubcommand() === "stats") {

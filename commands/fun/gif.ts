@@ -7,6 +7,7 @@ import {
     ChatInputCommandInteraction,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
+import { sentry } from "../../utilities/sentry.js";
 
 const data = new SlashCommandBuilder()
     .setName("gif")
@@ -90,6 +91,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
         try {
             new URL(link);
         } catch (err) {
+            sentry.captureException(err);
             await interaction.editReply(
                 "Error: invalid input, please provide a link to a GIF/image"
             );
@@ -229,6 +231,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
                 });
             }
         } catch (err) {
+            sentry.captureException(err);
             await interaction.editReply({
                 content: "Something went wrong, cancelling.",
                 components: [],
