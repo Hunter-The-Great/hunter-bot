@@ -7,6 +7,7 @@ import {
     ChatInputCommandInteraction,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
+import { sentry } from "../../utilities/sentry.js";
 
 const data = new SlashCommandBuilder()
     .setName("override")
@@ -77,6 +78,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             interaction.options.getString("uid")!
         );
     } catch (err) {
+        sentry.captureException(err); // Maybe don't log this?
         interaction.reply("User not found.");
         return;
     }
@@ -176,6 +178,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
                     });
                 }
             } catch (err) {
+                sentry.captureException(err);
                 await interaction.editReply({
                     content: "Something went wrong, cancelling.",
                     components: [],

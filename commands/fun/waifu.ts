@@ -7,6 +7,7 @@ import {
     ChatInputCommandInteraction,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
+import { sentry } from "../../utilities/sentry.js";
 
 const data = new SlashCommandBuilder()
     .setName("waifu")
@@ -256,6 +257,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
                 row.setComponents(save);
                 interaction.editReply({ components: [row] });
             } catch (err) {
+                sentry.captureException(err);
                 console.error(err);
             }
         });

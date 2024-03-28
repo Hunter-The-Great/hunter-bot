@@ -1,4 +1,5 @@
 import { Client, ContentType, ContentEncoding } from "@axiomhq/axiom-node";
+import { sentry } from "./sentry";
 
 const axiom = new Client({
     token: process.env.AXIOM_TOKEN,
@@ -9,6 +10,7 @@ async function log(type, payload) {
     try {
         await axiom.ingestEvents(type, payload);
     } catch (err) {
+        sentry.captureException(err);
         console.error("Axiom communications failure:\n", err);
     }
 }

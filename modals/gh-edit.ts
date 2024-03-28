@@ -1,6 +1,7 @@
 import { prisma } from "../utilities/db";
 import { checkPermissions } from "../utilities/permission-check";
 import { ModalSubmitInteraction } from "discord.js";
+import { sentry } from "../utilities/sentry";
 
 const name = "gh-edit";
 
@@ -11,7 +12,8 @@ const execute = async (interaction: ModalSubmitInteraction) => {
     if (interaction.fields.getTextInputValue("channel")) {
         const channel = await interaction.client.channels
             .fetch(channelID)
-            .catch(() => {
+            .catch((err) => {
+                sentry.captureException(err);
                 interaction.reply({
                     content: "Invalid channel ID.",
                     ephemeral: true,

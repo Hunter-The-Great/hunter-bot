@@ -1,4 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { sentry } from "../../utilities/sentry";
 
 const data = new SlashCommandBuilder()
     .setName("reload")
@@ -39,8 +40,9 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
         await interaction.reply(
             `Command \`${newCommand.data.name}\` was reloaded!`
         );
-    } catch (error) {
-        console.error(error);
+    } catch (err) {
+        sentry.captureException(err);
+        console.error(err);
         await interaction.reply(
             `There was an error while reloading a command '${command.data.name}'`
         );

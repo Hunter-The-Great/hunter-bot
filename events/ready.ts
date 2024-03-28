@@ -1,5 +1,6 @@
 import { Client, Events } from "discord.js";
 import os from "os";
+import { sentry } from "../utilities/sentry";
 
 const name = Events.ClientReady;
 
@@ -17,6 +18,7 @@ const execute = async (client: Client) => {
         });
     } catch (err) {
         console.log(err);
+        sentry.captureException(err);
     }
 };
 export { name, once, execute };

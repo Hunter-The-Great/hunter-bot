@@ -1,6 +1,7 @@
 import { Events, Interaction } from "discord.js";
 import { log } from "../utilities/log.js";
 import { checkPermissions } from "../utilities/permission-check.js";
+import { sentry } from "../utilities/sentry.js";
 
 const name = Events.InteractionCreate;
 
@@ -27,6 +28,7 @@ const execute = async (interaction: Interaction) => {
             return;
         } catch (err) {
             console.error("An error has occurred:\n", err);
+            sentry.captureException(err);
         }
     }
     if (interaction.isChatInputCommand()) {
@@ -57,6 +59,7 @@ const execute = async (interaction: Interaction) => {
             await command.execute(interaction);
         } catch (err) {
             console.error("An error has occurred:\n", err);
+            sentry.captureException(err);
             try {
                 if (interaction.isRepliable()) {
                     if (interaction.replied || interaction.deferred) {
@@ -71,6 +74,7 @@ const execute = async (interaction: Interaction) => {
                 }
             } catch (err1) {
                 console.log("\nA message could not be sent");
+                // Maybe log with sentry here?
                 return;
             }
         }
@@ -89,6 +93,7 @@ const execute = async (interaction: Interaction) => {
             await log("commands", payload);
         } catch (err) {
             console.error("Axiom communications failure:\n", err);
+            sentry.captureException(err);
         }
     } else if (interaction.isModalSubmit()) {
         //* modals
@@ -98,6 +103,7 @@ const execute = async (interaction: Interaction) => {
             await modal.execute(interaction);
         } catch (err) {
             console.error("An error has occurred:\n", err);
+            sentry.captureException(err);
         }
     } else {
         return;

@@ -5,6 +5,7 @@ import {
     ChatInputCommandInteraction,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
+import { sentry } from "../../utilities/sentry";
 
 const data = new SlashCommandBuilder()
     .setName("log-messages")
@@ -132,6 +133,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             } while (messageMap.length !== 0);
         }
     } catch (err) {
+        sentry.captureException(err);
         console.error(err);
         await interaction.editReply({
             content: `An error occurred while logging messages.`,

@@ -7,6 +7,7 @@ import {
     EmbedBuilder,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
+import { sentry } from "../../utilities/sentry";
 
 const data = new SlashCommandBuilder()
     .setName("guessing-channel")
@@ -89,6 +90,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
                 },
             });
         } catch (err) {
+            sentry.captureException(err); // Maybe don't log this?
             await interaction.editReply({
                 content: "Error deleting channel, was the channel registered?",
             });

@@ -2,6 +2,7 @@ import { fastify } from "./fastify";
 import { prisma } from "./utilities/db";
 import cors from "@fastify/cors";
 import { EmbedBuilder } from "discord.js";
+import { sentry } from "./utilities/sentry";
 
 const start = async (client) => {
     await fastify.register(cors, {
@@ -122,6 +123,7 @@ const start = async (client) => {
         fastify.listen({ host: "0.0.0.0", port: process.env.PORT });
         console.log("Listening on: " + process.env.PORT);
     } catch (err) {
+        sentry.captureException(err);
         fastify.log.error(err);
         process.exit(1);
     }
