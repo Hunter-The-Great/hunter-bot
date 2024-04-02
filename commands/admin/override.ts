@@ -84,8 +84,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
     }
     if (interaction.options.getSubcommand().includes("gif")) {
         await interaction.deferReply();
-        const alias = interaction.options.getString("alias");
-        if (!alias) throw new Error("Is this even possible?");
 
         if (interaction.options.getSubcommand() === "gif-list") {
             const data = await prisma.gif.findMany({
@@ -119,6 +117,9 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 
             return;
         } else if (interaction.options.getSubcommand() === "gif-load") {
+            const alias = interaction.options.getString("alias");
+            if (!alias) throw new Error("Is this even possible?");
+
             const data = await prisma.gif.findFirst({
                 where: { uid: puppet.id, alias },
             });
@@ -128,6 +129,9 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             }
             await interaction.editReply(data.link);
         } else if (interaction.options.getSubcommand() === "gif-delete") {
+            const alias = interaction.options.getString("alias");
+            if (!alias) throw new Error("Is this even possible?");
+
             if (
                 await prisma.gif.deleteMany({
                     where: { uid: puppet.id, alias },
