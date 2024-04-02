@@ -67,16 +67,17 @@ const data = new SlashCommandBuilder()
     );
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
-    const link = interaction.options.getString("link");
-    const alias = interaction.options.getString("alias");
     const id = interaction.user.id;
-    if (!alias || !link) throw new Error("Is this even possible?");
 
     await interaction.deferReply({
         ephemeral: !(interaction.options.getSubcommand() === "load"),
     });
 
     if (interaction.options.getSubcommand() === "save") {
+        const link = interaction.options.getString("link");
+        const alias = interaction.options.getString("alias");
+        if (!link || !alias) throw new Error("Is this even possible?");
+
         if (await prisma.gif.findFirst({ where: { uid: id, alias } })) {
             interaction.editReply("Alias already in use.");
             return;
@@ -144,6 +145,9 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 
         await interaction.editReply("Error: invalid link.");
     } else if (interaction.options.getSubcommand() === "load") {
+        const alias = interaction.options.getString("alias");
+        if (!alias) throw new Error("Is this even possible?");
+
         const regex = /^[A-Za-z0-9\s-_,.]+$/;
         if (!alias.match(regex) || alias.toLowerCase() === "null") {
             await interaction.editReply(
@@ -185,6 +189,9 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 
         await interaction.editReply({ embeds: [listEmbed] });
     } else if (interaction.options.getSubcommand() === "delete") {
+        const alias = interaction.options.getString("alias");
+        if (!alias) throw new Error("Is this even possible?");
+
         if (await prisma.gif.deleteMany({ where: { uid: id, alias } })) {
             await interaction.editReply("GIF deleted");
         } else {
