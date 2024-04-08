@@ -1,4 +1,5 @@
 import { ModalSubmitInteraction } from "discord.js";
+import { sentry } from "../utilities/sentry";
 
 const chrono = require("chrono-node");
 
@@ -61,6 +62,14 @@ const execute = async (interaction: ModalSubmitInteraction) => {
             content: "Failed to set reminder, please try again later.",
             ephemeral: true,
         });
+        sentry.captureEvent({
+            message: "Failed to set reminder",
+            extra: {
+                status: response.status,
+                statusText: response.statusText,
+            },
+        });
+
         console.log(
             "Upstash communication failure, code: " +
                 response.status +
