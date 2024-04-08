@@ -196,7 +196,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             const data = await prisma.waifu.count({
                 where: { uid: interaction.user.id },
             });
-            if (data >= 25) {
+            if (data >= 50) {
                 rsp.reply({
                     content:
                         "Too many waifus saved, please delete one before saving another.",
