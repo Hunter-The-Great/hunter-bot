@@ -228,8 +228,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
                         guessingAttempts: { increment: 1 },
                         guessingPoints: {
                             increment:
-                                i.customId.split(":")[1] ===
-                                message.author.username
+                                i.customId.split(":")[1] === correctAnswer
                                     ? 1
                                     : 0,
                         },
