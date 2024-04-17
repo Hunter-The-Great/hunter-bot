@@ -5,7 +5,8 @@ import { sentry } from "../utilities/sentry";
 const name = Events.MessageDelete;
 
 const execute = async (message: Message) => {
-    if (!message.guild || message.channel.isDMBased()) return;
+    if (!message.guild || message.channel.isDMBased() || message.author.bot)
+        return;
 
     try {
         await prisma.guild.upsert({

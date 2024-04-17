@@ -9,8 +9,9 @@ const execute = async (oldMessage: Message, newMessage: Message) => {
     if (!(oldMessage.guild && newMessage.guild)) return;
     if (oldMessage.channel.isDMBased() || newMessage.channel.isDMBased())
         return;
+    if (oldMessage.content === newMessage.content || oldMessage.author.bot)
+        return;
 
-    if (oldMessage.content === newMessage.content) return;
     try {
         await prisma.guild.upsert({
             where: {
