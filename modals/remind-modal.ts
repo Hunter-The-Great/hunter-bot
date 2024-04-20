@@ -42,7 +42,7 @@ const execute = async (interaction: ModalSubmitInteraction) => {
     };
 
     const response = await fetch(
-        "https://qstash.upstash.io/v1/publish/https://hunter-bot.drewh.net/reminders",
+        "https://qstash.upstash.io/v2/publish/https://hunter-bot.drewh.net/reminders",
         {
             method: "POST",
             headers: {
