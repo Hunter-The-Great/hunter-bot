@@ -87,3 +87,11 @@ model activeChannel {
   guildID String
   guild   Guild  @relation(fields: [guildID], references: [id])
 }
+
+model feedback {
+  id      String   @id @default(cuid())
+  message String   @db.VarChar(500)
+  savedAt DateTime @default(now())
+
+  @@fulltext([message])
+}

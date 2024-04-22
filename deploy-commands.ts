@@ -14,6 +14,7 @@ for (const folder of commandFolders) {
     }
     // Grab all the command files from the commands directory you created earlier
     const commandsPath = path.join(foldersPath, folder);
+    if (!fs.statSync(commandsPath).isDirectory()) continue;
     const commandFiles = fs
         .readdirSync(commandsPath)
         .filter((file) => file.endsWith(".ts"));
