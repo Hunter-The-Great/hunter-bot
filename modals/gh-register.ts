@@ -1,7 +1,6 @@
 import randomstring from "randomstring";
 import { prisma } from "../utilities/db";
 import { ModalSubmitInteraction } from "discord.js";
-import { checkPermissions } from "../utilities/permission-check";
 
 const name = "gh-register";
 
@@ -9,7 +8,7 @@ const execute = async (interaction: ModalSubmitInteraction) => {
     const discriminator =
         interaction.fields.getTextInputValue("discriminator") ||
         randomstring.generate({ charset: "alphanumeric", length: 25 });
-    const channelID = interaction.fields.getTextInputValue("channel") || "0";
+    const channelID = interaction.fields.getTextInputValue("channel") || "-1";
     if (interaction.fields.getTextInputValue("discriminator")) {
         const regex = new RegExp("^[a-zA-Z0-9_-]*$");
         if (!regex.test(discriminator)) {
@@ -21,15 +20,12 @@ const execute = async (interaction: ModalSubmitInteraction) => {
         }
     }
     if (interaction.fields.getTextInputValue("channel")) {
-        const channel = await interaction.client.channels.fetch(channelID);
-
-        if (!checkPermissions(interaction.user.id, channel)) {
-            await interaction.reply({
-                content: "You do not have admin permissions in this server.",
-                ephemeral: true,
-            });
+        await interaction.client.channels.fetch(channelID).catch(async () => {
+            await interaction.reply(
+                "An error occurred, check if your channel ID is valid."
+            );
             return;
-        }
+        });
     }
 
     if (

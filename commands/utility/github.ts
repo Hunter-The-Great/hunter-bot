@@ -7,6 +7,7 @@ import {
     TextInputStyle,
     ModalActionRowComponentBuilder,
     ChatInputCommandInteraction,
+    PermissionsBitField,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 
@@ -15,6 +16,7 @@ const data = new SlashCommandBuilder()
     .setDescription("GitHub webhook integration.")
     .setDMPermission(true)
     .setNSFW(false)
+    .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
     .addSubcommand((subcommand) =>
         subcommand.setName("register").setDescription("Registers a webhook.")
     )
@@ -47,24 +49,29 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             .setMaxLength(25)
             .setRequired(false)
             .setStyle(TextInputStyle.Short);
+
         const channelInput = new TextInputBuilder()
             .setCustomId("channel")
             .setLabel("Channel:")
-            .setPlaceholder("Requires admin privileges.")
+            .setPlaceholder("Leave blank for DMs")
             .setRequired(false)
             .setStyle(TextInputStyle.Short);
+
         const row1 =
             new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
                 discriminatorInput
             );
+
         const row2 =
             new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
                 channelInput
             );
+
         const modal = new ModalBuilder()
             .setCustomId("gh-register")
             .setTitle("Endpoint Generator")
             .addComponents(row1, row2);
+
         await interaction.showModal(modal);
     } else if (interaction.options.getSubcommand() === "list") {
         const webhooks = await prisma.gitHubWebhook.findMany({

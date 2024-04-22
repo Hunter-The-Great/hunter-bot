@@ -1,9 +1,14 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+    ChatInputCommandInteraction,
+    SlashCommandBuilder,
+    PermissionsBitField,
+} from "discord.js";
 import fs from "fs";
 
 const data = new SlashCommandBuilder()
     .setName("buffer")
     .setDescription("Sends a buffer of empty space.")
+    .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
     .setDMPermission(false)
     .setNSFW(false);
 

@@ -88,7 +88,7 @@ const start = async (client) => {
                     inline: true,
                 },
             ]);
-        if (webhook.channelID === "0") {
+        if (webhook.channelID === "-1") {
             await user.send({ embeds: [embed] });
         } else {
             const channel = await client.channels.fetch(webhook.channelID);

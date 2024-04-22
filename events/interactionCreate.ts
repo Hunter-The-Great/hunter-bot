@@ -1,6 +1,5 @@
 import { Events, Interaction } from "discord.js";
 import { log } from "../utilities/log.js";
-import { checkPermissions } from "../utilities/permission-check.js";
 import { sentry } from "../utilities/sentry.js";
 
 const name = Events.InteractionCreate;
@@ -43,19 +42,6 @@ const execute = async (interaction: Interaction) => {
                     `Command "${interaction.commandName}" not found`
                 );
             }
-            if (command.category === "moderation") {
-                if (
-                    !(await checkPermissions(
-                        interaction.user,
-                        interaction.channel
-                    ))
-                ) {
-                    interaction.reply(
-                        "Insufficient permissions to use this command."
-                    );
-                    return;
-                }
-            }
             await command.execute(interaction);
         } catch (err) {
             console.error("An error has occurred:\n", err);
@@ -78,7 +64,7 @@ const execute = async (interaction: Interaction) => {
                 return;
             }
         }
-        //* command logging
+        // command logging
         try {
             const payload = {
                 user: interaction.user.username,
@@ -96,7 +82,6 @@ const execute = async (interaction: Interaction) => {
             sentry.captureException(err);
         }
     } else if (interaction.isModalSubmit()) {
-        //* modals
         try {
             //@ts-ignore
             const modal = interaction.client.modals.get(interaction.customId);
