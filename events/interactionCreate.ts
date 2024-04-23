@@ -1,6 +1,7 @@
 import { Events, Interaction } from "discord.js";
 import { log } from "../utilities/log.js";
 import { sentry } from "../utilities/sentry.js";
+import { posthog } from "../utilities/posthog.js";
 
 const name = Events.InteractionCreate;
 
@@ -12,8 +13,8 @@ const execute = async (interaction: Interaction) => {
     if (interaction.user.bot) {
         return;
     }
+
     if (interaction.isButton()) {
-        //* buttons
         try {
             if (interaction.customId.endsWith(interaction.user.id)) {
                 return;
@@ -29,9 +30,7 @@ const execute = async (interaction: Interaction) => {
             console.error("An error has occurred:\n", err);
             sentry.captureException(err);
         }
-    }
-    if (interaction.isChatInputCommand()) {
-        //* slash commands
+    } else if (interaction.isChatInputCommand()) {
         try {
             //@ts-ignore
             const command = interaction.client.commands.get(
@@ -66,19 +65,21 @@ const execute = async (interaction: Interaction) => {
         }
         // command logging
         try {
-            const payload = {
-                user: interaction.user.username,
-                command: interaction.commandName,
-                //@ts-ignore
-                ...interaction.options._hoistedOptions.reduce((acc, params) => {
-                    return { [params.name]: params.value, ...acc };
-                }, {}),
-                //@ts-ignore
-                subcommand: interaction.options._subcommand,
-            };
-            await log("commands", payload);
+            posthog.capture({
+                event: "command",
+                distinctId: interaction.user.id,
+                properties: {
+                    user: interaction.user.username,
+                    guild: interaction.guild?.name,
+                    name: interaction.commandName,
+                    //@ts-ignore
+                    subcommand: interaction.options._subcommand,
+                    //@ts-ignore
+                    options: interaction.options._hoistedOptions,
+                },
+            });
         } catch (err) {
-            console.error("Axiom communications failure:\n", err);
+            console.error("Posthog Error:\n", err);
             sentry.captureException(err);
         }
     } else if (interaction.isModalSubmit()) {
@@ -86,6 +87,23 @@ const execute = async (interaction: Interaction) => {
             //@ts-ignore
             const modal = interaction.client.modals.get(interaction.customId);
             await modal.execute(interaction);
+            if (interaction.customId === "feedback") return; // I said it was anonymous didn't I?
+            // modal logging
+            try {
+                posthog.capture({
+                    event: "modal",
+                    distinctId: interaction.user.id,
+                    properties: {
+                        user: interaction.user.username,
+                        guild: interaction.guild?.name,
+                        name: interaction.customId,
+                        options: interaction.fields.fields,
+                    },
+                });
+            } catch (err) {
+                console.error("Posthog Error:\n", err);
+                sentry.captureException(err);
+            }
         } catch (err) {
             console.error("An error has occurred:\n", err);
             sentry.captureException(err);
