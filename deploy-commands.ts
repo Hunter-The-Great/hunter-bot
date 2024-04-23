@@ -19,7 +19,6 @@ for (const folder of commandFolders) {
         .filter((file) => file.endsWith(".ts"));
     // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
     for (const file of commandFiles) {
-        console.log(file);
         const filePath = path.join(commandsPath, file);
         const command = require(filePath);
         if ("data" in command && "execute" in command) {
