@@ -10,11 +10,10 @@ jobs:
         name: thing
         runs-on: ubuntu-latest
         steps:
-            - name: Deploy Commands
-              uses: actions/checkout@v4
-              uses: oven-sh/setup-bun@v1
-              run: bun run cmd
-              run: bun run cmd-dev
+              - uses: actions/checkout@v4
+              - uses: oven-sh/setup-bun@v1
+              - run: bun run cmd
+              - run: bun run cmd-dev
     docker:
         runs-on: ubuntu-latest
         steps:
