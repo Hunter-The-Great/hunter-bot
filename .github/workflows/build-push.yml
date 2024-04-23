@@ -15,7 +15,8 @@ jobs:
         steps:
               - uses: actions/checkout@v4
               - uses: oven-sh/setup-bun@v1
-              - run: bun install
+              - run: bun run install
+              - run: bun run db-gen
               - run: bun run cmd
               - run: bun run cmd-dev
     docker:
