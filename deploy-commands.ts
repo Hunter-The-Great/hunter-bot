@@ -2,7 +2,7 @@
 import { REST, Routes, SlashCommandBuilder } from "discord.js";
 import fs from "node:fs";
 import path from "node:path";
-
+console.log("e");
 const commands: SlashCommandBuilder[] = [];
 // Grab all the command files from the commands directory you created earlier
 const foldersPath = path.join(__dirname, "commands");
