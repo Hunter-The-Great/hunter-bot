@@ -8,6 +8,9 @@ const commands: SlashCommandBuilder[] = [];
 const foldersPath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(foldersPath);
 
+const token = process.env.TOKEN || process.argv[3];
+const clientID = process.env.CLIENT_ID || process.argv[4];
+
 for (const folder of commandFolders) {
     if (folder === "admin" || folder === "testing") {
         continue;
@@ -32,8 +35,8 @@ for (const folder of commandFolders) {
     }
 }
 
-const rest = new REST().setToken(process.env.TOKEN!);
+const rest = new REST().setToken(token);
 
-rest.put(Routes.applicationCommands(process.env.CLIENT_ID!), {
+rest.put(Routes.applicationCommands(clientID), {
     body: commands,
 });

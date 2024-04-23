@@ -11,6 +11,11 @@ jobs:
         steps:
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v2
+            - name: Deploy Commands
+              uses: actions/checkout@v4
+              uses: oven-sh/setup-bun@v1
+              run: bun cmd
+              run: bun cmd-dev
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v2
             - name: Login to Docker Hub
