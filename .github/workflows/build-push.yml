@@ -9,6 +9,9 @@ jobs:
     commands:
         name: Deploy Commands
         runs-on: ubuntu-latest
+        env:
+          TOKEN: ${{secrets.TOKEN}}
+          CLIENT_ID: ${{secrets.CLIENT_ID}}
         steps:
               - uses: actions/checkout@v4
               - uses: oven-sh/setup-bun@v1
