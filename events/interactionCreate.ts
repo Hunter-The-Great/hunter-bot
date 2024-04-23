@@ -1,5 +1,4 @@
 import { Events, Interaction } from "discord.js";
-import { log } from "../utilities/log.js";
 import { sentry } from "../utilities/sentry.js";
 import { posthog } from "../utilities/posthog.js";
 
