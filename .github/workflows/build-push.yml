@@ -7,7 +7,7 @@ on:
 
 jobs:
     commands:
-        name: thing
+        name: commands
         runs-on: ubuntu-latest
         steps:
               - uses: actions/checkout@v4
