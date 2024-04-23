@@ -32,7 +32,7 @@ const rest = new REST().setToken(process.env.TOKEN!);
 rest.put(
     Routes.applicationGuildCommands(
         process.env.CLIENT_ID!,
-        process.env.DEV_GUILD_ID!
+        "733531124655063051"
     ),
     { body: commands }
 );
