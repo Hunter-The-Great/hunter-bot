@@ -1,6 +1,6 @@
 import { Client, GatewayIntentBits, Collection } from "discord.js";
 import("dotenv/config");
-import { start } from "./rest-server.js";
+import { start } from "./server";
 import fs from "node:fs";
 import path from "node:path";
 import { posthog } from "./utilities/posthog.js";
@@ -32,7 +32,7 @@ for (const folder of commandFolders) {
     const commandsPath = path.join(foldersPath, folder);
     const commandFiles = fs
         .readdirSync(commandsPath)
-        .filter((file) => file.endsWith(".ts"));
+        .filter((file) => file.endsWith(".ts") || file.endsWith(".tsx"));
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
         const command = require(filePath);
@@ -51,7 +51,7 @@ for (const folder of commandFolders) {
 const textPath = path.join(__dirname, "text-commands");
 const textFiles = fs
     .readdirSync(textPath)
-    .filter((file) => file.endsWith(".ts"));
+    .filter((file) => file.endsWith(".ts") || file.endsWith(".tsx"));
 for (const file of textFiles) {
     const filePath = path.join(textPath, file);
     const command = require(filePath);
@@ -69,7 +69,7 @@ for (const file of textFiles) {
 const modalsPath = path.join(__dirname, "modals");
 const modalFiles = fs
     .readdirSync(modalsPath)
-    .filter((file) => file.endsWith(".ts"));
+    .filter((file) => file.endsWith(".ts") || file.endsWith(".tsx"));
 
 for (const file of modalFiles) {
     const filePath = path.join(modalsPath, file);
@@ -88,7 +88,7 @@ for (const file of modalFiles) {
 const eventsPath = path.join(__dirname, "events");
 const eventFiles = fs
     .readdirSync(eventsPath)
-    .filter((file) => file.endsWith(".ts"));
+    .filter((file) => file.endsWith(".ts") || file.endsWith(".tsx"));
 
 for (const file of eventFiles) {
     const filePath = path.join(eventsPath, file);

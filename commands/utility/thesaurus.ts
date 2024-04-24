@@ -3,6 +3,7 @@ import {
     EmbedBuilder,
     ChatInputCommandInteraction,
 } from "discord.js";
+import { updateSite } from "../../server";
 
 const data = new SlashCommandBuilder()
     .setName("thesaurus")

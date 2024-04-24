@@ -1,15 +1,34 @@
-import { fastify } from "./fastify";
-import { prisma } from "./utilities/db";
+import { prisma } from "../utilities/db";
+import websocket from "@fastify/websocket";
 import cors from "@fastify/cors";
 import { EmbedBuilder } from "discord.js";
-import { sentry } from "./utilities/sentry";
+import { sentry } from "../utilities/sentry";
+import { FastifyReply, fastify } from "fastify";
+import { BaseHtml } from "./baseHtml";
+
+export const server = fastify() as any;
+
+export function updateSite(message: JSX.Element) {
+    server.websocketServer.clients.forEach((client) => {
+        client.send(message.toString());
+    });
+}
 
 const start = async (client) => {
-    await fastify.register(cors, {
+    await server.register(cors, {
         origin: "*",
     });
 
-    fastify.post("/reminders", async (request, res) => {
+    await server.register(websocket);
+
+    //     fastify.register(fastifyStatic, {
+    //   root: process.cwd() + "/public",
+    //   prefix: "/public/",
+    // });
+
+    server.get("/pubsub", { websocket: true }, (_connection) => {});
+
+    server.post("/reminders", async (request, res) => {
         if (request.body.key !== process.env.KEY) {
             console.log("Invalid key for /reminders.");
             return res.code(401).send({ message: "Invalid Key" });
@@ -21,7 +40,7 @@ const start = async (client) => {
         return res.code(200).send({ message: "Acknowledged." });
     });
 
-    fastify.post("/message", async (request, res) => {
+    server.post("/message", async (request, res) => {
         if (request.body.key !== process.env.MESSAGE_KEY) {
             console.log("Invalid key for /message.");
             return res.code(401).send({ message: "Invalid Key" });
@@ -37,7 +56,7 @@ const start = async (client) => {
         return res.code(200).send({ message: "Acknowledged." });
     });
 
-    fastify.post("/gh/:uid/:discriminator", async (request, res) => {
+    server.post("/gh/:uid/:discriminator", async (request, res) => {
         const { uid, discriminator } = request.params;
         const user = await client.users.fetch(uid);
 
@@ -97,7 +116,7 @@ const start = async (client) => {
         return res.code(200).send({ message: "Acknowledged." });
     });
 
-    fastify.post("/drewh", async (request, res) => {
+    server.post("/drewh", async (request, res) => {
         if (request.body.key !== process.env.DREW_KEY) {
             console.log("Invalid key for /drewh.");
             return res.code(401).send({ message: "Invalid Key" });
@@ -107,7 +126,7 @@ const start = async (client) => {
         return res.code(200).send({ message: "Acknowledged." });
     });
 
-    fastify.post("/coolthing", async (request, res) => {
+    server.post("/coolthing", async (request, res) => {
         await client.channels.fetch("1198755163612119163").then((channel) => {
             channel.send(
                 `${request.body.user ?? "SOMEONE"} ${
@@ -118,13 +137,22 @@ const start = async (client) => {
         return res.code(200).send({ message: "Cool thing acknowledged." });
     });
 
+    server.get("/", async (req, res: FastifyReply) => {
+        res.header("Content-Type", "text/html; charset=utf-8");
+        res.send(<BaseHtml />);
+    });
+
+    server.get("/test", async (req, res: FastifyReply) => {
+        res.send(<div class="bg-red-200 rounded p-2">Changed!!!</div>);
+    });
+
     //* running the server
     try {
-        fastify.listen({ host: "0.0.0.0", port: process.env.PORT });
+        server.listen({ host: "0.0.0.0", port: process.env.PORT });
         console.log("Listening on: " + process.env.PORT);
     } catch (err) {
         sentry.captureException(err);
-        fastify.log.error(err);
+        server.log.error(err);
         process.exit(1);
     }
 };
