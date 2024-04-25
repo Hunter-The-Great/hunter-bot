@@ -1,7 +1,7 @@
 import { prisma } from "../utilities/db";
 import websocket from "@fastify/websocket";
 import cors from "@fastify/cors";
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, TextChannel } from "discord.js";
 import { sentry } from "../utilities/sentry";
 import { FastifyReply, fastify } from "fastify";
 import { BaseHtml } from "./baseHtml";
@@ -41,19 +41,28 @@ const start = async (client) => {
     });
 
     server.post("/message", async (request, res) => {
-        if (request.body.key !== process.env.MESSAGE_KEY) {
-            console.log("Invalid key for /message.");
-            return res.code(401).send({ message: "Invalid Key" });
-        }
-        const { channelID, message } = request.body;
+        const message = request.body.message;
+        const channelID = request.body.channel;
 
         const channel = await client.channels.fetch(channelID);
 
-        //TODO check if valid channel??
-        console.log(channel);
-
         await channel.send(message);
-        return res.code(200).send({ message: "Acknowledged." });
+        return res.send(
+            <div class="flex justify-center items-end">
+                <div id="message">
+                    <textarea
+                        name="message"
+                        class="resize max-h-48 max-w-lg rounded mx-3 bg-slate-950"
+                    ></textarea>
+                </div>
+                <button
+                    type="submit"
+                    class="bg-sky-500 hover:bg-sky-700 rounded p-1 max-h-10 min-w-20"
+                >
+                    Send
+                </button>
+            </div>
+        );
     });
 
     server.post("/gh/:uid/:discriminator", async (request, res) => {
@@ -142,8 +151,84 @@ const start = async (client) => {
         res.send(<BaseHtml />);
     });
 
-    server.get("/test", async (req, res: FastifyReply) => {
-        res.send(<div class="bg-red-200 rounded p-2">Changed!!!</div>);
+    server.post("/login", async (req, res: FastifyReply) => {
+        res.header("Content-Type", "text/html; charset=utf-8");
+        if (req.body.key !== process.env.MESSAGE_KEY) {
+            res.code(204).send({ message: "Incorrect key" });
+            return;
+        }
+        res.send(
+            <form
+                hx-post="/message"
+                hx-ext="json-enc"
+                class="flex-col justify-center"
+                hx-target="#message"
+            >
+                <div id="guilds">
+                    <label>Guild: </label>
+                    <select
+                        name="guild"
+                        hx-target="#channels"
+                        hx-post="/guild"
+                        hx-ext="json-enc"
+                        class="rounded bg-slate-950"
+                    >
+                        <option>Select a guild</option>
+                        {client.guilds.cache.map((guild) => (
+                            <option value={guild.id}>{guild.name}</option>
+                        ))}
+                    </select>
+                </div>
+                <div id="channels"></div>
+                <div id="message"></div>
+            </form>
+        );
+    });
+
+    server.post("/guild", async (req, res: FastifyReply) => {
+        res.header("Content-Type", "text/html; charset=utf-8");
+        res.send(
+            <div id="channels">
+                <label>Channel: </label>
+                <select
+                    name="channel"
+                    hx-ext="json-enc"
+                    hx-target="#message"
+                    hx-post="/channel"
+                    class="rounded bg-slate-950"
+                >
+                    <option>Select a channel</option>
+                    {client.guilds.cache
+                        .get(req.body.guild)
+                        .channels.cache.filter(
+                            (channel) => channel instanceof TextChannel
+                        )
+                        .map((channel) => (
+                            <option value={channel.id}>{channel.name}</option>
+                        ))}
+                </select>
+            </div>
+        );
+    });
+
+    server.post("/channel", async (req, res: FastifyReply) => {
+        res.header("Content-Type", "text/html; charset=utf-8");
+        res.send(
+            <div class="flex justify-center items-end">
+                <div id="message">
+                    <textarea
+                        name="message"
+                        class="resize max-h-48 max-w-lg rounded mx-3 bg-slate-950"
+                    ></textarea>
+                </div>
+                <button
+                    type="submit"
+                    class="bg-sky-500 hover:bg-sky-700 rounded p-1 max-h-10 min-w-20"
+                >
+                    Send
+                </button>
+            </div>
+        );
     });
 
     //* running the server

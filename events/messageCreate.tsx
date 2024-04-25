@@ -2,7 +2,7 @@ import { Events, Message } from "discord.js";
 import { prisma } from "../utilities/db";
 import { executeJarvis } from "../jarvis/jarvis.js";
 import { sentry } from "../utilities/sentry";
-import { updateSite } from "../server";
+//import { updateSite } from "../server";
 
 const name = Events.MessageCreate;
 
@@ -10,14 +10,14 @@ const execute = async (message: Message) => {
     if (!message.guild) return;
 
     // Update the site on every message
-    updateSite(
-        <div id="messages" hx-swap-oob="beforeend">
-            <div class="border border-gray-500 my-3 p-2">
-                <div>{message.author.displayName}</div>
-                <div>{message.content}</div>
-            </div>
-        </div>
-    );
+    //updateSite(
+    //    <div id="messages" hx-swap-oob="beforeend">
+    //        <div class="border border-gray-500 my-3 p-2">
+    //            <div>{message.author.displayName}</div>
+    //            <div>{message.content}</div>
+    //        </div>
+    //    </div>
+    //);
 
     try {
         await prisma.guild.upsert({
