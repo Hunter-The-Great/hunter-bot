@@ -4,11 +4,11 @@
 generator client {
   provider        = "prisma-client-js"
   binaryTargets   = ["native", "debian-openssl-3.0.x"]
-  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -21,7 +21,6 @@ model Gif {
   savedAt DateTime @default(now())
 
   @@unique([uid, alias])
-  @@fulltext([alias])
 }
 
 model Waifu {
@@ -93,6 +92,4 @@ model feedback {
   id      String   @id @default(cuid())
   message String   @db.VarChar(500)
   savedAt DateTime @default(now())
-
-  @@fulltext([message])
 }
