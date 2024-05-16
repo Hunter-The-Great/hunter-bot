@@ -22,7 +22,7 @@
     "@kitajs/html": "^4.1.0",
     "@kitajs/ts-html-plugin": "^4.0.1",
     "@prisma/client": "^5.11.0",
-    "@sentry/bun": "^7.108.0",
+    "@sentry/bun": "^8.2.1",
     "@types/node": "^20.11.26",
     "@upstash/redis": "^1.28.4",
     "chrono-node": "^2.7.5",
