@@ -8,6 +8,7 @@ import {
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 import { sentry } from "../../utilities/sentry.js";
+import { connect } from "node:http2";
 
 const data = new SlashCommandBuilder()
     .setName("gif")
@@ -126,7 +127,15 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
                 data: {
                     alias,
                     link,
-                    uid: id,
+                    user: {
+                        connectOrCreate: {
+                            where: { id: interaction.user.id },
+                            create: {
+                                id: interaction.user.id,
+                                username: interaction.user.username,
+                            },
+                        },
+                    },
                 },
             });
             await interaction.editReply(`${data + 1}/20 GIFs saved.`);
