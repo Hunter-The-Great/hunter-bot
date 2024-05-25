@@ -15,6 +15,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
         await interaction.editReply(
             "Bored API failed to respond, please try again later."
         );
+        return;
     }
     const data = await response.json();
     await interaction.editReply(data.activity + "\n" + data.link);
