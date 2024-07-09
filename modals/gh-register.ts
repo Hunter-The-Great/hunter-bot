@@ -45,7 +45,7 @@ const execute = async (interaction: ModalSubmitInteraction) => {
         data: { uid: interaction.user.id, discriminator, channelID },
     });
     await interaction.reply({
-        content: `Endpoint registered:\nhttps://hunter-bot.drewh.net/gh/${interaction.user.id}/${discriminator}`,
+        content: `Endpoint registered:\nhttps://hunter-bot.lowryb.sbs/gh/${interaction.user.id}/${discriminator}`,
         ephemeral: true,
     });
 };

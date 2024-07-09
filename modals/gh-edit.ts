@@ -59,7 +59,7 @@ const execute = async (interaction: ModalSubmitInteraction) => {
     }
 
     await interaction.reply({
-        content: `Endpoint edited:\nhttps://hunter-bot.drewh.net/gh/${interaction.user.id}/${discriminator}`,
+        content: `Endpoint edited:\nhttps://hunter-bot.lowryb.sbs/gh/${interaction.user.id}/${discriminator}`,
         ephemeral: true,
     });
 };
