@@ -34,33 +34,37 @@ const execute = async (message: Message) => {
                 id: message.guild.id,
             },
         });
-
-        if (guild?.logging && message.content !== "") {
-            await prisma.message.create({
-                data: {
-                    id: message.id,
-                    channel: message.channel.id,
-                    user: {
-                        connectOrCreate: {
-                            where: { id: message.author.id },
-                            create: {
-                                id: message.author.id,
-                                username: message.author.username,
+        try {
+            if (guild?.logging && message.content !== "") {
+                await prisma.message.create({
+                    data: {
+                        id: message.id,
+                        channel: message.channel.id,
+                        user: {
+                            connectOrCreate: {
+                                where: { id: message.author.id },
+                                create: {
+                                    id: message.author.id,
+                                    username: message.author.username,
+                                },
                             },
                         },
-                    },
-                    guild: {
-                        connectOrCreate: {
-                            where: { id: message.guild.id },
-                            create: {
-                                id: message.guild.id,
+                        guild: {
+                            connectOrCreate: {
+                                where: { id: message.guild.id },
+                                create: {
+                                    id: message.guild.id,
+                                },
                             },
                         },
+                        content: message.content,
+                        timestamp: new Date(message.createdTimestamp),
                     },
-                    content: message.content,
-                    timestamp: new Date(message.createdTimestamp),
-                },
-            });
+                });
+            }
+        } catch (err) {
+            console.error("Failed to log message:\n", err);
+            sentry.captureException(err);
         }
         if (message.author.id === process.env.CLIENT_ID || message.author.bot) {
             return;
@@ -72,6 +76,17 @@ const execute = async (message: Message) => {
                 console.error("An error has ocurred.", err);
                 sentry.captureException(err);
             }
+        }
+        if (message.content === "https://tenor.com/view/discord-gif-27442765") {
+            const fishMessage = await message
+                .fetchReference()
+                .catch(async () => {
+                    const messages = await message.channel.messages.fetch({
+                        limit: 2,
+                    });
+                    return messages.last();
+                });
+            if (fishMessage) await fishMessage.react("🐟");
         }
 
         //* Text commands
