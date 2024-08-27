@@ -52,7 +52,7 @@ const start = async (client) => {
                 <div id="message">
                     <textarea
                         name="message"
-                        class="resize max-h-48 max-w-lg rounded mx-3 bg-slate-950"
+                        class="resize max-h-48 max-w-lg rounded mx-3 bg-slate-950 p-1"
                     ></textarea>
                 </div>
                 <button
@@ -215,18 +215,18 @@ const start = async (client) => {
         res.header("Content-Type", "text/html; charset=utf-8");
         res.send(
             <div class="flex justify-center items-end">
-                <div id="message">
+                <div id="message" class="flex items-end">
                     <textarea
                         name="message"
-                        class="resize max-h-48 max-w-lg rounded mx-3 bg-slate-950"
+                        class="resize max-h-48 max-w-lg min-w-48 min-h-16 rounded mt-1 mr-1 bg-slate-950 p-1"
                     ></textarea>
+                    <button
+                        type="submit"
+                        class="bg-sky-500 hover:bg-sky-700 rounded p-1 max-h-10 min-w-20"
+                    >
+                        Send
+                    </button>
                 </div>
-                <button
-                    type="submit"
-                    class="bg-sky-500 hover:bg-sky-700 rounded p-1 max-h-10 min-w-20"
-                >
-                    Send
-                </button>
             </div>
         );
     });

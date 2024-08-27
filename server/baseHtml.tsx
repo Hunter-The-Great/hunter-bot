@@ -29,7 +29,7 @@ export const BaseHtml = ({ children, ...other }: any) => (
                         <input
                             type="password"
                             name="key"
-                            class="rounded bg-slate-950"
+                            class="rounded bg-slate-950 p-1"
                         />
                         <br />
                     </div>
