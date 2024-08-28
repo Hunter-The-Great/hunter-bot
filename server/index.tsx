@@ -26,6 +26,35 @@ const start = async (client) => {
     //   prefix: "/public/",
     // });
 
+    server.get("/", async (req, res: FastifyReply) => {
+        res.header("Content-Type", "text/html; charset=utf-8");
+        res.send(
+            <BaseHtml title="Hunter Bot">
+                <div class="flex h-1/2  w-full items-center justify-center">
+                    <form
+                        hx-post="/login"
+                        hx-ext="json-enc"
+                        hx-swap="outerHTML"
+                        class="scale-150"
+                    >
+                        <label>Key: </label>
+                        <input
+                            type="password"
+                            name="key"
+                            class="rounded bg-slate-950 p-1"
+                        />
+                        <br />
+                    </form>
+                </div>
+            </BaseHtml>
+        );
+    });
+
+    server.get("/feedback", async (req, res: FastifyReply) => {
+        res.header("Content-Type", "text/html; charset=utf-8");
+        res.send(<div>test</div>);
+    });
+
     server.get("/pubsub", { websocket: true }, (_connection) => {});
 
     server.post("/reminders", async (request, res) => {
@@ -48,13 +77,11 @@ const start = async (client) => {
 
         await channel.send(message);
         return res.send(
-            <div class="flex justify-center items-end">
-                <div id="message">
-                    <textarea
-                        name="message"
-                        class="resize max-h-48 max-w-lg rounded mx-3 bg-slate-950 p-1"
-                    ></textarea>
-                </div>
+            <div id="message" class="flex justify-center items-end">
+                <textarea
+                    name="message"
+                    class="resize max-h-48 max-w-lg min-w-48 min-h-16 rounded mt-1 mr-1 bg-slate-950 p-1"
+                ></textarea>
                 <button
                     type="submit"
                     class="bg-sky-500 hover:bg-sky-700 rounded p-1 max-h-10 min-w-20"
@@ -146,11 +173,6 @@ const start = async (client) => {
         return res.code(200).send({ message: "Cool thing acknowledged." });
     });
 
-    server.get("/", async (req, res: FastifyReply) => {
-        res.header("Content-Type", "text/html; charset=utf-8");
-        res.send(<BaseHtml />);
-    });
-
     server.post("/login", async (req, res: FastifyReply) => {
         res.header("Content-Type", "text/html; charset=utf-8");
         if (req.body.key !== process.env.MESSAGE_KEY) {
@@ -161,13 +183,15 @@ const start = async (client) => {
             <form
                 hx-post="/message"
                 hx-ext="json-enc"
-                class="flex-col justify-center"
+                class="flex-col justify-center scale-150"
+                hx-swap="outerHTML"
                 hx-target="#message"
             >
                 <div id="guilds">
                     <label>Guild: </label>
                     <select
                         name="guild"
+                        hx-swap="outerHTML"
                         hx-target="#channels"
                         hx-post="/guild"
                         hx-ext="json-enc"
@@ -193,6 +217,7 @@ const start = async (client) => {
                 <select
                     name="channel"
                     hx-ext="json-enc"
+                    hx-swap="outerHTML"
                     hx-target="#message"
                     hx-post="/channel"
                     class="rounded bg-slate-950"
@@ -214,19 +239,17 @@ const start = async (client) => {
     server.post("/channel", async (req, res: FastifyReply) => {
         res.header("Content-Type", "text/html; charset=utf-8");
         res.send(
-            <div class="flex justify-center items-end">
-                <div id="message" class="flex items-end">
-                    <textarea
-                        name="message"
-                        class="resize max-h-48 max-w-lg min-w-48 min-h-16 rounded mt-1 mr-1 bg-slate-950 p-1"
-                    ></textarea>
-                    <button
-                        type="submit"
-                        class="bg-sky-500 hover:bg-sky-700 rounded p-1 max-h-10 min-w-20"
-                    >
-                        Send
-                    </button>
-                </div>
+            <div id="message" class="flex justify-center items-end">
+                <textarea
+                    name="message"
+                    class="resize max-h-48 max-w-lg min-w-48 min-h-16 rounded mt-1 mr-1 bg-slate-950 p-1"
+                ></textarea>
+                <button
+                    type="submit"
+                    class="bg-sky-500 hover:bg-sky-700 rounded p-1 max-h-10 min-w-20"
+                >
+                    Send
+                </button>
             </div>
         );
     });

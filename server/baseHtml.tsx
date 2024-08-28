@@ -1,7 +1,7 @@
-export const BaseHtml = ({ children, ...other }: any) => (
+export const BaseHtml = ({ children, title }: any) => (
     <html>
         <head>
-            <title>Hunter Bot</title>
+            <title>{title}</title>
             <meta charset="UTF-8" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
             <meta
@@ -17,24 +17,11 @@ export const BaseHtml = ({ children, ...other }: any) => (
             <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/json-enc.js"></script>
             {/* <link rel="stylesheet" href="/public/style.css" /> */}
         </head>
-        <body
-            {...other}
-            class="p-8 bg-slate-900 text-white"
-            hx-ws="connect:/pubsub"
-        >
-            <div class="flex h-1/2 items-center justify-center mb-0.5 scale-150">
-                <form hx-post="/login" hx-ext="json-enc" hx-swap="innerHTML">
-                    <div>
-                        <label>Key: </label>
-                        <input
-                            type="password"
-                            name="key"
-                            class="rounded bg-slate-950 p-1"
-                        />
-                        <br />
-                    </div>
-                </form>
-            </div>
+        <body class="p-8 bg-slate-900 text-white" hx-ws="connect:/pubsub">
+            <nav class="mb-8 flex gap-8 border-b-gray-500 border-b">
+                <a href="/feedback">Feedback</a>
+            </nav>
+            {children}
         </body>
     </html>
 );
