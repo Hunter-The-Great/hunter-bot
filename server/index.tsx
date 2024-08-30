@@ -5,6 +5,7 @@ import { EmbedBuilder, TextChannel } from "discord.js";
 import { sentry } from "../utilities/sentry";
 import { FastifyReply, fastify } from "fastify";
 import { BaseHtml } from "./baseHtml";
+import { FeedbackHtml } from "./feedback";
 
 export const server = fastify() as any;
 
@@ -52,7 +53,7 @@ const start = async (client) => {
 
     server.get("/feedback", async (req, res: FastifyReply) => {
         res.header("Content-Type", "text/html; charset=utf-8");
-        res.send(<div>test</div>);
+        res.send(<BaseHtml>{await (<FeedbackHtml />)}</BaseHtml>);
     });
 
     server.get("/pubsub", { websocket: true }, (_connection) => {});
@@ -252,6 +253,14 @@ const start = async (client) => {
                 </button>
             </div>
         );
+    });
+
+    server.delete("/feedback-remove/:id", async (req, res: FastifyReply) => {
+        const id = req.params.id;
+        await prisma.feedback.delete({
+            where: { id },
+        });
+        res.code(200);
     });
 
     //* running the server
