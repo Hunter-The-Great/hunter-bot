@@ -6,13 +6,23 @@ import {
     TextInputStyle,
     ModalActionRowComponentBuilder,
     ChatInputCommandInteraction,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("remind")
     .setDescription("Sets a reminder.")
-    .setDMPermission(true)
-    .setNSFW(false);
+    .setNSFW(false)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ]);
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     const dateInput = new TextInputBuilder()

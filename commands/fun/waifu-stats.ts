@@ -2,14 +2,25 @@ import {
     SlashCommandBuilder,
     EmbedBuilder,
     ChatInputCommandInteraction,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 
 const data = new SlashCommandBuilder()
     .setName("waifu-stats")
     .setDescription("Displays a user's waifu stats.")
-    .setDMPermission(false)
     .setNSFW(false)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ])
+
     .addUserOption((option) =>
         option
             .setName("target")

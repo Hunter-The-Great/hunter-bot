@@ -6,6 +6,8 @@ import {
     TextInputStyle,
     ModalActionRowComponentBuilder,
     ChatInputCommandInteraction,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 import { decrypt } from "../../utilities/encryption.js";
@@ -13,8 +15,16 @@ import { decrypt } from "../../utilities/encryption.js";
 const data = new SlashCommandBuilder()
     .setName("canvas")
     .setDescription("Modifying Canvas token.")
-    .setDMPermission(true)
     .setNSFW(false)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ])
     .addSubcommand((subcommand) =>
         subcommand.setName("register").setDescription("Registers a token.")
     )

@@ -2,6 +2,8 @@ import {
     SlashCommandBuilder,
     EmbedBuilder,
     ChatInputCommandInteraction,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 
 const data = new SlashCommandBuilder()
@@ -19,8 +21,16 @@ const data = new SlashCommandBuilder()
             .setDescription("Show the latest comic?")
             .setRequired(false)
     )
-    .setDMPermission(false)
-    .setNSFW(false);
+    .setNSFW(false)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ]);
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();

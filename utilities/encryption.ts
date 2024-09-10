@@ -1,8 +1,7 @@
 import crypto from "crypto";
 
 async function encrypt(text) {
-    //@ts-ignore
-    const binaryDerStringPub = atob(process.env.PUBLIC_KEY);
+    const binaryDerStringPub = atob(process.env.PUBLIC_KEY!);
     const binaryDerPub = str2ab(binaryDerStringPub);
     const publicKey = await crypto.subtle.importKey(
         "spki",
@@ -15,13 +14,19 @@ async function encrypt(text) {
         ["encrypt"]
     );
 
-    return await crypto.subtle.encrypt("RSA-OAEP", publicKey, text);
+    const enc = new TextEncoder();
+    const encoded = enc.encode(text);
+    const encrypted = await crypto.subtle.encrypt(
+        "RSA-OAEP",
+        publicKey,
+        encoded
+    );
+    return encrypted;
 }
 
 async function decrypt(text) {
     const dec = new TextDecoder();
-    //@ts-ignore
-    const binaryDerStringPriv = atob(process.env.PRIVATE_KEY);
+    const binaryDerStringPriv = atob(process.env.PRIVATE_KEY!);
     const binaryDerPriv = str2ab(binaryDerStringPriv);
     //@ts-ignore
     const privateKey = await crypto.subtle.importKey(

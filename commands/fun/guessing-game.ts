@@ -7,6 +7,8 @@ import {
     ChatInputCommandInteraction,
     CategoryChannel,
     VoiceChannel,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
 import { sentry } from "../../utilities/sentry";
@@ -14,6 +16,9 @@ import { sentry } from "../../utilities/sentry";
 const data = new SlashCommandBuilder()
     .setName("guessing")
     .setDescription("Sends a random message and you have to guess who sent it.")
+    .setNSFW(false)
+    .setContexts(InteractionContextType.Guild)
+    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
     .addSubcommand((subcommand) =>
         subcommand.setName("game").setDescription("Starts the game.")
     )
@@ -32,9 +37,7 @@ const data = new SlashCommandBuilder()
                     .setDescription("The user to search for.")
                     .setRequired(false)
             )
-    )
-    .setDMPermission(false)
-    .setNSFW(false);
+    );
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();

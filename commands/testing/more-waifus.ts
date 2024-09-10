@@ -1,10 +1,16 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+    ApplicationIntegrationType,
+    ChatInputCommandInteraction,
+    InteractionContextType,
+    SlashCommandBuilder,
+} from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("more-waifus")
     .setDescription("Even more waifus")
-    .setDMPermission(false)
     .setNSFW(true)
+    .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes([ApplicationIntegrationType.GuildInstall])
     .addSubcommand((subcommand) =>
         subcommand
             .setName("sfw")

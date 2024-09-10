@@ -2,15 +2,18 @@ import {
     SlashCommandBuilder,
     PermissionsBitField,
     ChatInputCommandInteraction,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
 
 const data = new SlashCommandBuilder()
     .setName("jarvis")
     .setDescription("Toggles Jarvis mode.")
-    .setDMPermission(false)
     .setNSFW(false)
     .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
+    .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes([ApplicationIntegrationType.GuildInstall])
     .addBooleanOption((option) =>
         option
             .setName("status")

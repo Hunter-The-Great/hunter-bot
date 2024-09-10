@@ -1,10 +1,23 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+    ApplicationIntegrationType,
+    ChatInputCommandInteraction,
+    InteractionContextType,
+    SlashCommandBuilder,
+} from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("id")
     .setDescription("Tells you your user ID.")
-    .setDMPermission(false)
-    .setNSFW(false);
+    .setNSFW(false)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ]);
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.reply({

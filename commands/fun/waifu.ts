@@ -5,6 +5,8 @@ import {
     ActionRowBuilder,
     ButtonStyle,
     ChatInputCommandInteraction,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 import { sentry } from "../../utilities/sentry.js";
@@ -12,6 +14,15 @@ import { sentry } from "../../utilities/sentry.js";
 const data = new SlashCommandBuilder()
     .setName("waifu")
     .setDescription("Shows you a waifu.")
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ])
     .addStringOption((option) =>
         option
             .setName("type")
@@ -67,9 +78,7 @@ const data = new SlashCommandBuilder()
                 { name: "ero(NSFW)", value: "ero" }
             )
             .setRequired(false)
-    )
-    .setDMPermission(false)
-    .setNSFW(true);
+    );
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     /*

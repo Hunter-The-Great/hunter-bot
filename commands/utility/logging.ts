@@ -2,21 +2,24 @@ import {
     SlashCommandBuilder,
     ChatInputCommandInteraction,
     PermissionsBitField,
+    ApplicationIntegrationType,
+    InteractionContextType,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
 
 const data = new SlashCommandBuilder()
     .setName("logging")
     .setDescription("Toggles logging on/off.")
-    .setDMPermission(false)
     .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
+    .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes([ApplicationIntegrationType.GuildInstall])
+
     .addBooleanOption((option) =>
         option
             .setName("status")
             .setDescription("Toggles logging on/off.")
             .setRequired(true)
     );
-
 const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();
     await prisma.guild.upsert({

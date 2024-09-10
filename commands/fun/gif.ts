@@ -5,15 +5,24 @@ import {
     ActionRowBuilder,
     EmbedBuilder,
     ChatInputCommandInteraction,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 import { sentry } from "../../utilities/sentry.js";
-import { connect } from "node:http2";
 
 const data = new SlashCommandBuilder()
     .setName("gif")
     .setDescription("GIF saver.")
-    .setDMPermission(true)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ])
     .setNSFW(false)
     .addSubcommand((subcommand) =>
         subcommand

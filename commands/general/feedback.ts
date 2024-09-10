@@ -6,13 +6,23 @@ import {
     ActionRowBuilder,
     ModalActionRowComponentBuilder,
     ModalBuilder,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("feedback")
     .setDescription("Provides feedback to the author of this bot.")
-    .setDMPermission(true)
-    .setNSFW(false);
+    .setNSFW(false)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ]);
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     const input = new TextInputBuilder()

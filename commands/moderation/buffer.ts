@@ -2,6 +2,8 @@ import {
     ChatInputCommandInteraction,
     SlashCommandBuilder,
     PermissionsBitField,
+    ApplicationIntegrationType,
+    InteractionContextType,
 } from "discord.js";
 import fs from "fs";
 
@@ -9,8 +11,9 @@ const data = new SlashCommandBuilder()
     .setName("buffer")
     .setDescription("Sends a buffer of empty space.")
     .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
-    .setDMPermission(false)
-    .setNSFW(false);
+    .setNSFW(false)
+    .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes([ApplicationIntegrationType.GuildInstall]);
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     const data = fs.readFileSync("resources/buffer.txt", "utf8");

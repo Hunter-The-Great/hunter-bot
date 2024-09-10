@@ -5,6 +5,8 @@ import {
     ActionRowBuilder,
     ButtonStyle,
     ChatInputCommandInteraction,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 import { sentry } from "../../utilities/sentry.js";
@@ -18,8 +20,16 @@ const data = new SlashCommandBuilder()
             .setDescription("The user whose compendium you want to see.")
             .setRequired(false)
     )
-    .setDMPermission(false)
-    .setNSFW(true);
+    .setNSFW(true)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ]);
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();

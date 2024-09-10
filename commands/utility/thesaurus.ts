@@ -2,14 +2,24 @@ import {
     SlashCommandBuilder,
     EmbedBuilder,
     ChatInputCommandInteraction,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
-import { updateSite } from "../../server";
 
 const data = new SlashCommandBuilder()
     .setName("thesaurus")
     .setDescription("Gives a list of synonyms for a word.")
-    .setDMPermission(true)
     .setNSFW(false)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ])
+
     .addStringOption((option) =>
         option
             .setName("word")

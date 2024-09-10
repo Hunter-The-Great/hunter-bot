@@ -5,7 +5,7 @@ const name = "gh-edit";
 
 const execute = async (interaction: ModalSubmitInteraction) => {
     const discriminator = interaction.fields.getTextInputValue("discriminator");
-    const channelID = interaction.fields.getTextInputValue("channel") || "0";
+    const channelID = interaction.fields.getTextInputValue("channel") || "-1";
 
     if (interaction.fields.getTextInputValue("channel")) {
         await prisma.gitHubWebhook.updateMany({

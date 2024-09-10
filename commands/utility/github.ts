@@ -8,15 +8,25 @@ import {
     ModalActionRowComponentBuilder,
     ChatInputCommandInteraction,
     PermissionsBitField,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 
 const data = new SlashCommandBuilder()
     .setName("github")
     .setDescription("GitHub webhook integration.")
-    .setDMPermission(true)
     .setNSFW(false)
     .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ])
     .addSubcommand((subcommand) =>
         subcommand.setName("register").setDescription("Registers a webhook.")
     )

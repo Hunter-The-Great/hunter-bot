@@ -2,6 +2,8 @@ import {
     SlashCommandBuilder,
     EmbedBuilder,
     ChatInputCommandInteraction,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 import { decrypt } from "../../utilities/encryption.js";
@@ -9,9 +11,16 @@ import { decrypt } from "../../utilities/encryption.js";
 const data = new SlashCommandBuilder()
     .setName("courses")
     .setDescription("Displays a list of courses.")
-    .setDMPermission(true)
-    .setNSFW(false);
-
+    .setNSFW(false)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ]);
 const execute = async (interaction: ChatInputCommandInteraction) => {
     const user = await prisma.user.findUnique({
         where: { id: interaction.user.id },

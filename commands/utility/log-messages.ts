@@ -3,6 +3,8 @@ import {
     TextChannel,
     PermissionsBitField,
     ChatInputCommandInteraction,
+    InteractionContextType,
+    ApplicationIntegrationType,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
 import { sentry } from "../../utilities/sentry";
@@ -10,9 +12,10 @@ import { sentry } from "../../utilities/sentry";
 const data = new SlashCommandBuilder()
     .setName("log-messages")
     .setDescription("Logs all messages in a server.")
-    .setDMPermission(false)
     .setNSFW(false)
-    .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator);
+    .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
+    .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes([ApplicationIntegrationType.GuildInstall]);
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     if (!interaction.guild) return;

@@ -2,13 +2,12 @@ import { Events, Message } from "discord.js";
 import { prisma } from "../utilities/db";
 import { executeJarvis } from "../jarvis/jarvis.js";
 import { sentry } from "../utilities/sentry";
+import { console } from "inspector";
 //import { updateSite } from "../server";
 
 const name = Events.MessageCreate;
 
 const execute = async (message: Message) => {
-    if (!message.guild) return;
-
     // Update the site on every message
     //updateSite(
     //    <div id="messages" hx-swap-oob="beforeend">
@@ -20,58 +19,62 @@ const execute = async (message: Message) => {
     //);
 
     try {
-        await prisma.guild.upsert({
-            where: {
-                id: message.guild.id,
-            },
-            create: {
-                id: message.guild.id,
-            },
-            update: {},
-        });
-        const guild = await prisma.guild.findUnique({
-            where: {
-                id: message.guild.id,
-            },
-        });
-        try {
-            if (guild?.logging && message.content !== "") {
-                await prisma.message.create({
-                    data: {
-                        id: message.id,
-                        channel: message.channel.id,
-                        user: {
-                            connectOrCreate: {
-                                where: { id: message.author.id },
-                                create: {
-                                    id: message.author.id,
-                                    username: message.author.username,
+        if (message.guild) {
+            await prisma.guild.upsert({
+                where: {
+                    id: message.guild.id,
+                },
+                create: {
+                    id: message.guild.id,
+                },
+                update: {},
+            });
+            const guild = await prisma.guild.findUnique({
+                where: {
+                    id: message.guild.id,
+                },
+            });
+            try {
+                if (guild?.logging && message.content !== "") {
+                    await prisma.message.create({
+                        data: {
+                            id: message.id,
+                            channel: message.channel.id,
+                            user: {
+                                connectOrCreate: {
+                                    where: { id: message.author.id },
+                                    create: {
+                                        id: message.author.id,
+                                        username: message.author.username,
+                                    },
                                 },
                             },
-                        },
-                        guild: {
-                            connectOrCreate: {
-                                where: { id: message.guild.id },
-                                create: {
-                                    id: message.guild.id,
+                            guild: {
+                                connectOrCreate: {
+                                    where: { id: message.guild.id },
+                                    create: {
+                                        id: message.guild.id,
+                                    },
                                 },
                             },
+                            content: message.content,
+                            timestamp: new Date(message.createdTimestamp),
                         },
-                        content: message.content,
-                        timestamp: new Date(message.createdTimestamp),
-                    },
-                });
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to log message:\n", err);
+                sentry.captureException(err);
             }
-        } catch (err) {
-            console.error("Failed to log message:\n", err);
-            sentry.captureException(err);
         }
         if (message.author.id === process.env.CLIENT_ID || message.author.bot) {
             return;
         }
         if (message.content.toLowerCase() === "hello there") {
             try {
-                await message.channel.send("General Kenobi");
+                message.channel.isDMBased()
+                    ? await message.author.send("General Kenobi")
+                    : await message.channel.send("General Kenobi");
             } catch (err) {
                 console.error("An error has ocurred.", err);
                 sentry.captureException(err);
@@ -117,9 +120,10 @@ const execute = async (message: Message) => {
         }
         //* Jarvis
         if (
-            await prisma.guild.findFirst({
+            message.guild &&
+            (await prisma.guild.findFirst({
                 where: { id: message.guild.id },
-            })
+            }))
         ) {
             executeJarvis(message);
         }

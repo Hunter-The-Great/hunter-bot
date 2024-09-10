@@ -1,11 +1,17 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+    ApplicationIntegrationType,
+    ChatInputCommandInteraction,
+    InteractionContextType,
+    SlashCommandBuilder,
+} from "discord.js";
 import { sentry } from "../../utilities/sentry";
 
 const data = new SlashCommandBuilder()
     .setName("reload")
     .setDescription("Reloads a command.")
-    .setDMPermission(false)
     .setNSFW(false)
+    .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes([ApplicationIntegrationType.GuildInstall])
     .addStringOption((option) =>
         option
             .setName("command")

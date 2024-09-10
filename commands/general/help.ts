@@ -2,13 +2,23 @@ import {
     SlashCommandBuilder,
     EmbedBuilder,
     ChatInputCommandInteraction,
+    ApplicationIntegrationType,
+    InteractionContextType,
 } from "discord.js";
 
 const data = new SlashCommandBuilder()
     .setName("help")
     .setDescription("Displays help information.")
-    .setDMPermission(false)
-    .setNSFW(false);
+    .setNSFW(false)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ]);
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     const helpMenu = new EmbedBuilder()

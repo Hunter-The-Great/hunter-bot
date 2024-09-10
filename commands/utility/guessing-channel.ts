@@ -5,6 +5,8 @@ import {
     CategoryChannel,
     VoiceChannel,
     EmbedBuilder,
+    ApplicationIntegrationType,
+    InteractionContextType,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
 import { sentry } from "../../utilities/sentry";
@@ -14,10 +16,10 @@ const data = new SlashCommandBuilder()
     .setDescription(
         "Handles channels used for guessing game when message logging is off."
     )
-    .setDMPermission(false)
     .setNSFW(false)
-    .setDMPermission(false)
     .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
+    .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes([ApplicationIntegrationType.GuildInstall])
     .addSubcommand((subcommand) =>
         subcommand
             .setName("register")

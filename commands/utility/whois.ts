@@ -3,14 +3,25 @@ import {
     EmbedBuilder,
     hyperlink,
     ChatInputCommandInteraction,
+    ApplicationIntegrationType,
+    InteractionContextType,
 } from "discord.js";
 import { prisma } from "../../utilities/db";
 
 const data = new SlashCommandBuilder()
     .setName("whois")
     .setDescription("Tells you the information on a given user ID.")
-    .setDMPermission(true)
     .setNSFW(false)
+    .setContexts([
+        InteractionContextType.BotDM,
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+    ])
+    .setIntegrationTypes([
+        ApplicationIntegrationType.UserInstall,
+        ApplicationIntegrationType.GuildInstall,
+    ])
+
     .addUserOption((option) =>
         option
             .setName("target")

@@ -5,6 +5,8 @@ import {
     ButtonStyle,
     ActionRowBuilder,
     ChatInputCommandInteraction,
+    ApplicationIntegrationType,
+    InteractionContextType,
 } from "discord.js";
 import { prisma } from "../../utilities/db.js";
 import { sentry } from "../../utilities/sentry.js";
@@ -12,6 +14,9 @@ import { sentry } from "../../utilities/sentry.js";
 const data = new SlashCommandBuilder()
     .setName("override")
     .setDescription("Overrides a command.")
+    .setNSFW(false)
+    .setContexts([InteractionContextType.Guild])
+    .setIntegrationTypes([ApplicationIntegrationType.GuildInstall])
     .addSubcommand((subcommand) =>
         subcommand
             .setName("gif-list")
@@ -67,9 +72,7 @@ const data = new SlashCommandBuilder()
                     .setDescription("The UID to override.")
                     .setRequired(true)
             )
-    )
-    .setDMPermission(false)
-    .setNSFW(false);
+    );
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     let puppet;
