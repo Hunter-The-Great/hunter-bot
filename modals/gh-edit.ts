@@ -1,5 +1,6 @@
 import { prisma } from "../utilities/db";
 import { ModalSubmitInteraction } from "discord.js";
+import { checkPermissions } from "../utilities/permission-check";
 
 const name = "gh-edit";
 
@@ -8,6 +9,24 @@ const execute = async (interaction: ModalSubmitInteraction) => {
     const channelID = interaction.fields.getTextInputValue("channel") || "-1";
 
     if (interaction.fields.getTextInputValue("channel")) {
+        const channel = await interaction.client.channels
+            .fetch(channelID)
+            .catch(async () => {
+                await interaction.reply({
+                    content:
+                        "An error occurred, check if your channel ID is valid.",
+                    ephemeral: true,
+                });
+                return;
+            });
+        if (!(await checkPermissions(interaction.user.id, channel))) {
+            await interaction.reply({
+                content: "You do not have permission to use this channel.",
+                ephemeral: true,
+            });
+            return;
+        }
+
         await prisma.gitHubWebhook.updateMany({
             where: {
                 uid: interaction.user.id,

@@ -1,6 +1,8 @@
 import randomstring from "randomstring";
 import { prisma } from "../utilities/db";
 import { ModalSubmitInteraction } from "discord.js";
+import { checkPermissions } from "../utilities/permission-check";
+import { trace } from "console";
 
 const name = "gh-register";
 
@@ -20,12 +22,23 @@ const execute = async (interaction: ModalSubmitInteraction) => {
         }
     }
     if (interaction.fields.getTextInputValue("channel")) {
-        await interaction.client.channels.fetch(channelID).catch(async () => {
-            await interaction.reply(
-                "An error occurred, check if your channel ID is valid."
-            );
+        const channel = await interaction.client.channels
+            .fetch(channelID)
+            .catch(async () => {
+                await interaction.reply({
+                    content:
+                        "An error occurred, check if your channel ID is valid.",
+                    ephemeral: true,
+                });
+                return;
+            });
+        if (!(await checkPermissions(interaction.user.id, channel))) {
+            await interaction.reply({
+                content: "You do not have permission to use this channel.",
+                ephemeral: true,
+            });
             return;
-        });
+        }
     }
 
     if (
