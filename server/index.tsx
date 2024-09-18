@@ -73,6 +73,11 @@ const start = async (client) => {
     server.post("/message", async (request, res) => {
         const message = request.body.message;
         const channelID = request.body.channel;
+        const key = request.body.key;
+
+        if (key !== process.env.MESSAGE_KEY) {
+            return res.code(401).send({ message: "Unauthorized" });
+        }
 
         const channel = await client.channels.fetch(channelID);
 
@@ -188,6 +193,13 @@ const start = async (client) => {
                 hx-swap="outerHTML"
                 hx-target="#message"
             >
+                <div id="key">
+                    <input
+                        type="hidden"
+                        name="key"
+                        value={process.env.MESSAGE_KEY}
+                    />
+                </div>
                 <div id="guilds">
                     <label>Guild: </label>
                     <select
