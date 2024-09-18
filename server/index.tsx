@@ -182,7 +182,7 @@ const start = async (client) => {
     server.post("/login", async (req, res: FastifyReply) => {
         res.header("Content-Type", "text/html; charset=utf-8");
         if (req.body.key !== process.env.MESSAGE_KEY) {
-            res.code(204).send({ message: "Incorrect key" });
+            res.code(401).send({ message: "Unauthorized" });
             return;
         }
         res.send(
