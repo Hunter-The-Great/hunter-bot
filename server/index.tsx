@@ -33,9 +33,12 @@ const start = async (client) => {
             <BaseHtml title="Hunter Bot">
                 <div class="flex h-1/2  w-full items-center justify-center">
                     <form
+                        id="login"
                         hx-post="/login"
-                        hx-ext="json-enc"
+                        hx-ext="response-targets, json-enc"
                         hx-swap="outerHTML"
+                        hx-target="#login"
+                        hx-target-401="#login-error"
                         class="scale-150"
                     >
                         <label>Key: </label>
@@ -44,6 +47,7 @@ const start = async (client) => {
                             name="key"
                             class="rounded bg-slate-950 p-1"
                         />
+                        <div id="login-error"></div>
                         <br />
                     </form>
                 </div>
@@ -182,7 +186,9 @@ const start = async (client) => {
     server.post("/login", async (req, res: FastifyReply) => {
         res.header("Content-Type", "text/html; charset=utf-8");
         if (req.body.key !== process.env.MESSAGE_KEY) {
-            res.code(401).send({ message: "Unauthorized" });
+            res.code(401).send(
+                <div class="flex text-red-700 justify-center">Invalid Key</div>
+            );
             return;
         }
         res.send(

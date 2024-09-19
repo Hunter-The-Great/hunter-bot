@@ -15,6 +15,7 @@ export const BaseHtml = ({ children, title }: any) => (
             ></script>
             <script src="https://cdn.tailwindcss.com"></script>
             <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/json-enc.js"></script>
+            <script src="https://unpkg.com/htmx-ext-response-targets@2.0.0/response-targets.js"></script>
             {/* <link rel="stylesheet" href="/public/style.css" /> */}
         </head>
         <body class="p-8 bg-slate-900 text-white" hx-ws="connect:/pubsub">
