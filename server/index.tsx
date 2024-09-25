@@ -8,7 +8,6 @@ import { BaseHtml } from "./baseHtml";
 import { FeedbackHtml } from "./feedback";
 import { z, ZodSchema } from "zod";
 import { FastifyRequestType } from "fastify/types/type-provider";
-import { log } from "console";
 
 export const server = fastify();
 
@@ -158,7 +157,15 @@ const start = async (client) => {
     server.post(
         "/gh/:uid/:discriminator",
         useSchema(ghSchema, async (req, res) => {
-            const { uid, discriminator } = req.params;
+            const ghParams = z.object({
+                uid: z.string(),
+                discriminator: z.string(),
+            });
+            const result = ghParams.safeParse(req.params);
+            if (result.error) {
+                return res.code(400).send(result.error);
+            }
+            const { uid, discriminator } = result.data;
             const user = await client.users.fetch(uid);
 
             const webhook = await prisma.gitHubWebhook.findFirst({
@@ -366,7 +373,14 @@ const start = async (client) => {
     });
 
     server.delete("/feedback-remove/:id", async (req, res) => {
-        const id = req.params.id;
+        const feedbackRemoveParams = z.object({
+            id: z.string(),
+        });
+        const result = feedbackRemoveParams.safeParse(req.params);
+        if (result.error) {
+            return res.code(400).send(result.error);
+        }
+        const id = result.data.id;
         await prisma.feedback.delete({
             where: { id },
         });
