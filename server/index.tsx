@@ -49,7 +49,7 @@ function useSchema<T extends ZodSchema>(
     ) => void
 ) {
     return async (req: FastifyRequest, res: FastifyReply) => {
-        const result = schema.parse(req.body);
+        schema.parse(req.body);
         return handler(req, res);
     };
 }
