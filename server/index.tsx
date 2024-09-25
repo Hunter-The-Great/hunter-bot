@@ -6,7 +6,7 @@ import { sentry } from "../utilities/sentry";
 import { FastifyReply, FastifyRequest, fastify } from "fastify";
 import { BaseHtml } from "./baseHtml";
 import { FeedbackHtml } from "./feedback";
-import { z, ZodSchema } from "zod";
+import { z, ZodError, ZodSchema } from "zod";
 import { FastifyRequestType } from "fastify/types/type-provider";
 
 export const server = fastify();
@@ -17,6 +17,30 @@ export function updateSite(message: JSX.Element) {
     });
 }
 
+class VisibleError extends Error {
+    code: number;
+    constructor(message: string, code?: number) {
+        super(message);
+        this.name = "VisibleError";
+        this.code = code ?? 500;
+    }
+}
+
+server.setErrorHandler((err: Error, req, res) => {
+    if (err instanceof ZodError) {
+        return res.code(400).send({
+            error: "Bad Request",
+        });
+    } else if (err instanceof VisibleError) {
+        const code = err.code;
+        return res.code(code).send({
+            error: err.message,
+        });
+    }
+    console.error(err);
+    res.code(500).send({ error: "Internal Server Error" });
+});
+
 function useSchema<T extends ZodSchema>(
     schema: T,
     handler: (
@@ -25,10 +49,7 @@ function useSchema<T extends ZodSchema>(
     ) => void
 ) {
     return async (req: FastifyRequest, res: FastifyReply) => {
-        const result = schema.safeParse(req.body);
-        if (result.error) {
-            return res.code(400).send(result.error);
-        }
+        const result = schema.parse(req.body);
         return handler(req, res);
     };
 }
@@ -93,7 +114,7 @@ const start = async (client) => {
 
             if (key !== process.env.KEY) {
                 console.log("Invalid key for /reminders.");
-                return res.code(401).send({ message: "Invalid Key" });
+                throw new VisibleError("Unauthorized", 401);
             }
 
             const user = await client.users.fetch(uid);
@@ -114,7 +135,7 @@ const start = async (client) => {
             const { key, message, channel } = req.body;
 
             if (key !== process.env.MESSAGE_KEY) {
-                return res.code(401).send({ message: "Unauthorized" });
+                throw new VisibleError("Unauthorized", 401);
             }
 
             const channelobj = await client.channels.fetch(channel);
@@ -163,7 +184,7 @@ const start = async (client) => {
             });
             const result = ghParams.safeParse(req.params);
             if (result.error) {
-                return res.code(400).send(result.error);
+                throw new VisibleError(result.error.toString(), 400);
             }
             const { uid, discriminator } = result.data;
             const user = await client.users.fetch(uid);
@@ -172,7 +193,7 @@ const start = async (client) => {
                 where: { uid, discriminator },
             });
             if (!webhook) {
-                return res.code(404).send({ message: "Endpoint not found." });
+                throw new VisibleError("Endpoint not found", 404);
             }
             const embed = new EmbedBuilder()
                 .setColor(0x00ffff)
@@ -235,7 +256,7 @@ const start = async (client) => {
         useSchema(drewhSchema, async (req, res) => {
             if (req.body.key !== process.env.DREW_KEY) {
                 console.log("Invalid key for /drewh.");
-                return res.code(401).send({ message: "Invalid Key" });
+                throw new VisibleError("Unauthorized");
             }
             const drew = await client.users.fetch("254591447284711424");
             await drew.send(req.body.message);
@@ -378,7 +399,7 @@ const start = async (client) => {
         });
         const result = feedbackRemoveParams.safeParse(req.params);
         if (result.error) {
-            return res.code(400).send(result.error);
+            throw new VisibleError(result.error.toString(), 400);
         }
         const id = result.data.id;
         await prisma.feedback.delete({
