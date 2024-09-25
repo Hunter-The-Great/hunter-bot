@@ -22,7 +22,7 @@ const data = new SlashCommandBuilder()
 const execute = async (interaction: ChatInputCommandInteraction) => {
     await interaction.deferReply();
 
-    const response = await fetch("https://www.boredapi.com/api/activity");
+    const response = await fetch("https://api.lowryb.sbs/bored");
     if (!response.ok) {
         console.error(
             "Bored API failed to respond.\n",
