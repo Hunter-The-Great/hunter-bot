@@ -28,14 +28,12 @@ async function decrypt(text) {
     const dec = new TextDecoder();
     const binaryDerStringPriv = atob(process.env.PRIVATE_KEY!);
     const binaryDerPriv = str2ab(binaryDerStringPriv);
-    //@ts-ignore
     const privateKey = await crypto.subtle.importKey(
         "pkcs8",
         binaryDerPriv,
         {
             name: "RSA-OAEP",
             hash: "SHA-256",
-            passphrase: process.env.PASSPHRASE,
         },
         true,
         ["decrypt"]
