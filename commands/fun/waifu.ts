@@ -14,6 +14,7 @@ import { sentry } from "../../utilities/sentry.js";
 const data = new SlashCommandBuilder()
     .setName("waifu")
     .setDescription("Shows you a waifu.")
+    .setNSFW(true)
     .setContexts([
         InteractionContextType.BotDM,
         InteractionContextType.Guild,

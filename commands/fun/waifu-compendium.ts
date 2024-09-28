@@ -14,13 +14,13 @@ import { sentry } from "../../utilities/sentry.js";
 const data = new SlashCommandBuilder()
     .setName("waifu-compendium")
     .setDescription("shows your compendium of waifus.")
+    .setNSFW(true)
     .addUserOption((option) =>
         option
             .setName("target")
             .setDescription("The user whose compendium you want to see.")
             .setRequired(false)
     )
-    .setNSFW(true)
     .setContexts([
         InteractionContextType.BotDM,
         InteractionContextType.Guild,
