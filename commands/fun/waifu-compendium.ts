@@ -120,7 +120,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             i.user.id === interaction.user.id;
         const collector = rsp.createMessageComponentCollector({
             filter,
-            time: 5_000,
+            time: 600_000,
         });
         collector.on("collect", async (i) => {
             console.log(i);
