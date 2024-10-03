@@ -120,9 +120,10 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             i.user.id === interaction.user.id;
         const collector = rsp.createMessageComponentCollector({
             filter,
-            time: 600_000,
+            time: 5_000,
         });
         collector.on("collect", async (i) => {
+            console.log(i);
             if (i.customId.includes("prev")) {
                 index--;
                 const waifu = waifus[index];
@@ -194,36 +195,12 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             }
         });
         collector.on("end", async () => {
-            const prev = new ButtonBuilder()
-                .setCustomId(`waifu-compendium-prev:${interaction.user.id}`)
-                .setLabel("Prev")
-                .setStyle(ButtonStyle.Primary)
-                .setDisabled(true);
-
-            const num = new ButtonBuilder()
-                .setCustomId(`waifu-compendium-num:${interaction.user.id}`)
-                .setLabel(`1/${waifus.length}`)
-                .setStyle(ButtonStyle.Secondary)
-                .setDisabled(true);
-
-            const next = new ButtonBuilder()
-                .setCustomId(`waifu-compendium-next:${interaction.user.id}`)
-                .setLabel("Next")
-                .setStyle(ButtonStyle.Primary)
-                .setDisabled(true);
-
-            const deleteButton = new ButtonBuilder()
-                .setCustomId(`waifu-compendium-delete:${interaction.user.id}`)
-                .setLabel("Delete")
-                .setStyle(ButtonStyle.Danger)
-                .setDisabled(true);
-
-            const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-                prev,
-                num,
-                next,
-                deleteButton
-            );
+            row.setComponents([
+                prev.setDisabled(true),
+                num.setDisabled(true),
+                next.setDisabled(true),
+                deleteButton.setDisabled(true),
+            ]);
             interaction.editReply({ components: [row] });
         });
     } catch (err) {

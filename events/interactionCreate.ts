@@ -31,7 +31,6 @@ const execute = async (interaction: Interaction) => {
         }
     } else if (interaction.isChatInputCommand()) {
         try {
-            //@ts-ignore
             const command = interaction.client.commands.get(
                 interaction.commandName
             );
@@ -83,7 +82,6 @@ const execute = async (interaction: Interaction) => {
         }
     } else if (interaction.isModalSubmit()) {
         try {
-            //@ts-ignore
             const modal = interaction.client.modals.get(interaction.customId);
             await modal.execute(interaction);
             if (interaction.customId === "feedback") return; // I said it was anonymous didn't I?

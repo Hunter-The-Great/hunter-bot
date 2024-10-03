@@ -24,7 +24,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
     const commandName = interaction.options
         .getString("command", true)
         .toLowerCase();
-    //@ts-ignore
     const command = interaction.client.commands.get(commandName);
 
     if (!command) {
@@ -38,10 +37,8 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
     ];
 
     try {
-        //@ts-ignore
         interaction.client.commands.delete(command.data.name);
         const newCommand = require(`../${command.category}/${command.data.name}.ts`);
-        //@ts-ignore
         interaction.client.commands.set(newCommand.data.name, newCommand);
         await interaction.reply(
             `Command \`${newCommand.data.name}\` was reloaded!`

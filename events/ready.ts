@@ -11,7 +11,8 @@ const execute = async (client: Client) => {
     try {
         if (os.hostname() === "BenL-MacBook-Pro.local") return;
         client.channels.fetch("1126759333733085214").then((channel) => {
-            //@ts-ignore
+            if (!channel || !channel.isTextBased() || channel.isDMBased())
+                return;
             channel.send(
                 `# Hunter bot is live on ${os.hostname()}.\n \`${new Date().toLocaleString()}\``
             );

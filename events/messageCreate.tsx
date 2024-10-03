@@ -95,7 +95,6 @@ const execute = async (message: Message) => {
         //* Text commands
         if (message.content.startsWith("~!")) {
             try {
-                //@ts-ignore
                 const command = message.client.textCommands.get(
                     message.content.slice(2)
                 );

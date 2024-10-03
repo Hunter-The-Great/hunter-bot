@@ -182,12 +182,14 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             .setImage(image)
             .setDescription(`Rarity: ${starList}`);
 
-        const save = new ButtonBuilder()
+        const saveButton = new ButtonBuilder()
             .setCustomId(`waifu-save:${interaction.user.id}`)
             .setLabel("Save")
             .setStyle(ButtonStyle.Primary);
 
-        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(save);
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            saveButton
+        );
 
         const rsp = await interaction.editReply({
             embeds: [embed],
@@ -244,27 +246,13 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
                 },
             });
 
-            const saved = new ButtonBuilder()
-                .setCustomId("saved")
-                .setLabel("Saved")
-                .setStyle(ButtonStyle.Primary)
-                .setDisabled(true);
-            row.setComponents(saved);
+            row.setComponents(saveButton.setLabel("Saved").setDisabled(true));
             i.update({ components: [row] });
         });
         collector.on("end", async () => {
+            console.log("e");
             try {
-                const save = new ButtonBuilder()
-                    .setCustomId("save")
-                    .setLabel(
-                        await interaction
-                            .fetchReply()
-                            //@ts-ignore
-                            .then((r) => r.components[0].components[0].label)
-                    )
-                    .setStyle(ButtonStyle.Primary)
-                    .setDisabled(true);
-                row.setComponents(save);
+                row.setComponents(saveButton.setDisabled(true));
                 interaction.editReply({ components: [row] });
             } catch (err) {
                 sentry.captureException(err);

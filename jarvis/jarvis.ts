@@ -5,6 +5,8 @@ import { sentry } from "../utilities/sentry";
 
 const executeJarvis = async (message: Message) => {
     try {
+        if (!message.channel.isTextBased() || message.channel.isDMBased())
+            return;
         const jarvisStart = [
             "One moment",
             "Of course",
@@ -23,7 +25,6 @@ const executeJarvis = async (message: Message) => {
 
         const shadowCheck = message.content
             .toLowerCase()
-            //@ts-ignore
             .replaceAll('"', "")
             .replaceAll(",", "")
             .replaceAll(".", "");
@@ -32,7 +33,6 @@ const executeJarvis = async (message: Message) => {
             "jarvis search shadow h in gifs then click on the first one"
         ) {
             await message.channel.send(initialResponse);
-            // 10 second delay
             await new Promise((resolve) => setTimeout(resolve, 1000));
             await message.channel.send(
                 "https://tenor.com/view/jarvis-shadow-h-iron-man-sped-up-gif-24172792"
@@ -66,7 +66,6 @@ const executeJarvis = async (message: Message) => {
             /send |paste in |paste up |throw in |throw up |hit (\w)+ with |get |summon |search |search for /;
         if (message.content.toLowerCase().match(request)) {
             await message.channel.send(initialResponse);
-            // 10 second delay
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
             let alias = message.content
@@ -76,7 +75,6 @@ const executeJarvis = async (message: Message) => {
                 .replace(/ a /g, " ")
                 .replace(request, "")
                 .replace(/in |the |me |here |up /g, "")
-                //@ts-ignore
                 .replaceAll(",", "")
                 .replaceAll('"', "");
             const waifuRequest = /fine art|waifu/;

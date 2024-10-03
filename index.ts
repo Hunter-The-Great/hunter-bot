@@ -3,7 +3,6 @@ import("dotenv/config");
 import { start } from "./server";
 import fs from "node:fs";
 import path from "node:path";
-import { posthog } from "./utilities/posthog.js";
 
 class ExtendedClient extends Client {
     commands: Collection<string, any> = new Collection();
