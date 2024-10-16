@@ -22,7 +22,7 @@ RUN bun install
 
 COPY . .
 
-RUN bun run db-gen && bun run db-push
+RUN bun run db-gen
 
 CMD ["bun", "run", "start"]
 
