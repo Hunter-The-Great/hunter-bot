@@ -40,6 +40,7 @@ model User {
   //? display name
   canvasToken      Bytes?
   waifuCount       Int             @default(0)
+  nsfwCount        Int             @default(0)
   guessingPoints   Int             @default(0)
   guessingAttempts Int             @default(0)
   bot              Boolean         @default(false)

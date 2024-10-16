@@ -94,6 +94,13 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
         where: { id: interaction.user.id },
         update: {
             waifuCount: { increment: 1 },
+            nsfwCount: {
+                increment: Boolean(
+                    interaction.options.getString("type") === "true"
+                )
+                    ? 1
+                    : 0,
+            },
         },
         create: {
             id: interaction.user.id,
