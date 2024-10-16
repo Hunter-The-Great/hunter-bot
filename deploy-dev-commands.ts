@@ -6,7 +6,7 @@ import path from "node:path";
 const commands: SlashCommandBuilder[] = [];
 // Grab all the command files from the commands directory you created earlier
 const foldersPath = path.join(__dirname, "commands");
-const commandFolders = ["admin", "testing"];
+const commandFolders = ["admin"];
 
 for (const folder of commandFolders) {
     // Grab all the command files from the commands directory you created earlier
