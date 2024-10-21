@@ -20,6 +20,7 @@ export const BaseHtml = ({ children, title }: any) => (
         </head>
         <body class="p-8 bg-slate-900 text-white" hx-ws="connect:/pubsub">
             <nav class="mb-8 flex gap-8 border-b-gray-500 border-b">
+                <a href="/">Message</a>
                 <a href="/feedback">Feedback</a>
             </nav>
             {children}
