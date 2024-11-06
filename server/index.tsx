@@ -1,13 +1,14 @@
 import { prisma } from "../utilities/db";
 import websocket from "@fastify/websocket";
 import cors from "@fastify/cors";
-import { EmbedBuilder, TextChannel } from "discord.js";
+import { EmbedBuilder, embedLength, TextChannel } from "discord.js";
 import { sentry } from "../utilities/sentry";
 import { FastifyReply, FastifyRequest, fastify } from "fastify";
 import { BaseHtml } from "./baseHtml";
 import { FeedbackHtml } from "./feedback";
 import { z, ZodError, ZodSchema } from "zod";
 import { FastifyRequestType } from "fastify/types/type-provider";
+import { timeStamp } from "node:console";
 
 export const server = fastify();
 
@@ -126,13 +127,51 @@ const start = async (client) => {
     const messageSchema = z.object({
         key: z.string(),
         channel: z.string(),
-        message: z.string(),
+        message: z.string().optional(),
+        embed: z.boolean(),
+        title: z.string().optional(),
+        color: z.number().min(0).max(16777215).optional(),
+        thumbnail: z.string().optional(),
+        author: z
+            .object({
+                name: z.string(),
+                iconURL: z.string().optional(),
+            })
+            .optional(),
+        description: z.string().optional(),
+        fields: z
+            .array(
+                z.object({
+                    name: z.string(),
+                    value: z.string(),
+                    inline: z.boolean(),
+                })
+            )
+            .optional(),
+        footer: z
+            .object({
+                text: z.string(),
+                iconURL: z.string().optional(),
+            })
+            .optional(),
     });
 
     server.post(
         "/message",
         useSchema(messageSchema, async (req, res) => {
-            const { key, message, channel } = req.body;
+            const {
+                key,
+                message,
+                channel,
+                embed,
+                title,
+                color,
+                thumbnail,
+                author,
+                description,
+                fields,
+                footer,
+            } = req.body;
 
             if (key !== process.env.MESSAGE_KEY) {
                 throw new VisibleError("Unauthorized", 401);
@@ -140,7 +179,40 @@ const start = async (client) => {
 
             const channelobj = await client.channels.fetch(channel);
 
-            await channelobj.send(message);
+            if (embed) {
+                if (!fields) {
+                    return res
+                        .code(401)
+                        .send(
+                            <div class="flex text-red-700 justify-center">
+                                Embed missing field.
+                            </div>
+                        );
+                }
+                const messageEmbed = new EmbedBuilder()
+                    .setColor(color || null)
+                    .setTitle(title || null)
+                    .setDescription(description || " ")
+                    .setThumbnail(thumbnail || null)
+                    .setFields(fields)
+                    .setAuthor(author || null)
+                    .setFooter(footer || null);
+
+                await channelobj.send({
+                    content: message,
+                    embeds: [messageEmbed],
+                });
+            } else if (message) await channelobj.send(message);
+            else {
+                return res
+                    .code(401)
+                    .send(
+                        <div class="flex text-red-700 justify-center">
+                            Cannot send an empty message.
+                        </div>
+                    );
+            }
+
             return res.send(
                 <div id="message" class="flex justify-center items-end">
                     <textarea
@@ -334,6 +406,7 @@ const start = async (client) => {
                     </div>
                     <div id="channels"></div>
                     <div id="message"></div>
+                    <div id="embed"></div>
                 </form>
             );
         })
@@ -378,20 +451,88 @@ const start = async (client) => {
     server.post("/channel", async (req, res) => {
         res.header("Content-Type", "text/html; charset=utf-8");
         res.send(
-            <div id="message" class="flex justify-center items-end">
+            <div id="message" class="flex flex-wrap justify-center items-end">
                 <textarea
                     name="message"
                     class="resize max-h-48 max-w-lg min-w-48 min-h-16 rounded mt-1 mr-1 bg-slate-950 p-1"
                 ></textarea>
+
                 <button
                     type="submit"
                     class="bg-sky-500 hover:bg-sky-700 rounded p-1 max-h-10 min-w-20"
                 >
                     Send
                 </button>
+                <div id="break" class="flex h-0 w-full" />
+                <label>Embed: </label>
+                <input
+                    type="checkbox"
+                    name="embed"
+                    hx-target="#embed"
+                    hx-post="/embed"
+                />
             </div>
         );
     });
+
+    const embedSchema = z.object({ embed: z.string().optional() });
+
+    server.post(
+        "/embed",
+        useSchema(embedSchema, async (req, res) => {
+            res.header("Content-Type", "text/html; charset=utf-8");
+            if (!req.body.embed) {
+                res.send(<div id="embed" />);
+            } else {
+                res.send(
+                    <div id="embed" class="flex flex-col justify-center">
+                        <label>Title: </label>
+                        <input
+                            type="text"
+                            name="title"
+                            class="rounded bg-slate-950 p-1"
+                        />
+                        <label>Color: </label>
+                        <input
+                            type="number"
+                            name="color"
+                            class="rounded bg-slate-950 p-1"
+                        />
+                        <label>Thumbnail: </label>
+                        <input
+                            type="text"
+                            name="thumbnail"
+                            class="rounded bg-slate-950 p-1"
+                        />
+                        <label>Author: </label>
+                        <input
+                            type="text"
+                            name="author"
+                            class="rounded bg-slate-950 p-1"
+                        />
+                        <label>Description: </label>
+                        <input
+                            type="text"
+                            name="description"
+                            class="rounded bg-slate-950 p-1"
+                        />
+                        <label>Fields: </label>
+                        <input
+                            type="text"
+                            name="fields"
+                            class="rounded bg-slate-950 p-1"
+                        />
+                        <label>Footer: </label>
+                        <input
+                            type="text"
+                            name="footer"
+                            class="rounded bg-slate-950 p-1"
+                        />
+                    </div>
+                );
+            }
+        })
+    );
 
     server.delete("/feedback-remove/:id", async (req, res) => {
         const feedbackRemoveParams = z.object({
