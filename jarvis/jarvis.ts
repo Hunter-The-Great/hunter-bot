@@ -62,6 +62,134 @@ const executeJarvis = async (message: Message) => {
             return;
         }
 
+        const zooCheck = /hit (\w)+ with the zoo/;
+
+        if (message.content.toLowerCase().match(zooCheck)) {
+            await message.channel.send(initialResponse);
+            const randEmojis = [
+                "🐶",
+                "🐱",
+                "🐭",
+                "🐹",
+                "🐰",
+                "🦊",
+                "🐻",
+                "🐼",
+                "🐨",
+                "🐯",
+                "🦁",
+                "🐮",
+                "🐷",
+                "🐸",
+                "🐵",
+                "🐔",
+                "🐧",
+                "🐦",
+                "🐤",
+                "🐣",
+                "🦆",
+                "🦅",
+                "🦉",
+                "🦇",
+                "🐺",
+                "🐗",
+                "🐴",
+                "🦄",
+                "🐝",
+                "🐛",
+                "🦋",
+                "🐌",
+                "🐞",
+                "🐜",
+                "🦗",
+                "🕷",
+                "🦂",
+                "🦐",
+                "🦞",
+                "🦀",
+                "🐍",
+                "🦎",
+                "🦖",
+                "🦕",
+                "🐢",
+                "🐊",
+                "🐋",
+                "🐬",
+                "🐟",
+                "🐠",
+                "🐡",
+                "🦈",
+                "🐙",
+                "🦑",
+                "🦃",
+                "🐪",
+                "🐫",
+                "🦒",
+                "🦘",
+                "🦏",
+                "🦛",
+                "🐘",
+                "🦍",
+                "🦧",
+                "🐎",
+                "🦌",
+                "🐏",
+                "🐑",
+                "🦙",
+                "🐐",
+                "🦚",
+                "🦜",
+                "🦢",
+                "🦩",
+                "🐕",
+                "🐩",
+                "🐈",
+                "🐓",
+                "🦃",
+                "🦚",
+                "🦜",
+                "🦡",
+                "🦨",
+                "🦦",
+                "🦥",
+                "🐁",
+                "🐀",
+                "🐿",
+                "🦔",
+            ];
+            const shuffled = [...randEmojis]
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 16);
+            const animalEmojis = [...shuffled, "🐟", "🐴", "🐒", "🐂"].sort(
+                () => Math.random() - 0.5
+            );
+            try {
+                const zooMessage = await message
+                    .fetchReference()
+                    .catch(async () => {
+                        const messages = await message.channel.messages.fetch({
+                            limit: 3,
+                        });
+                        return messages.last();
+                    });
+                if (!zooMessage) throw new Error();
+
+                for (const emoji of animalEmojis) {
+                    try {
+                        zooMessage.react(emoji);
+                    } catch (err) {
+                        continue;
+                    }
+                }
+            } catch (err) {
+                await message.channel.send(
+                    "Apologies, I'm not sure who you mean."
+                );
+            }
+
+            return;
+        }
+
         const request =
             /send |paste in |paste up |throw in |throw up |hit (\w)+ with |get |summon |search |search for /;
         if (message.content.toLowerCase().match(request)) {
