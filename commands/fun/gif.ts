@@ -130,8 +130,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
         );
         const meta = await scrapeMeta.json();
         const response = await fetch(link);
-        console.log(meta);
-        console.log(response);
         const type = response.headers.get("content-type");
         if (
             type &&

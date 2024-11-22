@@ -257,7 +257,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             i.update({ components: [row] });
         });
         collector.on("end", async () => {
-            console.log("e");
             try {
                 row.setComponents(saveButton.setDisabled(true));
                 interaction.editReply({ components: [row] });

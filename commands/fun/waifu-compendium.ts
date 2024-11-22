@@ -123,7 +123,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             time: 600_000,
         });
         collector.on("collect", async (i) => {
-            console.log(i);
             if (i.customId.includes("prev")) {
                 index--;
                 const waifu = waifus[index];
