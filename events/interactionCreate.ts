@@ -1,7 +1,6 @@
 import { Events, Interaction } from "discord.js";
 import { sentry } from "../utilities/sentry.js";
 import { posthog } from "../utilities/posthog.js";
-import { handleRoleSelection } from "../menus/role-selector.js";
 
 const name = Events.InteractionCreate;
 
@@ -16,6 +15,15 @@ const execute = async (interaction: Interaction) => {
 
     if (interaction.isButton()) {
         try {
+            const button = interaction.client.buttons.get(
+                interaction.customId.split(":")[0]
+            );
+            if (button) {
+                await button.execute(interaction);
+                return;
+            }
+
+            // access control
             if (interaction.customId.endsWith(interaction.user.id)) {
                 return;
             }
@@ -25,7 +33,6 @@ const execute = async (interaction: Interaction) => {
                     ephemeral: true,
                 });
             }
-            return;
         } catch (err) {
             console.error("An error has occurred:\n", err);
             sentry.captureException(err);
@@ -105,10 +112,6 @@ const execute = async (interaction: Interaction) => {
         } catch (err) {
             console.error("An error has occurred:\n", err);
             sentry.captureException(err);
-        }
-    } else if (interaction.isStringSelectMenu()) {
-        if (interaction.customId === "role-selector") {
-            await handleRoleSelection(interaction);
         }
     } else {
         return;

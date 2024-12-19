@@ -10,6 +10,8 @@ import {
     StringSelectMenuInteraction,
     GuildMemberRoleManager,
     Collection,
+    ButtonBuilder,
+    ButtonStyle,
 } from "discord.js";
 
 const data = new SlashCommandBuilder()
@@ -73,29 +75,42 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
         async (selectInteraction: StringSelectMenuInteraction) => {
             const selectedRoles = selectInteraction.values;
 
-            const roleSelector = new StringSelectMenuBuilder()
-                .setCustomId("role-selector")
-                .setPlaceholder("Select your roles...")
-                .setMinValues(1)
-                .setMaxValues(selectedRoles.length)
-                .addOptions(
-                    selectedRoles.map((roleId) => {
-                        const role = availableRoles.get(roleId);
-                        return {
-                            label: role?.name || "Unknown Role",
-                            value: roleId,
-                        };
-                    })
-                );
+            const rows: ActionRowBuilder<ButtonBuilder>[] = [];
+            let currentRow = new ActionRowBuilder<ButtonBuilder>();
 
-            const roleSelectorRow =
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    roleSelector
-                );
+            // NOTE: I'm not sure if there's a limit to how many rows can be added
+
+            selectedRoles.forEach((role) => {
+                const name = availableRoles.get(role)?.name;
+                if (name) {
+                    const name = availableRoles.get(role)!.name;
+                    const button = new ButtonBuilder()
+                        .setCustomId(`role-select:${role}:${name}`)
+                        .setLabel(name)
+                        .setStyle(ButtonStyle.Primary);
+
+                    currentRow.addComponents(button);
+                }
+
+                if (currentRow.components.length === 5) {
+                    rows.push(currentRow);
+                    currentRow = new ActionRowBuilder<ButtonBuilder>();
+                }
+            });
+            if (currentRow.components.length !== 0) rows.push(currentRow);
+            rows.push(
+                new ActionRowBuilder<ButtonBuilder>().addComponents(
+                    new ButtonBuilder()
+                        .setCustomId("role-check")
+                        .setLabel("Check Roles")
+                        .setStyle(ButtonStyle.Secondary)
+                )
+            );
+
             if (!selectInteraction.channel?.isSendable()) return;
             await selectInteraction.channel.send({
                 content: "Select your roles to toggle:",
-                components: [roleSelectorRow],
+                components: rows,
             });
 
             await interaction.deleteReply();

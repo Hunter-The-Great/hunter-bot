@@ -1,9 +1,10 @@
-import { StringSelectMenuInteraction } from "discord.js";
+import { ButtonInteraction } from "discord.js";
 
-export async function handleRoleSelection(
-    interaction: StringSelectMenuInteraction
+const name = "role-select";
+
+const execute = async function handleRoleSelection(
+    interaction: ButtonInteraction
 ) {
-    const selectedRoles = interaction.values;
     const guild = interaction.guild;
 
     if (!guild) {
@@ -24,15 +25,18 @@ export async function handleRoleSelection(
     }
 
     try {
-        for (const role of selectedRoles) {
-            if (member.roles.cache.has(role)) {
-                member.roles.remove(role);
-            } else {
-                await member.roles.add(selectedRoles);
-            }
+        const role = interaction.customId.split(":")[1];
+        let added = false;
+        if (member.roles.cache.has(role)) {
+            member.roles.remove(role);
+        } else {
+            await member.roles.add(role);
+            added = true;
         }
         await interaction.reply({
-            content: "Your roles have been updated!",
+            content: `${added ? "Added" : "Removed"} the role "${
+                interaction.customId.split(":")[2]
+            }".`,
             ephemeral: true,
         });
     } catch (error) {
@@ -43,4 +47,6 @@ export async function handleRoleSelection(
             ephemeral: true,
         });
     }
-}
+};
+
+export { name, execute };

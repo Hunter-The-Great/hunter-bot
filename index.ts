@@ -8,6 +8,7 @@ class ExtendedClient extends Client {
     commands: Collection<string, any> = new Collection();
     textCommands: Collection<string, any> = new Collection();
     modals: Collection<string, any> = new Collection();
+    buttons: Collection<string, any> = new Collection();
 }
 
 const client = new ExtendedClient({
@@ -23,7 +24,7 @@ const client = new ExtendedClient({
 let foldersPath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(foldersPath);
 
-//Registers commands
+// Registers commands
 for (const folder of commandFolders) {
     if (!fs.lstatSync(path.join(foldersPath, folder)).isDirectory()) {
         continue;
@@ -64,7 +65,7 @@ for (const file of textFiles) {
     }
 }
 
-//registers modals
+// Registers modals
 const modalsPath = path.join(__dirname, "modals");
 const modalFiles = fs
     .readdirSync(modalsPath)
@@ -79,6 +80,24 @@ for (const file of modalFiles) {
     } else {
         console.log(
             `[WARNING] The modal at ${filePath} is missing a required "name" or "execute" property.`
+        );
+    }
+}
+
+// Registers buttons
+const buttonPath = path.join(__dirname, "buttons");
+const buttonFiles = fs
+    .readdirSync(buttonPath)
+    .filter((file) => file.endsWith(".ts") || file.endsWith(".tsx"));
+
+for (const file of buttonFiles) {
+    const filePath = path.join(buttonPath, file);
+    const button = require(filePath);
+    if ("name" in button && "execute" in button) {
+        client.buttons.set(button.name, button);
+    } else {
+        console.log(
+            `[WARNING] The button at ${filePath} is missing a required "name" or "execute" property.`
         );
     }
 }
