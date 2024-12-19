@@ -1,6 +1,7 @@
 import { Events, Interaction } from "discord.js";
 import { sentry } from "../utilities/sentry.js";
 import { posthog } from "../utilities/posthog.js";
+import { handleRoleSelection } from "../menus/role-selector.js";
 
 const name = Events.InteractionCreate;
 
@@ -104,6 +105,10 @@ const execute = async (interaction: Interaction) => {
         } catch (err) {
             console.error("An error has occurred:\n", err);
             sentry.captureException(err);
+        }
+    } else if (interaction.isStringSelectMenu()) {
+        if (interaction.customId === "role-selector") {
+            await handleRoleSelection(interaction);
         }
     } else {
         return;
