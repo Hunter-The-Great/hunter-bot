@@ -131,7 +131,12 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
         const meta = await scrapeMeta.json();
         const response = await fetch(link);
         const type = response.headers.get("content-type");
-        if (type && (type.includes("gif") || type.includes("image"))) {
+        if (
+            type &&
+            (type.includes("gif") ||
+                type.includes("image") ||
+                type.includes("video"))
+        ) {
             await prisma.gif.create({
                 data: {
                     alias,

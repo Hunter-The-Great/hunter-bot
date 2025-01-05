@@ -15,6 +15,15 @@ const execute = async (interaction: Interaction) => {
 
     if (interaction.isButton()) {
         try {
+            const button = interaction.client.buttons.get(
+                interaction.customId.split(":")[0]
+            );
+            if (button) {
+                await button.execute(interaction);
+                return;
+            }
+
+            // access control
             if (interaction.customId.endsWith(interaction.user.id)) {
                 return;
             }
@@ -24,7 +33,6 @@ const execute = async (interaction: Interaction) => {
                     ephemeral: true,
                 });
             }
-            return;
         } catch (err) {
             console.error("An error has occurred:\n", err);
             sentry.captureException(err);
