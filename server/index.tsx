@@ -443,20 +443,15 @@ const start = async (client) => {
                     if (color) messageEmbed.setColor(color);
                     if (authorName || authorIcon || authorURL)
                         messageEmbed.setAuthor({
-                            //@ts-ignore
                             name: authorName || null,
-                            //@ts-ignore
                             iconURL: authorIcon || null,
-                            //@ts-ignore
                             url: authorURL || null,
-                        });
+                        } as any);
                     if (footerText || footerIcon)
                         messageEmbed.setFooter({
-                            //@ts-ignore
                             text: footerText || null,
-                            //@ts-ignore
                             iconURL: footerIcon || null,
-                        });
+                        } as any);
                     if (timestamp)
                         messageEmbed.setTimestamp(parseDate(timestamp));
                     if (image) messageEmbed.setImage(image);
