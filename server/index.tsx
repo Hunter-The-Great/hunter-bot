@@ -439,8 +439,8 @@ const start = async (client) => {
                 try {
                     if (title) messageEmbed.setTitle(title);
                     if (thumbnail) messageEmbed.setThumbnail(thumbnail);
-                    if (color)
-                        messageEmbed.setColor(parseInt(color.slice(2), 16));
+                    //@ts-ignore
+                    if (color) messageEmbed.setColor(color);
                     if (authorName || authorIcon || authorURL)
                         messageEmbed.setAuthor({
                             //@ts-ignore
