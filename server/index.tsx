@@ -8,7 +8,7 @@ import { BaseHtml } from "./baseHtml";
 import { FeedbackHtml } from "./feedback";
 import { z, ZodError, ZodSchema } from "zod";
 import { FastifyRequestType } from "fastify/types/type-provider";
-import { timeStamp } from "node:console";
+import { parseDate } from "chrono-node";
 
 export const server = fastify();
 
@@ -29,6 +29,7 @@ class VisibleError extends Error {
 
 server.setErrorHandler((err: Error, req, res) => {
     if (err instanceof ZodError) {
+        console.log(err.message);
         return res.code(400).send({
             error: "Bad Request",
         });
@@ -71,7 +72,7 @@ const start = async (client) => {
         res.header("Content-Type", "text/html; charset=utf-8");
         res.send(
             <BaseHtml title="Hunter Bot">
-                <div class="flex h-1/2  w-full items-center justify-center">
+                <div class="flex w-full items-center justify-center text-xl">
                     <form
                         id="login"
                         hx-post="/login"
@@ -79,7 +80,6 @@ const start = async (client) => {
                         hx-swap="outerHTML"
                         hx-target="#login"
                         hx-target-401="#login-error"
-                        class="scale-150"
                     >
                         <label>Key: </label>
                         <input
@@ -121,112 +121,6 @@ const start = async (client) => {
             const user = await client.users.fetch(uid);
             await user.send(content);
             return res.code(200).send({ message: "Acknowledged." });
-        })
-    );
-
-    const messageSchema = z.object({
-        key: z.string(),
-        channel: z.string(),
-        message: z.string().optional(),
-        embed: z.boolean(),
-        title: z.string().optional(),
-        color: z.number().min(0).max(16777215).optional(),
-        thumbnail: z.string().optional(),
-        author: z
-            .object({
-                name: z.string(),
-                iconURL: z.string().optional(),
-            })
-            .optional(),
-        description: z.string().optional(),
-        fields: z
-            .array(
-                z.object({
-                    name: z.string(),
-                    value: z.string(),
-                    inline: z.boolean(),
-                })
-            )
-            .optional(),
-        footer: z
-            .object({
-                text: z.string(),
-                iconURL: z.string().optional(),
-            })
-            .optional(),
-    });
-
-    server.post(
-        "/message",
-        useSchema(messageSchema, async (req, res) => {
-            const {
-                key,
-                message,
-                channel,
-                embed,
-                title,
-                color,
-                thumbnail,
-                author,
-                description,
-                fields,
-                footer,
-            } = req.body;
-
-            if (key !== process.env.MESSAGE_KEY) {
-                throw new VisibleError("Unauthorized", 401);
-            }
-
-            const channelobj = await client.channels.fetch(channel);
-
-            if (embed) {
-                if (!fields) {
-                    return res
-                        .code(401)
-                        .send(
-                            <div class="flex text-red-700 justify-center">
-                                Embed missing field.
-                            </div>
-                        );
-                }
-                const messageEmbed = new EmbedBuilder()
-                    .setColor(color || null)
-                    .setTitle(title || null)
-                    .setDescription(description || " ")
-                    .setThumbnail(thumbnail || null)
-                    .setFields(fields)
-                    .setAuthor(author || null)
-                    .setFooter(footer || null);
-
-                await channelobj.send({
-                    content: message,
-                    embeds: [messageEmbed],
-                });
-            } else if (message) await channelobj.send(message);
-            else {
-                return res
-                    .code(401)
-                    .send(
-                        <div class="flex text-red-700 justify-center">
-                            Cannot send an empty message.
-                        </div>
-                    );
-            }
-
-            return res.send(
-                <div id="message" class="flex justify-center items-end">
-                    <textarea
-                        name="message"
-                        class="resize max-h-48 max-w-lg min-w-48 min-h-16 rounded mt-1 mr-1 bg-slate-950 p-1"
-                    ></textarea>
-                    <button
-                        type="submit"
-                        class="bg-sky-500 hover:bg-sky-700 rounded p-1 max-h-10 min-w-20"
-                    >
-                        Send
-                    </button>
-                </div>
-            );
         })
     );
 
@@ -376,10 +270,11 @@ const start = async (client) => {
             res.send(
                 <form
                     hx-post="/message"
-                    hx-ext="json-enc"
-                    class="flex-col justify-center scale-150"
+                    hx-ext="json-enc, response-targets"
+                    class="flex-col justify-center"
                     hx-swap="outerHTML"
-                    hx-target="#message"
+                    hx-target="#message-area"
+                    hx-target-400="#message-error"
                 >
                     <div id="key">
                         <input
@@ -452,28 +347,157 @@ const start = async (client) => {
         res.header("Content-Type", "text/html; charset=utf-8");
         res.send(
             <div id="message" class="flex flex-wrap justify-center items-end">
-                <textarea
-                    name="message"
-                    class="resize max-h-48 max-w-lg min-w-48 min-h-16 rounded mt-1 mr-1 bg-slate-950 p-1"
-                ></textarea>
-
-                <button
-                    type="submit"
-                    class="bg-sky-500 hover:bg-sky-700 rounded p-1 max-h-10 min-w-20"
+                <div
+                    id="message-input"
+                    class="flex flex-wrap justify-center items-end"
                 >
-                    Send
-                </button>
-                <div id="break" class="flex h-0 w-full" />
-                <label>Embed: </label>
-                <input
-                    type="checkbox"
-                    name="embed"
-                    hx-target="#embed"
-                    hx-post="/embed"
-                />
+                    <div id="message-area">
+                        <div id="message-error"></div>
+                        <textarea
+                            name="message"
+                            class="resize max-h-48 max-w-lg min-w-48 min-h-16 rounded mt-1 mr-1 bg-slate-950 p-1"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="bg-sky-500 hover:bg-sky-700 rounded p-1 max-h-10 min-w-20"
+                    >
+                        Send
+                    </button>
+                    <div id="break" class="flex h-0 w-full" />
+                    <label>Embed: </label>
+                    <input
+                        type="checkbox"
+                        name="embed"
+                        hx-target="#embed"
+                        hx-post="/embed"
+                    />
+                </div>
             </div>
         );
     });
+
+    const messageSchema = z.object({
+        key: z.string(),
+        channel: z.string(),
+        message: z.string().optional(),
+        embed: z.string().optional(),
+        title: z.string().optional(),
+        color: z.string().optional(),
+        thumbnail: z.string().optional(),
+        authorName: z.string().optional(),
+        authorIcon: z.string().optional(),
+        authorURL: z.string().optional(),
+        footerText: z.string().optional(),
+        footerIcon: z.string().optional(),
+        timestamp: z.string().optional(),
+        description: z.string().optional(),
+        image: z.string().optional(),
+    });
+
+    server.post(
+        "/message",
+        useSchema(messageSchema, async (req, res) => {
+            const {
+                key,
+                message,
+                channel,
+                embed,
+                title,
+                color,
+                thumbnail,
+                authorName,
+                authorIcon,
+                authorURL,
+                footerText,
+                footerIcon,
+                timestamp,
+                description,
+                image,
+            } = req.body;
+
+            if (key !== process.env.MESSAGE_KEY) {
+                throw new VisibleError("Unauthorized", 401);
+            }
+
+            const channelobj = await client.channels.fetch(channel);
+
+            if (embed) {
+                if (!description)
+                    return res.code(400).send(
+                        <div
+                            id="message-error"
+                            class="flex text-red-700 justify-center"
+                        >
+                            Cannot send an embed with an empty description.
+                        </div>
+                    );
+                const messageEmbed = new EmbedBuilder().setDescription(
+                    description
+                );
+                try {
+                    if (title) messageEmbed.setTitle(title);
+                    if (thumbnail) messageEmbed.setThumbnail(thumbnail);
+                    if (color)
+                        messageEmbed.setColor(parseInt(color.slice(2), 16));
+                    if (authorName || authorIcon || authorURL)
+                        messageEmbed.setAuthor({
+                            //@ts-ignore
+                            name: authorName || null,
+                            //@ts-ignore
+                            iconURL: authorIcon || null,
+                            //@ts-ignore
+                            url: authorURL || null,
+                        });
+                    if (footerText || footerIcon)
+                        messageEmbed.setFooter({
+                            //@ts-ignore
+                            text: footerText || null,
+                            //@ts-ignore
+                            iconURL: footerIcon || null,
+                        });
+                    if (timestamp)
+                        messageEmbed.setTimestamp(parseDate(timestamp));
+                    if (image) messageEmbed.setImage(image);
+                } catch (err) {
+                    return res.code(400).send(
+                        <div
+                            id="message-error"
+                            class="flex text-red-700 justify-center"
+                        >
+                            Error parsing embed.
+                        </div>
+                    );
+                }
+
+                await channelobj.send({
+                    content: message,
+                    embeds: [messageEmbed],
+                });
+            } else if (message) await channelobj.send(message);
+            else {
+                return res.code(400).send(
+                    <div
+                        id="message-error"
+                        class="flex text-red-700 justify-center"
+                    >
+                        Cannot send an empty message.
+                    </div>
+                );
+            }
+
+            return res.send(
+                <div id="message-area">
+                    <div id="message-error"></div>
+                    <textarea
+                        name="message"
+                        class="resize max-h-48 max-w-lg min-w-48 min-h-16 rounded mt-1 mr-1 bg-slate-950 p-1"
+                    />
+                </div>
+            );
+        })
+    );
 
     const embedSchema = z.object({ embed: z.string().optional() });
 
@@ -492,9 +516,15 @@ const start = async (client) => {
                             name="title"
                             class="rounded bg-slate-950 p-1"
                         />
+                        <label>Description: </label>
+                        <input
+                            type="text"
+                            name="description"
+                            class="rounded bg-slate-950 p-1"
+                        />
                         <label>Color: </label>
                         <input
-                            type="number"
+                            type="color"
                             name="color"
                             class="rounded bg-slate-950 p-1"
                         />
@@ -504,28 +534,62 @@ const start = async (client) => {
                             name="thumbnail"
                             class="rounded bg-slate-950 p-1"
                         />
-                        <label>Author: </label>
+                        <label>Image: </label>
                         <input
                             type="text"
-                            name="author"
+                            name="image"
                             class="rounded bg-slate-950 p-1"
                         />
-                        <label>Description: </label>
+                        <div id="author" class="flex flex-col">
+                            <label>Author: </label>
+                            <div id="Author-text" class="flex flex-row m-1">
+                                <label class="ml-4">Name: </label>
+                                <input
+                                    type="text"
+                                    name="authorName"
+                                    class="rounded bg-slate-950 p-1 m-1"
+                                />
+                            </div>
+                            <div id="author-icon" class="flex flex-row m-1">
+                                <label class="ml-4">Image: </label>
+                                <input
+                                    type="text"
+                                    name="authorIcon"
+                                    class="rounded bg-slate-950 p-1 m-1"
+                                />
+                            </div>
+                            <div id="author-url" class="flex flex-row m-1">
+                                <label class="ml-4">URL: </label>
+                                <input
+                                    type="text"
+                                    name="authorURL"
+                                    class="rounded bg-slate-950 p-1 m-1"
+                                />
+                            </div>
+                        </div>
+                        <div id="footer">
+                            <label>Footer: </label>
+                            <div id="footer-text" class="flex flex-row m-1">
+                                <label class="ml-4">Text: </label>
+                                <input
+                                    type="text"
+                                    name="footerText"
+                                    class="rounded bg-slate-950 p-1 m-1"
+                                />
+                            </div>
+                            <div id="footer-icon" class="flex flex-row m-1">
+                                <label class="ml-4">Image: </label>
+                                <input
+                                    type="text"
+                                    name="footerIcon"
+                                    class="rounded bg-slate-950 p-1 m-1"
+                                />
+                            </div>
+                        </div>
+                        <label>Timestamp: </label>
                         <input
-                            type="text"
-                            name="description"
-                            class="rounded bg-slate-950 p-1"
-                        />
-                        <label>Fields: </label>
-                        <input
-                            type="text"
-                            name="fields"
-                            class="rounded bg-slate-950 p-1"
-                        />
-                        <label>Footer: </label>
-                        <input
-                            type="text"
-                            name="footer"
+                            type="datetime-local"
+                            name="timestamp"
                             class="rounded bg-slate-950 p-1"
                         />
                     </div>
