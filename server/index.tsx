@@ -1,7 +1,7 @@
 import { prisma } from "../utilities/db";
 import websocket from "@fastify/websocket";
 import cors from "@fastify/cors";
-import { EmbedBuilder, embedLength, TextChannel } from "discord.js";
+import { Attachment, EmbedBuilder, embedLength, TextChannel } from "discord.js";
 import { sentry } from "../utilities/sentry";
 import { FastifyReply, FastifyRequest, fastify } from "fastify";
 import { BaseHtml } from "./baseHtml";
@@ -212,20 +212,69 @@ const start = async (client) => {
         })
     );
 
-    const drewhSchema = z.object({
+    const drewhMessageSchema = z.object({
         key: z.string(),
         message: z.string(),
     });
 
     server.post(
-        "/drewh",
-        useSchema(drewhSchema, async (req, res) => {
+        "/drewh/message",
+        useSchema(drewhMessageSchema, async (req, res) => {
             if (req.body.key !== process.env.DREW_KEY) {
                 console.log("Invalid key for /drewh.");
                 throw new VisibleError("Unauthorized");
             }
             const drew = await client.users.fetch("254591447284711424");
             await drew.send(req.body.message);
+            return res.code(200).send({ message: "Acknowledged." });
+        })
+    );
+
+    const drewhMemeSchema = z.object({
+        link: z.string(),
+        key: z.string(),
+    });
+
+    server.post(
+        "/drewh/meme",
+        useSchema(drewhMemeSchema, async (req, res) => {
+            const { link, key } = req.body;
+
+            if (key !== process.env.DREW_KEY) {
+                console.log("Invalid key for /drewh.");
+                throw new VisibleError("Unauthorized");
+            }
+
+            const response = await fetch("https://cobalt.drewh.net", {
+                method: "POST",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    url: link,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new VisibleError("Error processing link.");
+            }
+
+            const { url, filename } = await response.json();
+
+            const channel = await client.channels.fetch(
+                process.env.MEME_CHANNEL
+            );
+
+            await channel.send({
+                files: [
+                    {
+                        attachment: url,
+                        name: filename,
+                    },
+                ],
+            });
+
             return res.code(200).send({ message: "Acknowledged." });
         })
     );
@@ -585,7 +634,7 @@ const start = async (client) => {
                         <input
                             type="datetime-local"
                             name="timestamp"
-                            class="rounded bg-slate-950 p-1"
+                            class="rounded bg-slate-950 p-1 fill-white"
                         />
                     </div>
                 );
