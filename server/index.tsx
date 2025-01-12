@@ -239,6 +239,9 @@ const start = async (client) => {
         "/drewh/meme",
         useSchema(drewhMemeSchema, async (req, res) => {
             const { link, key } = req.body;
+            const channel = await client.channels.fetch(
+                process.env.MEME_CHANNEL
+            );
 
             if (key !== process.env.DREW_KEY) {
                 console.log("Invalid key for /drewh.");
@@ -257,14 +260,15 @@ const start = async (client) => {
             });
 
             if (!response.ok) {
-                throw new VisibleError("Error processing link.");
+                try {
+                    new URL(link);
+                    await channel.send(link);
+                } finally {
+                    throw new VisibleError("Error processing link.");
+                }
             }
 
             const { url, filename } = await response.json();
-
-            const channel = await client.channels.fetch(
-                process.env.MEME_CHANNEL
-            );
 
             await channel.send({
                 files: [
