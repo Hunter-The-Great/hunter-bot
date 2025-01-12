@@ -233,12 +233,13 @@ const start = async (client) => {
     const drewhMemeSchema = z.object({
         link: z.string(),
         key: z.string(),
+        user: z.string(),
     });
 
     server.post(
         "/drewh/meme",
         useSchema(drewhMemeSchema, async (req, res) => {
-            const { link, key } = req.body;
+            const { link, key, user } = req.body;
             const channel = await client.channels.fetch(
                 process.env.MEME_CHANNEL
             );
@@ -262,8 +263,9 @@ const start = async (client) => {
             if (!response.ok) {
                 try {
                     new URL(link);
-                    await channel.send(link);
-                } finally {
+                    await channel.send(`-# Sent by: ${user}\n${link}`);
+                    return res.code(202).send({ message: "Acknowledged" });
+                } catch {
                     throw new VisibleError("Error processing link.");
                 }
             }
@@ -277,6 +279,7 @@ const start = async (client) => {
                         name: filename,
                     },
                 ],
+                content: `-# Sent by: ${user}`,
             });
 
             return res.code(200).send({ message: "Acknowledged." });
