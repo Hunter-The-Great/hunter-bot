@@ -283,7 +283,7 @@ const start = async (client) => {
                         name: filename,
                     },
                 ],
-                content: `-# Sent by: ${user}`,
+                content: `-# [Sent by: ${user}](<${link}>)`,
             });
 
             return res.code(200).send({ message: "Acknowledged." });
