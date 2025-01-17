@@ -261,12 +261,20 @@ const start = async (client) => {
                 }),
             });
 
+            const embedify = (originalLink: string) => {
+                if (originalLink.includes("instagram")) {
+                    originalLink = originalLink.replace(
+                        "instagram",
+                        "instagramez"
+                    );
+                }
+                return originalLink;
+            };
+
             if (!response.ok) {
                 try {
                     new URL(link);
-                    if (link.includes("instagram")) {
-                        link = link.replace("instagram", "instagramez");
-                    }
+                    link = embedify(link);
                     await channel.send(`-# [Sent by: ${user}](${link})`);
                     return res.code(202).send({ message: "Acknowledged" });
                 } catch {
@@ -276,15 +284,25 @@ const start = async (client) => {
 
             const { url, filename } = await response.json();
 
-            await channel.send({
-                files: [
-                    {
-                        attachment: url,
-                        name: filename,
-                    },
-                ],
-                content: `-# [Sent by: ${user}](<${link}>)`,
-            });
+            try {
+                await channel.send({
+                    files: [
+                        {
+                            attachment: url,
+                            name: filename,
+                        },
+                    ],
+                    content: `-# [Sent by: ${user}](<${link}>)`,
+                });
+            } catch (err) {
+                try {
+                    new URL(link);
+                    link = embedify(link);
+                    await channel.send(`-# [Sent by: ${user}](${link})`);
+                } catch (err) {
+                    throw new VisibleError("Error processing link.");
+                }
+            }
 
             return res.code(200).send({ message: "Acknowledged." });
         })
