@@ -239,7 +239,8 @@ const start = async (client) => {
     server.post(
         "/drewh/meme",
         useSchema(drewhMemeSchema, async (req, res) => {
-            const { link, key, user } = req.body;
+            const { key, user } = req.body;
+            let { link } = req.body;
             const channel = await client.channels.fetch(
                 process.env.MEME_CHANNEL
             );
@@ -263,7 +264,10 @@ const start = async (client) => {
             if (!response.ok) {
                 try {
                     new URL(link);
-                    await channel.send(`-# Sent by: ${user}\n${link}`);
+                    if (link.includes("instagram")) {
+                        link = link.replace("instagram", "instagramez");
+                    }
+                    await channel.send(`-# [Sent by: ${user}](${link})`);
                     return res.code(202).send({ message: "Acknowledged" });
                 } catch {
                     throw new VisibleError("Error processing link.");
