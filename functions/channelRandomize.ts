@@ -5,7 +5,7 @@ import os from "os";
 export async function randomizeChannel(client: Client) {
     let channel: Channel | null;
     try {
-        channel = await client.channels.fetch("1330609925243535441");
+        channel = await client.channels.fetch("1330050225733369859");
     } catch {
         if (os.hostname() === "BenL-MacBook-Pro.local") return;
         console.log(
