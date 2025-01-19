@@ -1,6 +1,7 @@
 import { Client, Events } from "discord.js";
 import os from "os";
 import { sentry } from "../utilities/sentry";
+import { randomizeChannel } from "../functions/channelRandomize";
 
 const name = Events.ClientReady;
 
@@ -8,6 +9,9 @@ const once = true;
 
 const execute = async (client: Client) => {
     console.log(`Logged in as ${client.user!.tag}`);
+
+    randomizeChannel(client);
+
     try {
         if (os.hostname() === "BenL-MacBook-Pro.local") return;
         client.channels.fetch("1126759333733085214").then((channel) => {
