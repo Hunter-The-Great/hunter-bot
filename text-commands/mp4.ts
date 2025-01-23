@@ -37,6 +37,7 @@ const execute = async (message: Message) => {
             await message.channel.send(backup(link));
         }
     }
+    await message.delete();
 };
 
 export { name, execute };
