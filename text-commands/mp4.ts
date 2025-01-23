@@ -22,7 +22,7 @@ const execute = async (message: Message) => {
     if (info === null) return;
     const { url, filename } = info;
 
-    if (filename === null) await repliedMessage.reply(`[.]${url}`);
+    if (filename === null) await repliedMessage.reply(`[.](${url})`);
     else {
         try {
             await repliedMessage.reply({
