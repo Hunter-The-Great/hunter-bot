@@ -93,10 +93,10 @@ const execute = async (message: Message) => {
         }
 
         //* Text commands
-        if (message.content.startsWith("~!")) {
+        if (message.content.startsWith("!")) {
             try {
                 const command = message.client.textCommands.get(
-                    message.content.slice(2)
+                    message.content.slice(1)
                 );
                 if (!command) {
                     throw new Error(

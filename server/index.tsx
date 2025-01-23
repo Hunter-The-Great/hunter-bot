@@ -9,6 +9,7 @@ import { FeedbackHtml } from "./feedback";
 import { z, ZodError, ZodSchema } from "zod";
 import { FastifyRequestType } from "fastify/types/type-provider";
 import { parseDate } from "chrono-node";
+import { backup, embedify } from "../functions/embedify";
 
 export const server = fastify();
 
@@ -239,8 +240,7 @@ const start = async (client) => {
     server.post(
         "/drewh/meme",
         useSchema(drewhMemeSchema, async (req, res) => {
-            const { key, user } = req.body;
-            let { link } = req.body;
+            const { key, user, link } = req.body;
             const channel = await client.channels.fetch(
                 process.env.MEME_CHANNEL
             );
@@ -250,39 +250,22 @@ const start = async (client) => {
                 throw new VisibleError("Unauthorized");
             }
 
-            const response = await fetch("https://cobalt.drewh.net", {
-                method: "POST",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    url: link,
-                }),
-            });
+            const info = await embedify(link);
 
-            const embedify = (originalLink: string) => {
-                if (originalLink.includes("instagram")) {
-                    originalLink = originalLink.replace(
-                        "instagram",
-                        "instagramez"
-                    );
-                }
-                return originalLink;
-            };
+            if (info === null) {
+                throw new VisibleError("Error processing link.");
+            }
 
-            if (!response.ok) {
+            const { url, filename } = info;
+
+            if (filename === null) {
                 try {
-                    new URL(link);
-                    link = embedify(link);
-                    await channel.send(`-# [Sent by: ${user}](${link})`);
+                    await channel.send(`-# [Sent by: ${user}](${url})`);
                     return res.code(202).send({ message: "Acknowledged" });
                 } catch {
                     throw new VisibleError("Error processing link.");
                 }
             }
-
-            const { url, filename } = await response.json();
 
             try {
                 await channel.send({
@@ -296,9 +279,9 @@ const start = async (client) => {
                 });
             } catch (err) {
                 try {
-                    new URL(link);
-                    link = embedify(link);
-                    await channel.send(`-# [Sent by: ${user}](${link})`);
+                    await channel.send(
+                        `-# [Sent by: ${user}](${backup(link)})`
+                    );
                 } catch (err) {
                     throw new VisibleError("Error processing link.");
                 }
