@@ -117,15 +117,19 @@ const execute = async (message: Message) => {
         ) {
             return;
         }
-        //* Jarvis
-        if (
-            message.guild &&
-            (await prisma.guild.findFirst({
-                where: { id: message.guild.id },
-            }))
-        ) {
-            executeJarvis(message);
-        }
+
+        //* Jarvis functionality
+        if (!message.guild) return;
+
+        const guild = await prisma.guild.findFirst({
+            where: {
+                id: message.guild.id,
+            },
+        });
+
+        if (!guild || !guild.jarvis) return;
+
+        executeJarvis(message);
     } catch (err) {
         console.error("An error has occurred:\n", err);
         sentry.captureException(err);
