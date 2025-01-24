@@ -42,7 +42,8 @@ const execute = async (oldMessage: Message, newMessage: Message) => {
             Guild: ${newMessage.guild.name} | ${newMessage.guild.id}
             Channel: ${newMessage.channel.name} | ${newMessage.channel.id}
             Link: ${newMessage.url}
-            Content: ${newMessage.content}\n-------------------------------\n`,
+            Content: ${newMessage.content}
+            Old Content: ${oldMessage.content}\n-------------------------------\n`,
             err
         );
     }
