@@ -62,7 +62,7 @@ const executeJarvis = async (message: Message) => {
             return;
         }
 
-        const zooCheck = /hit (\w)+ with the zoo/;
+        const zooCheck = /hit [\w\s]* with the zoo/;
 
         if (message.content.toLowerCase().match(zooCheck)) {
             await message.channel.send(initialResponse);
