@@ -1,16 +1,15 @@
 import {
     ChatInputCommandInteraction,
     SlashCommandBuilder,
-    PermissionsBitField,
     ApplicationIntegrationType,
     InteractionContextType,
 } from "discord.js";
 import fs from "fs";
+import { checkPermissions } from "../../utilities/permission-check";
 
 const data = new SlashCommandBuilder()
     .setName("buffer")
     .setDescription("Sends a buffer of empty space.")
-    .setDefaultMemberPermissions(PermissionsBitField.Flags.Administrator)
     .setNSFW(false)
     .setContexts([
         InteractionContextType.Guild,
@@ -29,10 +28,17 @@ const data = new SlashCommandBuilder()
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
     const data = fs.readFileSync("resources/buffer.txt", "utf8");
-    interaction.options.getBoolean("ephemeral");
+    let ephemeral = interaction.options.getBoolean("ephemeral") ?? true;
+
+    if (
+        !ephemeral &&
+        !(await checkPermissions(interaction.user, interaction.channel))
+    )
+        ephemeral = true;
+
     await interaction.reply({
         content: data,
-        ephemeral: interaction.options.getBoolean("ephemeral") ?? true,
+        ephemeral,
     });
 };
 
