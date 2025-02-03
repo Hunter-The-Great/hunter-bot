@@ -190,6 +190,14 @@ const executeJarvis = async (message: Message) => {
             return;
         }
 
+        if (
+            message.content
+                .toLowerCase()
+                .match(/\bcoin\b.*\bflip\b|\bflip\b.*\bcoin\b/)
+        ) {
+            await message.channel.send(Math.random() > 0.5 ? "Heads" : "Tails");
+        }
+
         const request =
             /send |paste in |paste up |throw in |throw up |hit (\w)+ with |get |summon |search |search for /;
         if (message.content.toLowerCase().match(request)) {
