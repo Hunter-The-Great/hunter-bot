@@ -20,7 +20,11 @@ const data = new SlashCommandBuilder()
     ]);
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
-    await interaction.reply(Math.random() > 0.5 ? "Heads" : "Tails");
+    await interaction.reply(
+        Math.random() > 0.5
+            ? "https://tenor.com/view/yuh-huh-gif-15270611547611670785"
+            : "https://tenor.com/view/nuh-uh-beocord-no-lol-gif-24435520"
+    );
 };
 
 const category = "fun";
