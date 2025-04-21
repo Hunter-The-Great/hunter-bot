@@ -1,8 +1,8 @@
+import { sentry } from "../utilities/sentry";
 import { prisma } from "../utilities/db";
 import websocket from "@fastify/websocket";
 import cors from "@fastify/cors";
 import { Attachment, EmbedBuilder, embedLength, TextChannel } from "discord.js";
-import { sentry } from "../utilities/sentry";
 import { FastifyReply, FastifyRequest, fastify } from "fastify";
 import { BaseHtml } from "./baseHtml";
 import { FeedbackHtml } from "./feedback";
@@ -671,10 +671,13 @@ const start = async (client) => {
 
     //* running the server
     try {
-        server.listen({ host: "0.0.0.0", port: parseInt(process.env.PORT!) });
+        server.listen({
+            host: "0.0.0.0",
+            port: parseInt(process.env.PORT!),
+        });
         console.log("Listening on: " + process.env.PORT);
     } catch (err) {
-        sentry.captureException(err);
+        console.error(err);
         server.log.error(err);
         process.exit(1);
     }

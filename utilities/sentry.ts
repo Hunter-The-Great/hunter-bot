@@ -1,7 +1,12 @@
-import * as Sentry from "@sentry/bun";
+import * as Sentry from "@sentry/node";
 
-Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-});
+try {
+    Sentry.init({
+        dsn: process.env.SENTRY_DSN,
+        enabled: true,
+    });
+} catch (err) {
+    console.error("Sentry failed to initialize: ", err);
+}
 
 export const sentry = Sentry;
