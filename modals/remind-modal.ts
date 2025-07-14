@@ -11,7 +11,6 @@ const execute = async (interaction: ModalSubmitInteraction) => {
     const time = chrono.parseDate(interaction.fields.getTextInputValue("date"));
 
     const date = new Date(time!);
-    console.log(date);
 
     if (date.toString() === "Invalid Date") {
         interaction.reply({
