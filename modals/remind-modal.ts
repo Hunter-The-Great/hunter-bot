@@ -11,6 +11,7 @@ const execute = async (interaction: ModalSubmitInteraction) => {
     const time = chrono.parseDate(interaction.fields.getTextInputValue("date"));
 
     const date = new Date(time!);
+    console.log(date);
 
     if (date.toString() === "Invalid Date") {
         interaction.reply({
@@ -18,7 +19,7 @@ const execute = async (interaction: ModalSubmitInteraction) => {
             ephemeral: true,
         });
         return;
-    } else {
+    } else if (delay) {
         const regex = /^[0-9]+$/;
         if (!delay.match(regex)) {
             interaction.reply({
