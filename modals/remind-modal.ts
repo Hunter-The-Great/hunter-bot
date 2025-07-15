@@ -57,7 +57,6 @@ const execute = async (interaction: ModalSubmitInteraction) => {
             }),
         }
     );
-    console.log(response);
     if (!response.ok) {
         if (response.status === 412) {
             await interaction.reply({
