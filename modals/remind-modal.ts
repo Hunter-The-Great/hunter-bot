@@ -57,11 +57,19 @@ const execute = async (interaction: ModalSubmitInteraction) => {
             }),
         }
     );
+    console.log(response);
     if (!response.ok) {
-        await interaction.reply({
-            content: "Failed to set reminder, please try again later.",
-            ephemeral: true,
-        });
+        if (response.status === 412) {
+            await interaction.reply({
+                content: "Date too far in the future.",
+                ephemeral: true,
+            });
+        } else {
+            await interaction.reply({
+                content: "Failed to set reminder, please try again later.",
+                ephemeral: true,
+            });
+        }
         sentry.captureEvent({
             message: "Failed to set reminder",
             extra: {
