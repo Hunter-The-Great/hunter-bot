@@ -27,6 +27,7 @@ const data = new SlashCommandBuilder()
             .setRequired(true)
     );
 const execute = async (interaction: ChatInputCommandInteraction) => {
+    await interaction.deferReply();
     const thesaurus = require("thesaurus");
 
     const synonyms = thesaurus.find(interaction.options.getString("word"));
@@ -98,7 +99,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             inline: true,
         });
 
-    await interaction.reply({
+    await interaction.editReply({
         embeds: [embed],
         ephemeral: false,
     });
