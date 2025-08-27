@@ -39,7 +39,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
         "Invert mouse movement.",
         "No hud (and no melee characters).",
     ];
-    const individualChallenges: Record<string, string[]> = {
+    const individualChallenges = {
         "Black Widow": ["No ADS."],
         "Black Panther": [
             "Every time you miss a dash reset you have to make a move in chess.",
