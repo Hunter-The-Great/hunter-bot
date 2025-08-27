@@ -31,7 +31,7 @@ const data = new SlashCommandBuilder()
     );
 
 const execute = async (interaction: ChatInputCommandInteraction) => {
-    const teamChallenges: string[] = [
+    const teamChallenges = [
         "Play your least played characters",
         "Must use ultimates immediately when you get them.",
         "Must RP your character.",
@@ -65,11 +65,11 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
         Starlord: ["No walking"],
     };
 
-    const players: number =
+    const players =
         interaction.options.getNumber("players") ??
         (interaction.guild?.id === "1120455139954786324" ? 3 : 6);
 
-    let team: boolean = true;
+    let team = true;
     if (Math.random() < 0.3) {
         // Team challenges
         const challenge =
@@ -119,7 +119,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             challenges[2] = "- Drew" + challenges[2].substring(10);
         }
 
-        const embed: EmbedBuilder = new EmbedBuilder()
+        const embed = new EmbedBuilder()
             .setColor(0x00ffff)
             .setTitle("Individual Challenges")
             .setDescription(
