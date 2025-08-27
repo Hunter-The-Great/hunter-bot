@@ -70,7 +70,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
         (interaction.guild?.id === "1120455139954786324" ? 3 : 6);
 
     let team: boolean = true;
-    if (Math.random() < 0) {
+    if (Math.random() < 0.3) {
         // Team challenges
         const challenge =
             teamChallenges[Math.floor(Math.random() * teamChallenges.length)];
