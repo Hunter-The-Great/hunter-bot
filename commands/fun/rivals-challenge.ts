@@ -62,7 +62,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             "Must use twerk emote after every kill and before you're allowed to disengage a dive.",
         ],
         Groot: ["No walls."],
-        Starlord: ["No walking"],
+        Starlord: ["No walking."],
     };
 
     const players =
