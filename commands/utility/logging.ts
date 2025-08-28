@@ -5,6 +5,7 @@ import {
     ApplicationIntegrationType,
     InteractionContextType,
 } from "discord.js";
+import { Scopes } from "../../utilities/Scopes";
 import { prisma } from "../../utilities/db";
 
 const data = new SlashCommandBuilder()
@@ -42,5 +43,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const category = "utility";
+const scopes = [Scopes.global];
 
-export { data, category, execute };
+export { data, category, scopes, execute };

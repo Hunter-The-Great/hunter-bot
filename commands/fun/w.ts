@@ -4,6 +4,7 @@ import {
     InteractionContextType,
     ApplicationIntegrationType,
 } from "discord.js";
+import { Scopes } from "../../utilities/Scopes";
 import fs from "fs";
 
 const data = new SlashCommandBuilder()
@@ -26,5 +27,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const category = "fun";
+const scopes = [Scopes.global];
 
-export { data, category, execute };
+export { data, category, scopes, execute };

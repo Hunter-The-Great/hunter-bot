@@ -8,11 +8,10 @@ import {
     ActionRowBuilder,
     StringSelectMenuBuilder,
     StringSelectMenuInteraction,
-    GuildMemberRoleManager,
-    Collection,
     ButtonBuilder,
     ButtonStyle,
 } from "discord.js";
+import { Scopes } from "../../utilities/Scopes";
 
 const data = new SlashCommandBuilder()
     .setName("role-selector")
@@ -130,5 +129,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const category = "utility";
+const scopes = [Scopes.global];
 
-export { data, category, execute };
+export { data, category, scopes, execute };

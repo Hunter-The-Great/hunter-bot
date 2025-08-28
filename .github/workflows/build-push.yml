@@ -18,7 +18,6 @@ jobs:
               - run: bun install
               - run: bun run db-gen
               - run: bun run cmd
-              - run: bun run cmd-dev
     Docker:
         runs-on: ubuntu-latest
         steps:

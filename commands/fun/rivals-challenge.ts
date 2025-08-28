@@ -5,6 +5,7 @@ import {
     ApplicationIntegrationType,
     EmbedBuilder,
 } from "discord.js";
+import { Scopes } from "../../utilities/Scopes";
 
 const data = new SlashCommandBuilder()
     .setName("rivals-challenge")
@@ -135,5 +136,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const category = "fun";
+const scopes = [Scopes.global];
 
-export { data, category, execute };
+export { data, category, scopes, execute };

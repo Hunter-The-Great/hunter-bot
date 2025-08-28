@@ -4,6 +4,7 @@ import {
     InteractionContextType,
     SlashCommandBuilder,
 } from "discord.js";
+import { Scopes } from "../../utilities/Scopes";
 import { sentry } from "../../utilities/sentry";
 
 const data = new SlashCommandBuilder()
@@ -54,5 +55,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const category = "admin";
+const scopes = [Scopes.admin];
 
-export { data, category, execute };
+export { data, category, scopes, execute };

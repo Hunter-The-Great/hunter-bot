@@ -5,6 +5,7 @@ import {
     InteractionContextType,
     ApplicationIntegrationType,
 } from "discord.js";
+import { Scopes } from "../../utilities/Scopes";
 import { prisma } from "../../utilities/db.js";
 import { decrypt } from "../../utilities/encryption.js";
 
@@ -56,5 +57,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
 };
 
 const category = "canvas";
+const scopes = [Scopes.global];
 
-export { data, category, execute };
+export { data, category, scopes, execute };
