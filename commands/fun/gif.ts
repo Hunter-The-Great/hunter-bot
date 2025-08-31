@@ -155,11 +155,17 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
             });
             await interaction.editReply(`${data + 1}/20 GIFs saved.`);
             return;
-        } else if (meta.images.length > 0) {
+        } else if (
+            meta.images.length > 0 ||
+            link.startsWith("https://tenor.com/view/")
+        ) {
+            console.log(link);
             await prisma.gif.create({
                 data: {
                     alias,
-                    link: meta.images[0],
+                    link: link.startsWith("https://tenor.com/view")
+                        ? link
+                        : meta.images[0],
                     uid: id,
                 },
             });
