@@ -1,9 +1,10 @@
 export async function embedify(link: string) {
-    const response = await fetch("https://cobalt.drewh.net", {
+    const response = await fetch("https://cobalt.lowryb.sbs", {
         method: "POST",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            Authorization: `Api-Key ${process.env.COBALT_KEY}`,
         },
         body: JSON.stringify({
             url: link,
