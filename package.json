@@ -10,7 +10,7 @@
     "cmd": "bun run deploy-commands.ts",
     "db-gen": "bun x prisma generate",
     "db-push": "bun x prisma db push",
-    "format": "prettier --write \"**/*.ts\""
+    "format": "prettier --write \"**/*.ts\" ; prettier --write \"**/*.tsx\""
   },
   "keywords": [],
   "author": "",
