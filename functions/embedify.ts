@@ -34,6 +34,8 @@ export async function embedify(link: string) {
 export function backup(originalLink: string) {
     if (originalLink.includes("instagram.")) {
         originalLink = originalLink.replace("instagram", "kkinstagram");
+    } else if (originalLink.includes("tiktok.")) {
+        originalLink = originalLink.replace("tiktok", "tnktok");
     }
     return originalLink;
 }

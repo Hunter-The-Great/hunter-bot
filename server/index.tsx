@@ -250,6 +250,13 @@ const start = async (client) => {
                 throw new VisibleError("Unauthorized");
             }
 
+            if (link.includes("sora.chatgpt.com")) {
+                await channel.send(
+                    `Whoops! ${user} tried to send AI slop! We don't support that here.`
+                );
+                return res.code(200).send({ message: "Acknowledged." });
+            }
+
             const info = await embedify(link);
 
             if (info === null) {
