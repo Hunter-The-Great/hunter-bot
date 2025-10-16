@@ -1,15 +1,14 @@
-import { sentry } from "../utilities/sentry";
 import { prisma } from "../utilities/db";
 import websocket from "@fastify/websocket";
 import cors from "@fastify/cors";
-import { Attachment, EmbedBuilder, embedLength, TextChannel } from "discord.js";
+import { EmbedBuilder, TextChannel } from "discord.js";
 import { FastifyReply, FastifyRequest, fastify } from "fastify";
 import { BaseHtml } from "./baseHtml";
 import { FeedbackHtml } from "./feedback";
 import { z, ZodError, ZodSchema } from "zod";
 import { FastifyRequestType } from "fastify/types/type-provider";
 import { parseDate } from "chrono-node";
-import { backup, embedify } from "../functions/embedify";
+import { sendMeme } from "../functions/sendMeme";
 
 export const server = fastify();
 
@@ -237,53 +236,17 @@ const start = async (client) => {
     "/drewh/meme",
     useSchema(drewhMemeSchema, async (req, res) => {
       const { key, user, link } = req.body;
-      const channel = await client.channels.fetch(process.env.MEME_CHANNEL);
 
       if (key !== process.env.DREW_KEY) {
         console.log("Invalid key for /drewh.");
-        throw new VisibleError("Unauthorized");
-      }
-
-      if (link.includes("sora.chatgpt.com")) {
-        await channel.send(
-          `Whoops! ${user} tried to send AI slop! We don't support that here. Please reevaluate your life choices.`
-        );
-        return res.code(200).send({ message: "Acknowledged." });
-      }
-
-      const info = await embedify(link);
-
-      if (info === null) {
-        throw new VisibleError("Error processing link.");
-      }
-
-      const { url, filename } = info;
-
-      if (filename === null) {
-        try {
-          await channel.send(`-# [Sent by: ${user}](${url})`);
-          return res.code(202).send({ message: "Acknowledged" });
-        } catch {
-          throw new VisibleError("Error processing link.");
-        }
+        throw new VisibleError("Unauthorized", 401);
       }
 
       try {
-        await channel.send({
-          files: [
-            {
-              attachment: url,
-              name: filename,
-            },
-          ],
-          content: `-# [Sent by: ${user}](<${link}>)`,
-        });
+        await sendMeme(client, user, link);
       } catch (err) {
-        try {
-          await channel.send(`-# [Sent by: ${user}](${backup(link)})`);
-        } catch (err) {
-          throw new VisibleError("Error processing link.");
-        }
+        console.log(err);
+        throw new VisibleError("Error processing link.");
       }
 
       return res.code(200).send({ message: "Acknowledged." });

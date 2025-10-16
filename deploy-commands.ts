@@ -45,12 +45,16 @@ for (const scope of Object.keys(commands)) {
   if (commands[scope].length === 0) {
     continue;
   }
-  if (scope === "global")
+  if (scope === "global") {
     rest.put(Routes.applicationCommands(process.env.CLIENT_ID!), {
       body: commands[scope],
     });
-  else
-    rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID!, scope), {
-      body: commands[scope],
-    });
+  } else
+    rest
+      .put(Routes.applicationGuildCommands(process.env.CLIENT_ID!, scope), {
+        body: commands[scope],
+      })
+      .catch((err) =>
+        console.error(`WARNING: failed to deploy to scope ${scope}.\n`, err)
+      );
 }
