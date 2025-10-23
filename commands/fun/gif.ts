@@ -7,6 +7,10 @@ import {
   ChatInputCommandInteraction,
   InteractionContextType,
   ApplicationIntegrationType,
+  TextInputBuilder,
+  TextInputStyle,
+  ModalActionRowComponentBuilder,
+  ModalBuilder,
 } from "discord.js";
 import { Scopes } from "../../utilities/Scopes";
 import { prisma } from "../../utilities/db.js";
@@ -70,6 +74,11 @@ const data = new SlashCommandBuilder()
           .setRequired(true)
           .setMaxLength(100)
       )
+  )
+  .addSubcommand((subcommand) =>
+    subcommand
+      .setName("compendium")
+      .setDescription("Opens an interactive compendium of all your saved GIFs.")
   )
   .addSubcommand((subcommand) =>
     subcommand.setName("clear").setDescription("Clears all your saved GIFs.")
@@ -155,7 +164,6 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
       meta.images.length > 0 ||
       link.startsWith("https://tenor.com/view/")
     ) {
-      console.log(link);
       await prisma.gif.create({
         data: {
           alias,
@@ -222,6 +230,167 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
       await interaction.editReply("GIF deleted");
     } else {
       await interaction.editReply("No GIF by that alias found.");
+    }
+  } else if (interaction.options.getSubcommand() === "compendium") {
+    const gifs = await prisma.gif.findMany({
+      where: { uid: id },
+      orderBy: { savedAt: "asc" },
+    });
+
+    if (gifs.length === 0) {
+      await interaction.editReply({
+        content: "No GIFs saved.",
+      });
+      return;
+    }
+
+    const prev = new ButtonBuilder()
+      .setCustomId(`gif-compendium-prev:${interaction.user.id}`)
+      .setLabel("Prev")
+      .setStyle(ButtonStyle.Primary)
+      .setDisabled(true);
+
+    const num = new ButtonBuilder()
+      .setCustomId(`gif-compendium-num:${interaction.user.id}`)
+      .setLabel(`1/${gifs.length}`)
+      .setStyle(ButtonStyle.Secondary)
+      .setDisabled(true);
+
+    const next = new ButtonBuilder()
+      .setCustomId(`gif-compendium-next:${interaction.user.id}`)
+      .setLabel("Next")
+      .setStyle(ButtonStyle.Primary)
+      .setDisabled(gifs.length <= 1);
+
+    const edit = new ButtonBuilder()
+      .setCustomId(`gif-compendium-edit:${interaction.user.id}`)
+      .setLabel("Edit Alias")
+      .setStyle(ButtonStyle.Secondary)
+      .setDisabled(false);
+
+    const deleteButton = new ButtonBuilder()
+      .setCustomId(`gif-compendium-delete:${interaction.user.id}`)
+      .setLabel("Delete")
+      .setStyle(ButtonStyle.Danger)
+      .setDisabled(false);
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      prev,
+      num,
+      next,
+      edit,
+      deleteButton
+    );
+
+    const reply = [
+      `# ${interaction.user.username}'s Compendium\n`,
+      `[${gifs[0].alias}](${gifs[0].link})`,
+    ];
+
+    const rsp = await interaction.editReply({
+      content: reply.join(""),
+      components: [row],
+    });
+
+    try {
+      let index = 0;
+      const filter = (i) =>
+        i.customId.startsWith("gif-compendium") &&
+        i.user.id === interaction.user.id;
+      const collector = rsp.createMessageComponentCollector({
+        filter,
+        time: 600_000,
+      });
+      collector.on("collect", async (i) => {
+        if (i.customId.includes("prev")) {
+          index--;
+          const gif = gifs[index];
+          if (index === 0) {
+            prev.setDisabled(true);
+          }
+          if (index !== gifs.length - 1) {
+            next.setDisabled(false);
+          }
+          num.setLabel(`${index + 1}/${gifs.length}`);
+          reply[1] = `[${gif.alias}](${gif.link})`;
+          i.update({ content: reply.join(""), components: [row] });
+        } else if (i.customId.includes("next")) {
+          index++;
+          const gif = gifs[index];
+          if (index !== 0) {
+            prev.setDisabled(false);
+          }
+          if (index === gifs.length - 1) {
+            next.setDisabled(true);
+          }
+          num.setLabel(`${index + 1}/${gifs.length}`);
+          reply[1] = `[${gif.alias}](${gif.link})`;
+          i.update({ content: reply.join(""), components: [row] });
+        } else if (i.customId.includes("edit")) {
+          const gif = gifs[index];
+          const aliasInput = new TextInputBuilder()
+            .setCustomId("alias-update")
+            .setLabel("Enter New Alias: ")
+            .setValue(gif.alias)
+            .setRequired(true)
+            .setStyle(TextInputStyle.Short);
+          const row =
+            new ActionRowBuilder<ModalActionRowComponentBuilder>().addComponents(
+              aliasInput
+            );
+          const modal = new ModalBuilder()
+            .setCustomId(`alias-modal:${gif.alias}`)
+            .setTitle("Edit GIF Alias")
+            .addComponents(row);
+          await i.showModal(modal);
+        } else if (i.customId.includes("delete")) {
+          if (i.user.id !== gifs[index].uid) {
+            i.reply({
+              content: "You can't delete someone else's GIF!",
+              ephemeral: true,
+            });
+            return;
+          }
+          await prisma.gif.delete({ where: { id: gifs[index].id } });
+          gifs.splice(index, 1);
+          if (gifs.length === 0) {
+            await i.update({
+              content: "No GIFs found.",
+              embeds: [],
+              components: [],
+            });
+            return;
+          }
+          if (index === gifs.length) {
+            index--;
+          }
+          const gif = gifs[index];
+          if (index === 0) {
+            prev.setDisabled(true);
+          } else {
+            prev.setDisabled(false);
+          }
+          if (index !== gifs.length - 1) {
+            next.setDisabled(false);
+          } else {
+            next.setDisabled(true);
+          }
+          num.setLabel(`${index + 1}/${gifs.length}`);
+          reply[1] = `[${gif.alias}](${gif.link})`;
+          i.update({ content: reply.join(""), components: [row] });
+        }
+      });
+      collector.on("end", async () => {
+        row.setComponents([
+          prev.setDisabled(true),
+          num.setDisabled(true),
+          next.setDisabled(true),
+          deleteButton.setDisabled(true),
+        ]);
+        interaction.editReply({ components: [row] });
+      });
+    } catch (err) {
+      sentry.captureException(err);
+      console.error(err);
     }
   } else if (interaction.options.getSubcommand() === "clear") {
     const confirm = new ButtonBuilder()

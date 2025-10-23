@@ -86,7 +86,9 @@ const execute = async (interaction: Interaction) => {
     }
   } else if (interaction.isModalSubmit()) {
     try {
-      const modal = interaction.client.modals.get(interaction.customId);
+      const modal = interaction.client.modals.get(
+        interaction.customId.split(":")[0]
+      );
       await modal.execute(interaction);
       if (interaction.customId === "feedback") return; // I said it was anonymous didn't I?
       // modal logging
