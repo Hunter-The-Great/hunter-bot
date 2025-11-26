@@ -9,6 +9,7 @@ import {
   VoiceChannel,
   InteractionContextType,
   ApplicationIntegrationType,
+  GatewayRateLimitError,
 } from "discord.js";
 import { Scopes } from "../../utilities/Scopes";
 import { prisma } from "../../utilities/db";
@@ -163,7 +164,17 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
       return;
     }
 
-    await interaction.guild!.members.fetch({ force: true });
+    try {
+      await interaction.guild!.members.fetch({ force: true });
+    } catch (err) {
+      if (!(err instanceof GatewayRateLimitError)) {
+        await interaction.editReply(
+          "An error has occurred, please try again later."
+        );
+        console.error(err);
+        return;
+      }
+    }
     const users = interaction.guild!.members.cache.filter(
       (member) => !member.user.bot
     );
@@ -303,7 +314,17 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
       );
     await interaction.editReply({ embeds: [response] });
   } else if (interaction.options.getSubcommand() === "leaderboard") {
-    await interaction.guild!.members.fetch({ force: true });
+    try {
+      await interaction.guild!.members.fetch({ force: true });
+    } catch (err) {
+      if (!(err instanceof GatewayRateLimitError)) {
+        await interaction.editReply(
+          "An error has occurred, please try again later."
+        );
+        console.error(err);
+        return;
+      }
+    }
     const guildMembers = (await interaction.guild!.members.fetch()).filter(
       (member) => !member.user.bot
     );
@@ -337,7 +358,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
     console.log(
       `ERROR: subcommand not found for /guessing: ${interaction.options.getSubcommand()}`
     );
-    await interaction.editReply("An error occured, please try again later.");
+    await interaction.editReply("An error occurred, please try again later.");
   }
 };
 

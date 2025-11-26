@@ -41,7 +41,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
     .setDescription(
       `has run the /waifu command ${user?.waifuCount || 0} times (${
         user?.nsfwCount || 0
-      } of which ${user?.nsfwCount === 1 ? "was" : "were"}  NSFW). ${
+      } of which ${user?.nsfwCount === 1 ? "was" : "were"} NSFW). ${
         target.id === "386758028533170177" ? "\n(it's for testing, ok?)" : " "
       }`
     )

@@ -195,13 +195,13 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
       console.log(
         `ERROR: subcommand not found for /override gif: ${interaction.options.getSubcommand()}`
       );
-      await interaction.reply("An error occured, please try again later.");
+      await interaction.reply("An error occurred, please try again later.");
     }
   } else {
     console.log(
       `ERROR: subcommand not found for /override: ${interaction.options.getSubcommand()}`
     );
-    await interaction.reply("An error occured, please try again later.");
+    await interaction.reply("An error occurred, please try again later.");
   }
 };
 

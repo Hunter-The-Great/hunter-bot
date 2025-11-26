@@ -51,11 +51,11 @@ const execute = async (interaction: Interaction) => {
         if (interaction.isRepliable()) {
           if (interaction.replied || interaction.deferred) {
             await interaction.editReply(
-              "An error has occured, please try again later."
+              "An error has occurred, please try again later."
             );
           } else {
             await interaction.reply(
-              "An error has occured, please try again later."
+              "An error has occurred, please try again later."
             );
           }
         }

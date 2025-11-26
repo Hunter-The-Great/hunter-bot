@@ -87,7 +87,7 @@ const execute = async (interaction: ChatInputCommandInteraction) => {
     });
   } else {
     console.log(`ERROR: subcommand not found for /canvas: ${command}`);
-    await interaction.reply("An error occured, please try again later.");
+    await interaction.reply("An error occurred, please try again later.");
   }
 };
 
