@@ -12,13 +12,6 @@ export async function sendMeme(
     return;
   }
 
-  if (link.includes("sora.chatgpt.com")) {
-    await channel.send(
-      `Whoops! ${user} tried to send AI slop! We don't support that here. Please reevaluate your life choices.`
-    );
-    throw new Error("Error processing link.");
-  }
-
   const info = await embedify(link);
 
   if (info === null) {
