@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "bun test",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "bun run index.ts",
     "dev": "bun run --watch index.ts",
     "cmd": "bun run deploy-commands.ts",

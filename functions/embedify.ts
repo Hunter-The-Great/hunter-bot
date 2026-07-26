@@ -1,14 +1,19 @@
-type EmbedInfo = {
-  url: string;
-  filename: string | null;
-};
+export async function embedify(link: string) {
+  const response = await fetch("https://cobalt.lowryb.sbs", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Api-Key ${process.env.COBALT_KEY}`,
+    },
+    body: JSON.stringify({
+      url: link,
+    }),
+  });
 
-export async function embedify(link: string): Promise<EmbedInfo | null> {
-  const fallback = (): EmbedInfo | null => {
+  if (!response.ok) {
     try {
-      const url = new URL(link);
-      if (url.protocol !== "http:" && url.protocol !== "https:") return null;
-
+      new URL(link);
       return {
         url: backup(link),
         filename: null,
@@ -16,53 +21,21 @@ export async function embedify(link: string): Promise<EmbedInfo | null> {
     } catch {
       return null;
     }
-  };
-
-  try {
-    const response = await fetch("https://cobalt.lowryb.sbs", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Api-Key ${process.env.COBALT_KEY}`,
-      },
-      body: JSON.stringify({
-        url: link,
-      }),
-    });
-
-    if (!response.ok) return fallback();
-
-    const result = await response.json();
-    if (
-      typeof result?.url !== "string" ||
-      typeof result?.filename !== "string"
-    ) {
-      return fallback();
-    }
-
-    return {
-      url: result.url,
-      filename: result.filename,
-    };
-  } catch {
-    return fallback();
   }
+
+  const { url, filename } = await response.json();
+
+  return {
+    url,
+    filename,
+  };
 }
 
 export function backup(originalLink: string) {
-  try {
-    const url = new URL(originalLink);
-    const hostname = url.hostname.toLowerCase();
-
-    if (hostname === "instagram.com" || hostname.endsWith(".instagram.com")) {
-      url.hostname = "oginstagram.com";
-    } else if (hostname === "tiktok.com" || hostname.endsWith(".tiktok.com")) {
-      url.hostname = "tnktok.com";
-    }
-
-    return url.toString();
-  } catch {
-    return originalLink;
+  if (originalLink.includes("instagram.")) {
+    originalLink = originalLink.replace("instagram", "oginstagram");
+  } else if (originalLink.includes("tiktok.")) {
+    originalLink = originalLink.replace("tiktok", "tnktok");
   }
+  return originalLink;
 }
